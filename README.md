@@ -1,3 +1,3 @@
 # discordjs4j
 
-A Discord API/Gateway library heavily inspired by [Discord.JS](https://discord.js.org/#/).
+A Java Discord API/Gateway library heavily inspired by [discord.js](https://discord.js.org/#/).
