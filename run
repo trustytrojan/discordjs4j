@@ -1,0 +1,2 @@
+#!/bin/sh
+java --enable-preview -cp bin:lib/* $1.Main

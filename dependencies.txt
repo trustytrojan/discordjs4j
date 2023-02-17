@@ -1,0 +1,5 @@
+I will try to keep the up to date binaries of these libraries in /lib.
+
+- https://code.google.com/archive/p/json-simple/downloads
+- https://github.com/TooTallNate/Java-WebSocket
+	- https://repo1.maven.org/maven2/org/slf4j/
