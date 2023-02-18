@@ -1,8 +1,8 @@
 package discord.enums;
 
 public enum NSFWLevel {
-  Default,
-  Explicit,
-  Safe,
-  AgeRestricted
+	Default,
+	Explicit,
+	Safe,
+	AgeRestricted
 }

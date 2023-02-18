@@ -57,21 +57,15 @@ public enum AuditLogEvent {
 	AutoModerationUserCommunicationDisabled(145);
 
 	public static AuditLogEvent get(long value) {
-		for (final var x : AuditLogEvent.values()) {
-			if (x.value == value) {
+		for(final var x : AuditLogEvent.values())
+			if(x.value == value)
 				return x;
-			}
-		}
 		return null;
 	}
 
-	private final int value;
+	public final int value;
 
 	private AuditLogEvent(int value) {
 		this.value = value;
-	}
-
-	public int value() {
-		return value;
 	}
 }

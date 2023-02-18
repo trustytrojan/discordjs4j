@@ -1,7 +1,7 @@
 package discord.enums;
 
 public enum ExplicitContentFilterLevel {
-  Disabled,
-  MembersWithoutRoles,
-  AllMembers
+	Disabled,
+	MembersWithoutRoles,
+	AllMembers
 }

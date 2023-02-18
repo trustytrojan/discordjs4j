@@ -35,7 +35,7 @@ public class ApplicationCommandPayload implements JSONable {
   @Override
   public JSONObject toJSONObject() {
     final var obj = new BetterJSONObject();
-    obj.put("type", type.value());
+    obj.put("type", type.value);
     obj.put("name", name);
     obj.put("description", description);
     if(options.size() > 0) obj.put("options", JSON.buildArray(options));

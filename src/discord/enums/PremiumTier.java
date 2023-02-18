@@ -1,8 +1,8 @@
 package discord.enums;
 
 public enum PremiumTier {
-  None,
-  Tier1,
-  Tier2,
-  Tier3
+	None,
+	Tier1,
+	Tier2,
+	Tier3
 }

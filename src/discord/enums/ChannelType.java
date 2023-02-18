@@ -14,27 +14,20 @@ public enum ChannelType {
 	GuildDirectory(14),
 	GuildForum(15);
 
-	private final int value;
+	public final int value;
 
 	private ChannelType(int value) {
 		this.value = value;
 	}
 
-	public int value() {
-		return value;
-	}
-
 	public static ChannelType get(long value) {
-		for (final var x : ChannelType.values()) {
-			if (x.value == value) {
-				return x;
-			}
-		}
+		for(final var x : ChannelType.values())
+			if(x.value == value) return x;
 		return null;
 	}
 
 	public String toString() {
-		return switch (this) {
+		return switch(this) {
 			case GuildText -> "Text Channel";
 			case DM -> "DM Channel";
 			case GuildVoice -> "Voice Channel";
