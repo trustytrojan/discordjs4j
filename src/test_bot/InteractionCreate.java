@@ -11,8 +11,7 @@ final class InteractionCreate {
 	static void listener(Interaction __) {
 		switch (__) {
 			case ChatInputInteraction ___ -> commandInteractionListener(___);
-			default -> {
-			}
+			default -> {}
 		}
 	}
 
