@@ -10,17 +10,17 @@ import discord.util.JSONable;
  */
 public record ApplicationCommandOptionChoice(String name, Object value) implements JSONable {
 
-  @Override
-  public String toJSONString() {
-    return toJSONObject().toJSONString();
-  }
+	@Override
+	public String toJSONString() {
+		return toJSONObject().toJSONString();
+	}
 
-  @Override
-  public JSONObject toJSONObject() {
-    final var obj = new BetterJSONObject();
-    obj.put("name", name);
-    obj.put("value", value);
-    return obj.innerObject;
-  }
+	@Override
+	public JSONObject toJSONObject() {
+		final var obj = new BetterJSONObject();
+		obj.put("name", name);
+		obj.put("value", value);
+		return obj.innerObject;
+	}
 
 }

@@ -14,7 +14,7 @@ final class AuditLogEntryCreate {
 		final var embed = new Embed();
 		embed.setAuthor("By "+executor.tag(), executor.avatarURL(), null);
 
-		switch (log.action_type()) {
+		switch(log.action_type()) {
 			case ChannelCreate -> {
 				embed.setTitle("Channel created");
 				try {
@@ -29,7 +29,7 @@ final class AuditLogEntryCreate {
 				embed.setFooter("ID: "+log.target_id(), null);
 			}
 
-			default -> { return; }
+			default -> {}
 		}
 
 		//channel.send(embed);

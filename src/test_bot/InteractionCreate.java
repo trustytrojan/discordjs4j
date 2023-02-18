@@ -9,14 +9,14 @@ final class InteractionCreate {
 	private static final BotDiscordClient client = Main.client;
 
 	static void listener(Interaction __) {
-		switch (__) {
+		switch(__) {
 			case ChatInputInteraction ___ -> commandInteractionListener(___);
 			default -> {}
 		}
 	}
 
 	private static void commandInteractionListener(ChatInputInteraction interaction) {
-		switch (interaction.commandName()) {
+		switch(interaction.commandName()) {
 			case "ping" -> interaction.reply('`' + client.gateway.ping() + "ms`");
 		}
 	}

@@ -16,49 +16,49 @@ import discord.util.JSON;
 
 public class ChannelManager extends DataManager<Channel> {
 
-  public Channel createCorrectChannel(BetterJSONObject data) {
-    final var type = ChannelType.get(data.getLong("type"));
-    return switch(type) {
-      case GuildText -> new TextChannel(client, data);
-      case DM -> new DMChannel(client, data);
-      case GroupDM -> new GroupDMChannel(client, data);
-      case GuildCategory -> new CategoryChannel(client, data);
-      // ...
-      default -> null;
-    };
-  }
+	public Channel createCorrectChannel(BetterJSONObject data) {
+		final var type = ChannelType.get(data.getLong("type"));
+		return switch(type) {
+			case GuildText -> new TextChannel(client, data);
+			case DM -> new DMChannel(client, data);
+			case GroupDM -> new GroupDMChannel(client, data);
+			case GuildCategory -> new CategoryChannel(client, data);
+			// ...
+			default -> null;
+		};
+	}
 
-  public ChannelManager(DiscordClient client) {
-    super(client);
-  }
+	public ChannelManager(DiscordClient client) {
+		super(client);
+	}
 
-  @Override
-  public Channel forceCache(BetterJSONObject data) {
-    return cache(createCorrectChannel(data));
-  }
+	@Override
+	public Channel forceCache(BetterJSONObject data) {
+		return cache(createCorrectChannel(data));
+	}
 
-  @Override
-  public CompletableFuture<Channel> fetch(String id, boolean force) {
-    final var path = String.format("/channels/%s", id);
-    return super.fetch(id, path, force);
-  }
+	@Override
+	public CompletableFuture<Channel> fetch(String id, boolean force) {
+		final var path = String.format("/channels/%s", id);
+		return super.fetch(id, path, force);
+	}
 
-  public CompletableFuture<BetterMap<String, TextBasedChannel>> fetchDMs() {
-    return CompletableFuture.supplyAsync(() -> {
-      try {
-        final var path = "/users/@me/channels";
-        final var raw_dms = JSON.parseObjectArray(client.api.get(path));
-        final var dms = new BetterMap<String, TextBasedChannel>();
-        for(final var raw_dm : raw_dms) {
-          final var dm = (TextBasedChannel)cache(raw_dm);
-          dms.put(dm.id(), dm);
-        }
-        return dms;
-      } catch(Exception e) {
-        e.printStackTrace();
-        return null;
-      }
-    });
-  }
+	public CompletableFuture<BetterMap<String, TextBasedChannel>> fetchDMs() {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				final var path = "/users/@me/channels";
+				final var raw_dms = JSON.parseObjectArray(client.api.get(path));
+				final var dms = new BetterMap<String, TextBasedChannel>();
+				for(final var raw_dm : raw_dms) {
+					final var dm = (TextBasedChannel)cache(raw_dm);
+					dms.put(dm.id(), dm);
+				}
+				return dms;
+			} catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		});
+	}
 
 }

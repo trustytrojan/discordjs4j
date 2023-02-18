@@ -16,7 +16,7 @@ public class Main {
 		try {
 			client = new BotDiscordClient();
 			client.login(Util.readFile("token"), intents);
-		} catch (Exception e) { throw new RuntimeException(e); }
+		} catch(Exception e) { throw new RuntimeException(e); }
 
 		client.ready.connect(() -> System.out.println("Logged in as "+client.user.tag()+"!"));
 

@@ -6,26 +6,26 @@ import discord.util.BetterJSONObject;
 import discord.util.JSONable;
 
 public record EmbedAuthor(
-  String name,
-  String url,
-  String icon_url
+	String name,
+	String url,
+	String icon_url
 ) implements JSONable {
 
-  @Override
-  public JSONObject toJSONObject() {
-    final var obj = new BetterJSONObject();
+	@Override
+	public JSONObject toJSONObject() {
+		final var obj = new BetterJSONObject();
 
-    obj.put("name", name);
+		obj.put("name", name);
 
-    if(url != null) {
-      obj.put("url", url);
-    }
+		if(url != null) {
+			obj.put("url", url);
+		}
 
-    if(icon_url != null) {
-      obj.put("icon_url", icon_url);
-    }
+		if(icon_url != null) {
+			obj.put("icon_url", icon_url);
+		}
 
-    return obj.innerObject;
-  }
+		return obj.innerObject;
+	}
 
 }
