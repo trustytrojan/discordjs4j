@@ -41,9 +41,8 @@ public class BetterJSONObject {
 
 	public List<BetterJSONObject> getObjectArray(String key) {
 		final var objects = new ArrayList<BetterJSONObject>();
-		for(final var obj : getArray(key)) {
+		for (final var obj : getArray(key))
 			objects.add(new BetterJSONObject((JSONObject)obj));
-		}
 		return objects;
 	}
 

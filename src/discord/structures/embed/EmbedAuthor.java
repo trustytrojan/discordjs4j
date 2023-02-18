@@ -14,17 +14,9 @@ public record EmbedAuthor(
 	@Override
 	public JSONObject toJSONObject() {
 		final var obj = new BetterJSONObject();
-
 		obj.put("name", name);
-
-		if(url != null) {
-			obj.put("url", url);
-		}
-
-		if(icon_url != null) {
-			obj.put("icon_url", icon_url);
-		}
-
+		if (url != null) obj.put("url", url);
+		if (icon_url != null) obj.put("icon_url", icon_url);
 		return obj.innerObject;
 	}
 

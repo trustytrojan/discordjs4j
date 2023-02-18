@@ -39,7 +39,7 @@ public class ApplicationCommandOptionPayload implements JSONable {
 		obj.put("type", type.value());
 		obj.put("name", name);
 		obj.put("description", description);
-		if(required) obj.put("required", required);
+		if (required) obj.put("required", required);
 		return obj.innerObject;
 	}
 

@@ -18,8 +18,7 @@ public enum GatewayOpcode {
 	}
 
 	public static GatewayOpcode get(int value) {
-		for(final var x : GatewayOpcode.values())
-			if(x.value == value) return x;
+		for (final var x : GatewayOpcode.values()) if (x.value == value) return x;
 		return null;
 	}
 

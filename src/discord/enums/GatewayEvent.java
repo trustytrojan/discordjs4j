@@ -15,8 +15,7 @@ public enum GatewayEvent {
 	MessageDelete("MESSAGE_DELETE");
 
 	public static final GatewayEvent get(String value) {
-		for(final var x : GatewayEvent.values())
-			if(x.value.equals(value)) return x;
+		for (final var x : GatewayEvent.values()) if (x.value.equals(value)) return x;
 		return null;
 	}
 

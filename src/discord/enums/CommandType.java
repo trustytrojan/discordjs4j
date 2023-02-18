@@ -6,8 +6,7 @@ public enum CommandType {
 	User(3);
 
 	public static CommandType get(long value) {
-		for(final var x : CommandType.values())
-			if(x.value == value) return x;
+		for (final var x : CommandType.values()) if (x.value == value) return x;
 		return null;
 	}
 

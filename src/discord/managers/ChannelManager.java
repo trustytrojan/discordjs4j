@@ -18,7 +18,7 @@ public class ChannelManager extends DataManager<Channel> {
 
 	public Channel createCorrectChannel(BetterJSONObject data) {
 		final var type = ChannelType.get(data.getLong("type"));
-		return switch(type) {
+		return switch (type) {
 			case GuildText -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
 			case GroupDM -> new GroupDMChannel(client, data);
@@ -49,12 +49,12 @@ public class ChannelManager extends DataManager<Channel> {
 				final var path = "/users/@me/channels";
 				final var raw_dms = JSON.parseObjectArray(client.api.get(path));
 				final var dms = new BetterMap<String, TextBasedChannel>();
-				for(final var raw_dm : raw_dms) {
+				for (final var raw_dm : raw_dms) {
 					final var dm = (TextBasedChannel)cache(raw_dm);
 					dms.put(dm.id(), dm);
 				}
 				return dms;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}

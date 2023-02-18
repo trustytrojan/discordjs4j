@@ -30,11 +30,12 @@ public class GuildManager extends DataManager<Guild> {
 			try {
 				final var partials = JSON.parseObjectArray(client.api.get("/users/@me/guilds"));
 				final var guilds = new BetterMap<String, Guild>();
-				for(final var partial : partials) {
-					cache(partial);
+				for (final var partial : partials) {
+					final var guild = cache(partial);
+					guilds.put(guild.id(), guild);
 				}
 				return guilds;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}

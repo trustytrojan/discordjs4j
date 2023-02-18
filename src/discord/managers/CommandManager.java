@@ -34,7 +34,7 @@ public class CommandManager extends DataManager<ApplicationCommand> {
 			try {
 				final var data = JSON.parseObject(client.api.post(path, payload.toJSONString()));
 				return cache(data);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
@@ -44,10 +44,8 @@ public class CommandManager extends DataManager<ApplicationCommand> {
 	public CompletableFuture<Void> delete(String id) {
 		final var path = commandPath(id);
 		return CompletableFuture.runAsync(() -> {
-			try {
-				client.api.delete(path);
-				cache.remove(id);
-			} catch(Exception e) { e.printStackTrace(); }
+			try { client.api.delete(path); cache.remove(id); }
+			catch (Exception e) { e.printStackTrace(); }
 		});
 	}
 
@@ -57,15 +55,13 @@ public class CommandManager extends DataManager<ApplicationCommand> {
 		return CompletableFuture.runAsync(() -> {
 			try {
 				final var data = JSON.parseObjectArray(client.api.get(path));
-				for(final var obj : data) {
-					forceCache(obj);
-				}
-			} catch(Exception e) { e.printStackTrace(); }
+				for (final var obj : data) forceCache(obj);
+			} catch (Exception e) { e.printStackTrace(); }
 		});
 	}
 
 	private String commandPath(String id) {
 		return String.format("/applications/%s/commands/%s", client.application.id(), id);
 	}
-	
+
 }

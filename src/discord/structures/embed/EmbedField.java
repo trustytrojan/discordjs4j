@@ -18,11 +18,9 @@ public record EmbedField(
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		final var obj = new JSONObject();
-
 		obj.put("name", name);
 		obj.put("value", value);
 		obj.put("inline", inline);
-
 		return obj;
 	}
 

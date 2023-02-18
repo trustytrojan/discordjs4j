@@ -66,7 +66,7 @@ public final class GatewayClient extends WebSocketClient {
 		final var obj = JSON.parseObject(__);
 		final var opcode = GatewayOpcode.get(obj.getLong("op"));
 		
-		switch(opcode) {
+		switch (opcode) {
 
 			case Dispatch -> {
 				sequence_number = obj.getLong("s");
@@ -74,7 +74,7 @@ public final class GatewayClient extends WebSocketClient {
 				final var t = obj.getString("t");
 				System.out.printf("[GatewayClient] Event received: %s\n", t);
 
-				switch(GatewayEvent.get(t)) {
+				switch (GatewayEvent.get(t)) {
 
 					case Ready -> {
 						final var d = obj.getObject("d");
@@ -91,7 +91,7 @@ public final class GatewayClient extends WebSocketClient {
 					case GuildDelete -> {
 						final var id = obj.getObject("d").getString("id");
 						final var removed = client.guilds.cache.remove(id);
-						if(removed == null) return;
+						if (removed == null) return;
 						client.guildDelete.emit(removed);
 					}
 
@@ -100,7 +100,7 @@ public final class GatewayClient extends WebSocketClient {
 					case ChannelDelete -> {
 						final var id = obj.getObject("d").getString("id");
 						final var removed = client.channels.cache.remove(id);
-						if(removed == null) return;
+						if (removed == null) return;
 						client.channelDelete.emit(removed);
 					}
 
@@ -117,14 +117,14 @@ public final class GatewayClient extends WebSocketClient {
 						client.channels.fetch(d.getString("channel_id")).thenAccept((channel) -> {
 							final var messages = ((TextBasedChannel)channel).messages();
 							final var removed = messages.cache.remove(d.getString("id"));
-							if(removed == null) return;
+							if (removed == null) return;
 							client.messageDelete.emit(removed);
 						});
 					}
 					
 					default -> {
 						final var str = obj.get("d").toString();
-						if(str.length() < 1000) System.out.println(str);
+						if (str.length() < 1000) System.out.println(str);
 					}
 
 				}

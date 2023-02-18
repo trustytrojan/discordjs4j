@@ -21,8 +21,7 @@ public enum ChannelType {
 	}
 
 	public static ChannelType get(long value) {
-		for(final var x : ChannelType.values())
-			if(x.value == value) return x;
+		for (final var x : ChannelType.values()) if (x.value == value) return x;
 		return null;
 	}
 

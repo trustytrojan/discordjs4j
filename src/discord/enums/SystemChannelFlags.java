@@ -7,8 +7,7 @@ public enum SystemChannelFlags {
 	SuppressJoinNotificationReplies(8);
 
 	public static SystemChannelFlags get(int value) {
-		for(final var x : SystemChannelFlags.values())
-			if(x.value == value) return x;
+		for (final var x : SystemChannelFlags.values()) if (x.value == value) return x;
 		return null;
 	}
 

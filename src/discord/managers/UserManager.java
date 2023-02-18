@@ -28,15 +28,11 @@ public class UserManager extends DataManager<User> {
 	public CompletableFuture<ClientUser> fetchMe() {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
-				final var path = "/users/@me";
-				final var data = JSON.parseObject(client.api.get(path));
+				final var data = JSON.parseObject(client.api.get("/users/@me"));
 				final var me = new ClientUser(client, data);
 				cache.put(me.id(), me);
 				return me;
-			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			} catch (Exception e) { e.printStackTrace(); return null; }
 		});
 	}
 	

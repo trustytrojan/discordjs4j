@@ -14,8 +14,7 @@ public enum CommandOptionType {
 	Attachment(11);
 
 	public static CommandOptionType get(long value) {
-		for(final var x : CommandOptionType.values())
-			if(x.value == value) return x;
+		for (final var x : CommandOptionType.values()) if (x.value == value) return x;
 		return null;
 	}
 

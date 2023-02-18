@@ -12,7 +12,6 @@ public class CategoryChannel implements GuildChannel {
 	public CategoryChannel(DiscordClient client, BetterJSONObject data) {
 		this.client = client;
 		this.data = data;
-		
 	}
 
 	@Override

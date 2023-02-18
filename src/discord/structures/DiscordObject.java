@@ -33,9 +33,7 @@ public interface DiscordObject {
 				final var raw = client().api.get(api_path());
 				final var obj = JSON.parseObject(raw);
 				setData(obj);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
+			} catch (Exception e) { e.printStackTrace(); }
 		});
 	}
 

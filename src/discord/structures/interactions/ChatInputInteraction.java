@@ -51,13 +51,9 @@ public class ChatInputInteraction extends Interaction {
 	@SuppressWarnings("unchecked")
 	private CompletableFuture<Void> _reply(InteractionCallbackType type, MessagePayload payload) {
 		final var path = String.format("/interactions/%s/%s/callback", id(), token());
-
 		final var obj = new JSONObject();
 		obj.put("type", type.value);
-		if(payload != null) {
-			obj.put("data", payload.toJSONObject());
-		}
-		
+		if (payload != null) obj.put("data", payload.toJSONObject());
 		return CompletableFuture.runAsync(() -> {
 			try { client.api.post(path, obj.toJSONString()); }
 			catch(Exception e) { e.printStackTrace(); }

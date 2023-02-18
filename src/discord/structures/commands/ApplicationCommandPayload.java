@@ -38,7 +38,7 @@ public class ApplicationCommandPayload implements JSONable {
 		obj.put("type", type.value);
 		obj.put("name", name);
 		obj.put("description", description);
-		if(options.size() > 0) obj.put("options", JSON.buildArray(options));
+		if (options.size() > 0) obj.put("options", JSON.buildArray(options));
 		return obj.innerObject;
 	}
 

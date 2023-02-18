@@ -26,5 +26,5 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 		final var path = String.format("/channels/%s", id);
 		return super.fetch(id, path, force);
 	}
-	
+
 }

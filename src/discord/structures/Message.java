@@ -30,11 +30,7 @@ public class Message implements DiscordObject {
 	}
 
 	public TextBasedChannel channel() {
-		if(channel == null) {
-			try { _channel.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
-		}
-
+		if (channel == null) try { _channel.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return channel;
 	}
 
@@ -43,11 +39,7 @@ public class Message implements DiscordObject {
 	}
 
 	public User author() {
-		if(author == null) {
-			try { _author.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
-		}
-
+		if (author == null) try { _author.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return author;
 	}
 

@@ -44,7 +44,7 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 	 */
 	public T cache(BetterJSONObject data) {
 		final var _t = cache.get(data.getString("id"));
-		if(_t == null) return forceCache(data);
+		if (_t == null) return forceCache(data);
 		_t.setData(data);
 		return _t;
 	}
@@ -73,15 +73,15 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 	 */
 	protected CompletableFuture<T> fetch(String id, String path, boolean force) {
 		return CompletableFuture.supplyAsync(() -> {
-			if(!force) {
+			if (!force) {
 				final var cached = cache.get(id);
-				if(cached != null) return cached;
+				if (cached != null) return cached;
 			}
 
 			try {
 				final var data = JSON.parseObject(client.api.get(path));
 				return cache(data);
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}

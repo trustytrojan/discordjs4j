@@ -10,17 +10,15 @@ final class AuditLogEntryCreate {
 	
 	static void listener(AuditLogEntry log) {
 		final var executor = log.executor();
-
 		final var embed = new Embed();
 		embed.setAuthor("By "+executor.tag(), executor.avatarURL(), null);
-
-		switch(log.action_type()) {
+		switch (log.action_type()) {
 			case ChannelCreate -> {
 				embed.setTitle("Channel created");
 				try {
 					final var channel = client.channels.fetch(log.target_id()).get();
 					embed.addField("Name", '`'+channel.name()+'`');
-				} catch(Exception e) { e.printStackTrace(); return; }
+				} catch (Exception e) { e.printStackTrace(); return; }
 			}
 
 			case ChannelDelete -> {
@@ -31,8 +29,6 @@ final class AuditLogEntryCreate {
 
 			default -> {}
 		}
-
-		//channel.send(embed);
 	}
 
 }

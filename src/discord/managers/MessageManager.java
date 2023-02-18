@@ -26,13 +26,8 @@ public class MessageManager extends DataManager<Message> {
 	public CompletableFuture<Message> delete(String id) {
 		final var path = String.format("/channels/%s/messages/%s", channel.id(), id);
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				client.api.delete(path);
-				return cache.remove(id);
-			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			try { client.api.delete(path); return cache.remove(id); }
+			catch (Exception e) { e.printStackTrace(); return null; }
 		});
 	}
 
@@ -53,10 +48,7 @@ public class MessageManager extends DataManager<Message> {
 					messages.put(message.id(), message);
 				}
 				return messages;
-			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			} catch (Exception e) { e.printStackTrace(); return null; }
 		});
 	}
 

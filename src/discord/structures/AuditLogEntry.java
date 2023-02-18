@@ -18,7 +18,7 @@ public class AuditLogEntry {
 		this.data = data;
 		_executor = client.users.fetch(user_id()).thenAccept((user) -> executor = user);
 		
-		for(final var change_data : data.getObjectArray("changes"))
+		for (final var change_data : data.getObjectArray("changes"))
 			changes.put(change_data.getString("key"), new AuditLogChange(change_data));
 	}
 
@@ -31,9 +31,7 @@ public class AuditLogEntry {
 	}
 
 	public User executor() {
-		if(executor == null)
-			try { _executor.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
+		if (executor == null) try { _executor.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return executor;
 	}
 

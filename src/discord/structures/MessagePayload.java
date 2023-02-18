@@ -35,21 +35,12 @@ public class MessagePayload implements JSONable {
 	@Override
 	public JSONObject toJSONObject() {
 		final var obj = new BetterJSONObject();
-
-		if(content != null) {
-			obj.put("content", content);
-		}
-
-		if(reply_to != null) {
+		if (content != null) obj.put("content", content);
+		if (reply_to != null)
 			obj.put("message_reference", JSON.buildObject(
 				JSON.objectEntry("message_id", reply_to)
 			));
-		}
-
-		if(embeds.size() > 0) {
-			obj.put("embeds", JSON.buildArray(embeds));
-		}
-
+		if (embeds.size() > 0) obj.put("embeds", JSON.buildArray(embeds));
 		return obj.innerObject;
 	}
 

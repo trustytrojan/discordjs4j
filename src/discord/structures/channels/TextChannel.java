@@ -39,11 +39,7 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 
 	@Override
 	public Guild guild() {
-		if(guild == null) {
-			try { _guild.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
-		}
-
+		if (guild == null) try { _guild.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return guild;
 	}
 

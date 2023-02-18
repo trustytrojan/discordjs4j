@@ -12,7 +12,7 @@ import discord.structures.channels.TextBasedChannel;
 public abstract class Interaction {
 
 	public static Interaction createCorrectInteraction(DiscordClient client, BetterJSONObject data) {
-		return switch(InteractionType.get(data.getLong("type"))) {
+		return switch (InteractionType.get(data.getLong("type"))) {
 			case ApplicationCommand -> new ChatInputInteraction(client, data);
 			default -> null;
 		};
@@ -31,18 +31,15 @@ public abstract class Interaction {
 	protected Interaction(DiscordClient client, BetterJSONObject data) {
 		this.client = client;
 		this.data = data;
-
 		String user_id;
-		if(inGuild()) {
+		if (inGuild()) {
 			user_id = data.getObject("member").getObject("user").getString("id");
 			_guild = client.guilds.fetch(guildId()).thenAccept((guild) -> this.guild = guild);
-		}
-		else {
+		} else {
 			user_id = data.getObject("user").getString("id");
 			_guild = null;
 		}
 		_user = client.users.fetch(user_id).thenAccept((user) -> this.user = user);
-
 		_channel = client.channels.fetch(channelId()).thenAccept((channel) -> this.channel = (TextBasedChannel)channel);
 	}
 
@@ -67,9 +64,7 @@ public abstract class Interaction {
 	}
 
 	public User user() {
-		if(user == null)
-			try { _user.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
+		if (user == null) try { _user.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return user;
 	}
 
@@ -78,9 +73,7 @@ public abstract class Interaction {
 	}
 
 	public TextBasedChannel channel() {
-		if(channel == null)
-			try { _channel.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
+		if (channel == null) try { _channel.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return channel;
 	}
 
@@ -89,9 +82,7 @@ public abstract class Interaction {
 	}
 
 	public Guild guild() {
-		if(guild == null)
-			try { _guild.get(); }
-			catch(Exception e) { throw new RuntimeException(e); }
+		if (guild == null) try { _guild.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return guild;
 	}
 

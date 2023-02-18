@@ -13,13 +13,8 @@ public record EmbedFooter(
 	@Override
 	public JSONObject toJSONObject() {
 		final var obj = new BetterJSONObject();
-
 		obj.put("text", text);
-
-		if(icon_url != null) {
-			obj.put("icon_url", icon_url);
-		}
-
+		if (icon_url != null) obj.put("icon_url", icon_url);
 		return obj.innerObject;
 	}
 
