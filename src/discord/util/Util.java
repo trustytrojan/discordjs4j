@@ -1,8 +1,8 @@
 package discord.util;
 
 import java.io.FileInputStream;
-//import java.time.Instant;
-//import java.util.Date;
+import java.time.Instant;
+import java.util.Date;
 
 public final class Util {
 
@@ -13,8 +13,8 @@ public final class Util {
 		return token;
 	}
 
-	// public static Date long_to_date(long ms) {
-	//   return Date.from(Instant.ofEpochMilli(ms));
-	// }
+	public static Date long_to_date(long ms) {
+		return Date.from(Instant.ofEpochMilli(ms));
+	}
 
 }

@@ -21,7 +21,9 @@ public interface Channel extends DiscordObject {
 				final var client = client();
 				client.api.delete(api_path());
 				client.channels.cache.remove(id());
-			} catch (Exception e) { e.printStackTrace(); }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 

@@ -16,9 +16,11 @@ public class Main {
 		try {
 			client = new BotDiscordClient();
 			client.login(Util.readFile("token"), intents);
-		} catch (Exception e) { throw new RuntimeException(e); }
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 
-		client.ready.connect(() -> System.out.println("Logged in as "+client.user.tag()+"!"));
+		client.ready.connect(() -> System.out.println("Logged in as " + client.user.tag() + "!"));
 
 		client.guildCreate.connect((guild) -> {
 			System.out.printf("Received guild %s %s\n", guild.id(), guild.name());
@@ -29,5 +31,5 @@ public class Main {
 	}
 
 	public static void main(String[] __) {}
-	
+
 }

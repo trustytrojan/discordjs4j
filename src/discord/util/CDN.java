@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class CDN {
-	
+
 	private static final String base_url = "https://cdn.discordapp.com";
 	private static final List<Integer> allowed_sizes = Arrays.asList(16, 32, 64, 128, 256, 512, 1024, 2048, 4096);
 	private static final List<String> allowed_extensions = Arrays.asList("webp", "png", "jpg", "jpeg", "gif");
@@ -28,15 +28,15 @@ public final class CDN {
 	}
 
 	public static final String avatar(String id, String hash, int size, String extension) {
-		return dynamicMakeURL("/avatars/"+id+'/'+hash, hash, size, extension);
+		return dynamicMakeURL("/avatars/" + id + '/' + hash, hash, size, extension);
 	}
 
 	public static final String icon(String id, String hash, int size, String extension) {
-		return dynamicMakeURL("/icons/"+id+'/'+hash, hash, size, extension);
+		return dynamicMakeURL("/icons/" + id + '/' + hash, hash, size, extension);
 	}
 
 	public static final String splash(String guild_id, String hash, int size, String extension) {
-		return makeURL("/discovery-splashes/"+guild_id+'/'+hash, size, extension);
+		return makeURL("/discovery-splashes/" + guild_id + '/' + hash, size, extension);
 	}
 
 }

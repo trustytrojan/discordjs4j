@@ -15,8 +15,8 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 
 	private Guild guild;
 	private final CompletableFuture<Void> _guild;
-	//private CategoryChannel parent;
-	//private final CompletableFuture<Void> _parent;
+	// private CategoryChannel parent;
+	// private final CompletableFuture<Void> _parent;
 
 	// data from Discord
 	// public Message last_message;
@@ -29,7 +29,8 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 		this.data = data;
 		messages = new MessageManager(client, this);
 		_guild = client.guilds.fetch(guild_id()).thenAccept((guild) -> this.guild = guild);
-		//_parent = client.channels.fetch(parent_id()).thenAccept((channel) -> parent = channel);
+		// _parent = client.channels.fetch(parent_id()).thenAccept((channel) -> parent =
+		// channel);
 	}
 
 	@Override
@@ -39,7 +40,12 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 
 	@Override
 	public Guild guild() {
-		if (guild == null) try { _guild.get(); } catch (Exception e) { throw new RuntimeException(e); }
+		if (guild == null)
+			try {
+				_guild.get();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		return guild;
 	}
 

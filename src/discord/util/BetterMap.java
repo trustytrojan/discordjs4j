@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-public class BetterMap<K,V> extends TreeMap<K,V> implements Iterable<V> {
+public class BetterMap<K, V> extends TreeMap<K, V> implements Iterable<V> {
 
 	@Override
 	public Iterator<V> iterator() {
@@ -21,5 +21,5 @@ public class BetterMap<K,V> extends TreeMap<K,V> implements Iterable<V> {
 	public V first() {
 		return iterator().next();
 	}
-	
+
 }

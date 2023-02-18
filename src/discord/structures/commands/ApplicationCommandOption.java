@@ -7,7 +7,7 @@ import discord.util.BetterJSONObject;
 import discord.enums.CommandOptionType;
 
 public class ApplicationCommandOption {
-	
+
 	private BetterJSONObject data;
 	public final List<ApplicationCommandOption> options = new ArrayList<>();
 

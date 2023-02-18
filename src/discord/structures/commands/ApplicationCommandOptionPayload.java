@@ -10,7 +10,7 @@ import discord.enums.CommandOptionType;
 import discord.util.JSONable;
 
 public class ApplicationCommandOptionPayload implements JSONable {
-	
+
 	public final CommandOptionType type;
 	public final String name;
 	public final String description;

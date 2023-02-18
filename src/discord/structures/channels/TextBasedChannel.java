@@ -26,7 +26,8 @@ public interface TextBasedChannel extends Channel {
 			try {
 				final var data = JSON.parseObject(client().api.post(path, payload.toJSONString()));
 				final var from_cache = messages().cache.get(data.getString("id"));
-				if (from_cache == null) return messages().cache(data);
+				if (from_cache == null)
+					return messages().cache(data);
 				return from_cache;
 			} catch (Exception e) {
 				e.printStackTrace();

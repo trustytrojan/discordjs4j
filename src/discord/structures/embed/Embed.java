@@ -1,7 +1,7 @@
 package discord.structures.embed;
 
 import java.util.ArrayList;
-import java.util.List;  
+import java.util.List;
 
 import org.json.simple.JSONObject;
 
@@ -59,27 +59,22 @@ public class Embed implements JSONable {
 	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
 		final var obj = new JSONObject();
-
 		if (title != null) obj.put("title", title);
 		if (url != null) obj.put("url", url);
 		if (description != null) obj.put("description", description);
-
 		if (this.image != null) {
 			final var image = new JSONObject();
 			image.put("url", this.image);
 			obj.put("image", image);
 		}
-
 		if (this.thumbnail != null) {
 			final var thumbnail = new JSONObject();
 			thumbnail.put("url", this.thumbnail);
 			obj.put("thumbnail", thumbnail);
 		}
-
 		if (author != null) obj.put("author", author.toJSONObject());
 		if (footer != null) obj.put("footer", footer.toJSONObject());
 		if (fields != null) obj.put("fields", JSON.buildArray(fields));
-
 		return obj;
 	}
 

@@ -7,7 +7,7 @@ import discord.enums.CommandType;
 import discord.structures.DiscordObject;
 
 public class ApplicationCommand implements DiscordObject {
-	
+
 	private BetterJSONObject data;
 	private final BotDiscordClient client;
 
@@ -27,7 +27,7 @@ public class ApplicationCommand implements DiscordObject {
 	public String description() {
 		return data.getString("description");
 	}
-	
+
 	@Override
 	public BetterJSONObject getData() {
 		return data;

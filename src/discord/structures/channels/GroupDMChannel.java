@@ -43,9 +43,8 @@ public class GroupDMChannel implements TextBasedChannel {
 	}
 
 	public void updateRecipients(List<BetterJSONObject> raw_recipients) {
-		for (final var raw_user : raw_recipients) {
+		for (final var raw_user : raw_recipients)
 			recipients.add(client.users.cache(raw_user));
-		}
 	}
 
 	@Override

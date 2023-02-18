@@ -4,7 +4,7 @@ import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
 
 public class Application implements DiscordObject {
-	
+
 	private final DiscordClient client;
 	private BetterJSONObject data;
 

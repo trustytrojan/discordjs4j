@@ -34,19 +34,12 @@ public class ChatInputInteraction extends Interaction {
 	}
 
 	public CompletableFuture<Void> reply(String content) {
-		return _reply(
-			InteractionCallbackType.ChannelMessageWithSource,
-			new MessagePayload().setContent(content)
-		);
+		return _reply(InteractionCallbackType.ChannelMessageWithSource, new MessagePayload().setContent(content));
 	}
 
 	public CompletableFuture<Void> reply(MessagePayload payload) {
 		return _reply(InteractionCallbackType.ChannelMessageWithSource, payload);
 	}
-
-	// private CompletableFuture<Void> _reply(InteractionCallbackType type) {
-	//   return _reply(type, null);
-	// }
 
 	@SuppressWarnings("unchecked")
 	private CompletableFuture<Void> _reply(InteractionCallbackType type, MessagePayload payload) {
@@ -55,8 +48,11 @@ public class ChatInputInteraction extends Interaction {
 		obj.put("type", type.value);
 		if (payload != null) obj.put("data", payload.toJSONObject());
 		return CompletableFuture.runAsync(() -> {
-			try { client.api.post(path, obj.toJSONString()); }
-			catch(Exception e) { e.printStackTrace(); }
+			try {
+				client.api.post(path, obj.toJSONString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 

@@ -4,11 +4,7 @@ import org.json.simple.JSONObject;
 
 import discord.util.JSONable;
 
-public record EmbedField(
-	String name,
-	String value,
-	boolean inline
-) implements JSONable {
+public record EmbedField(String name, String value, boolean inline) implements JSONable {
 
 	public EmbedField(String name, String value) {
 		this(name, value, false);

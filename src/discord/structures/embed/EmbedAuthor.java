@@ -5,11 +5,7 @@ import org.json.simple.JSONObject;
 import discord.util.BetterJSONObject;
 import discord.util.JSONable;
 
-public record EmbedAuthor(
-	String name,
-	String url,
-	String icon_url
-) implements JSONable {
+public record EmbedAuthor(String name, String url, String icon_url) implements JSONable {
 
 	@Override
 	public JSONObject toJSONObject() {

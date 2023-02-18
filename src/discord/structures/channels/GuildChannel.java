@@ -4,9 +4,10 @@ import discord.structures.Guild;
 
 public interface GuildChannel extends Channel {
 
-	//public PermissionOverwrites permission_overwrites;
+	// public PermissionOverwrites permission_overwrites;
 
 	public String guild_id();
+
 	public Guild guild();
 
 	default String name() {
@@ -16,10 +17,10 @@ public interface GuildChannel extends Channel {
 	default Long position() {
 		return getData().getLong("position");
 	}
-	
+
 	default CategoryChannel parent() throws Exception {
 		final var parent_id = getData().getString("parent_id");
-		return (CategoryChannel)client().channels.fetch(parent_id).get();
+		return (CategoryChannel) client().channels.fetch(parent_id).get();
 	}
 
 }

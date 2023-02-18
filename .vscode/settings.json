@@ -1,5 +1,6 @@
 {
   "java.dependency.packagePresentation": "hierarchical",
   "java.configuration.updateBuildConfiguration": "automatic",
-  "java.project.outputPath": "bin"
+  "java.project.outputPath": "bin",
+  "java.format.settings.url": "eclipse-formatter.xml"
 }

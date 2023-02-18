@@ -50,5 +50,5 @@ public class CategoryChannel implements GuildChannel {
 	public Long position() {
 		return data.getLong("position");
 	}
-	
+
 }
