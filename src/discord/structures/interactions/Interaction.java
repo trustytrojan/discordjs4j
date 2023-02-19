@@ -19,7 +19,7 @@ public abstract class Interaction {
 	}
 
 	protected final DiscordClient client;
-	protected BetterJSONObject data;
+	private BetterJSONObject data;
 
 	private User user;
 	private final CompletableFuture<Void> _user;
@@ -64,11 +64,7 @@ public abstract class Interaction {
 	}
 
 	public User user() {
-		if (user == null) try {
-			_user.get();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		if (user == null) try { _user.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return user;
 	}
 
@@ -77,11 +73,7 @@ public abstract class Interaction {
 	}
 
 	public TextBasedChannel channel() {
-		if (channel == null) try {
-			_channel.get();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		if (channel == null) try { _channel.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return channel;
 	}
 
@@ -90,11 +82,7 @@ public abstract class Interaction {
 	}
 
 	public Guild guild() {
-		if (guild == null) try {
-			_guild.get();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		if (guild == null) try { _guild.get(); } catch (Exception e) { throw new RuntimeException(e); }
 		return guild;
 	}
 

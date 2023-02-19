@@ -10,11 +10,13 @@ import discord.enums.CommandType;
 import discord.enums.InteractionCallbackType;
 import discord.structures.MessagePayload;
 
-public class ChatInputInteraction extends Interaction {
+public class ChatInputInteraction extends Interaction implements RepliableInteraction {
+
+	public final ChatInputInteractionOptions options;
 
 	public ChatInputInteraction(DiscordClient client, BetterJSONObject data) {
 		super(client, data);
-		System.out.println(data);
+		options = new ChatInputInteractionOptions(innerData().getObjectArray("options"));
 	}
 
 	public String commandId() {
@@ -29,20 +31,8 @@ public class ChatInputInteraction extends Interaction {
 		return CommandType.get(innerData().getLong("type"));
 	}
 
-	public CompletableFuture<Void> deferReply() {
-		return _reply(InteractionCallbackType.DeferredChannelMessageWithSource, null);
-	}
-
-	public CompletableFuture<Void> reply(String content) {
-		return _reply(InteractionCallbackType.ChannelMessageWithSource, new MessagePayload().setContent(content));
-	}
-
-	public CompletableFuture<Void> reply(MessagePayload payload) {
-		return _reply(InteractionCallbackType.ChannelMessageWithSource, payload);
-	}
-
 	@SuppressWarnings("unchecked")
-	private CompletableFuture<Void> _reply(InteractionCallbackType type, MessagePayload payload) {
+	public CompletableFuture<Void> _reply(InteractionCallbackType type, MessagePayload payload) {
 		final var path = String.format("/interactions/%s/%s/callback", id(), token());
 		final var obj = new JSONObject();
 		obj.put("type", type.value);
