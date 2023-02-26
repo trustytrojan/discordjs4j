@@ -10,28 +10,36 @@ final class AuditLogEntryCreate {
 	private static final BotDiscordClient client = Main.client;
 
 	static void listener(AuditLogEntry log) {
-		final var type = log.action_type();
-		final var guild = log.guild();
+		final var type = log.actionType();
 		final var executor = log.executor();
 		final var embed = new Embed();
 		embed.setColor(LogEmbedColor.get(type));
 		embed.setAuthor("By " + executor.tag(), executor.avatarURL(), null);
 		switch (type) {
+			case GuildUpdate -> {
+				embed.setTitle("Server updated");
+				for (final var change : log.changes) {
+					var key = change.key();
+					var valueFormat = "`%s` ➡️ `%s`";
+					switch (key) {
+						case "name" -> { key = "Name"; }
+						case "system_channel_id" -> { key = "System Messages Channel"; valueFormat = "<#%s> ➡️ <#%s>"; }
+						
+					}
+					embed.addField(key, String.format(valueFormat, change.oldValue(), change.newValue()));
+				}
+			}
+
 			case ChannelCreate -> {
 				embed.setTitle("Channel created");
-				try {
-					final var channel = client.channels.fetch(log.target_id()).get();
-					embed.addField("Name", '`' + channel.name() + '`');
-				} catch (Exception e) {
-					e.printStackTrace();
-					return;
-				}
+				embed.addField("Name", '`' + (String)log.changes.get("name").newValue() + '`');
+				embed.setFooter("ID: " + log.targetId(), null);
 			}
 
 			case ChannelDelete -> {
 				embed.setTitle("Channel deleted");
-				embed.addField("Name", '`' + log.changes.get("name").old_value().toString() + '`');
-				embed.setFooter("ID: " + log.target_id(), null);
+				embed.addField("Name", '`' + (String)log.changes.get("name").oldValue() + '`');
+				embed.setFooter("ID: " + log.targetId(), null);
 			}
 
 			default -> {}

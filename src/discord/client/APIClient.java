@@ -1,7 +1,9 @@
 package discord.client;
 
+import java.io.IOException;
 import java.net.HttpRetryException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -9,6 +11,8 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
+
+import org.json.simple.parser.ParseException;
 
 import discord.util.JSON;
 
@@ -23,7 +27,7 @@ public final class APIClient {
 	private static final HttpClient http_client = HttpClient.newHttpClient();
 	private static final String base_url = "https://discord.com/api/v10";
 
-	private static void check_error(HttpResponse<String> resp) throws Exception {
+	private static void check_error(HttpResponse<String> resp) throws HttpRetryException {
 		final var status_code = resp.statusCode();
 
 		if (status_code >= 400) {
@@ -44,7 +48,9 @@ public final class APIClient {
 		this.bot = bot;
 	}
 
-	private String send_request(String path, HttpMethod method, String request_body) throws Exception {
+	private String send_request(String path, HttpMethod method, String request_body)
+		throws IOException, InterruptedException, ParseException, URISyntaxException
+	{
 		System.out.printf("[APIClient] Request: %s %s\n", method, path);
 
 		final var url = base_url + path;

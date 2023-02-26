@@ -3,6 +3,7 @@ package discord.structures;
 import discord.util.BetterJSONObject;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import discord.client.DiscordClient;
 // import discord.enums.DefaultMessageNotificationLevel;
@@ -50,8 +51,6 @@ public class Guild implements DiscordObject {
 
 	// // Special channels
 	// public String system_channel_id;
-	private final CompletableFuture<Void> _system_channel;
-	private TextChannel system_channel;
 	// public String rules_channel_id;
 	// //public TextChannel rules_channel;
 	// public String afk_channel_id;
@@ -62,29 +61,29 @@ public class Guild implements DiscordObject {
 	// //public TextChannel public_updates_channel_id;
 
 	// Large amounts of data
-	//public RoleManager roles;
-	//public VoiceState[] voice_states;
-	//public Sticker[] stickers;
-	//public Object[] stage_instances;
-	//public GuildScheduledEvent[] events;
-	//public GuildEmojiManager emojis;
-	//presences... these will be applied to GuildMember objects
-	//threads... figure this out later
+	// public RoleManager roles;
+	// public VoiceState[] voice_states;
+	// public Sticker[] stickers;
+	// public Object[] stage_instances;
+	// public GuildScheduledEvent[] events;
+	// public GuildEmojiManager emojis;
+	// presences... these will be applied to GuildMember objects
+	// threads... figure this out later
 
 	// Unknown metadata
-	//public Object[] embedded_activities;
-	//public Object hub_type;
-	//joined_at... this can go somewhere else
-	//public Object home_header; probably the boost progress bar
-	//public boolean lazy; ????
+	// public Object[] embedded_activities;
+	// public Object hub_type;
+	// joined_at... this can go somewhere else
+	// public Object home_header; probably the boost progress bar
+	// public boolean lazy; ????
 
 	private final DiscordClient client;
 	private BetterJSONObject data;
 
 	public final GuildChannelManager channels;
-	//public final MemberManager members;
-	//public final RoleManager roles;
-	
+	// public final MemberManager members;
+	// public final RoleManager roles;
+
 	public Guild(DiscordClient client, BetterJSONObject data) {
 		this.client = client;
 		this.data = data;
@@ -95,9 +94,13 @@ public class Guild implements DiscordObject {
 		return data.getString("name");
 	}
 
-	public TextChannel systemChannel() throws Exception {
+	public TextChannel systemChannel() {
 		final var id = data.getString("system_channel_id");
-		return (TextChannel)client.channels.fetch(id).get();
+		try {
+			return (TextChannel)client.channels.fetch(id).get();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override

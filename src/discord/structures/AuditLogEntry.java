@@ -20,8 +20,8 @@ public class AuditLogEntry implements GuildObject {
 	public AuditLogEntry(DiscordClient client, BetterJSONObject data) {
 		System.out.println(data);
 		this.data = data;
-		_guild = client.guilds.fetch(guild_id()).thenAccept((guild) -> this.guild = guild);
-		_executor = client.users.fetch(user_id()).thenAccept((user) -> executor = user);
+		_guild = client.guilds.fetch(guildId()).thenAccept((guild) -> this.guild = guild);
+		_executor = client.users.fetch(executorId()).thenAccept((user) -> executor = user);
 		for (final var change_data : data.getObjectArray("changes")) {
 			changes.put(change_data.getString("key"), new AuditLogChange(change_data));
 		}
@@ -29,6 +29,11 @@ public class AuditLogEntry implements GuildObject {
 
 	public String id() {
 		return data.getString("id");
+	}
+
+	@Override
+	public String guildId() {
+		return data.getString("guild_id");
 	}
 
 	@Override
@@ -43,7 +48,7 @@ public class AuditLogEntry implements GuildObject {
 		return guild;
 	}
 
-	public String user_id() {
+	public String executorId() {
 		return data.getString("user_id");
 	}
 
@@ -58,7 +63,7 @@ public class AuditLogEntry implements GuildObject {
 		return executor;
 	}
 
-	public String target_id() {
+	public String targetId() {
 		return data.getString("target_id");
 	}
 
@@ -66,7 +71,7 @@ public class AuditLogEntry implements GuildObject {
 		return data.getString("reason");
 	}
 
-	public AuditLogEvent action_type() {
+	public AuditLogEvent actionType() {
 		return AuditLogEvent.get(data.getLong("action_type"));
 	}
 
@@ -77,22 +82,24 @@ public class AuditLogEntry implements GuildObject {
 
 	@Override
 	public void setData(BetterJSONObject data) {
-		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+		throw ex;
 	}
 
 	@Override
 	public DiscordClient client() {
-		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+		throw ex;
 	}
 
 	@Override
 	public String api_path() {
-		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+		throw ex;
 	}
 
 	@Override
 	public CompletableFuture<Void> fetch() {
-		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+		throw ex;
 	}
+
+	private static final UnsupportedOperationException ex = new UnsupportedOperationException("Audit log entries can never be changed!");
 
 }

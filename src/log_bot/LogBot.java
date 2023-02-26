@@ -8,6 +8,7 @@ import org.json.simple.parser.ParseException;
 import discord.client.BotDiscordClient;
 import discord.util.BetterMap;
 import discord.util.JSON;
+import discord.util.Util;
 
 public class LogBot extends BotDiscordClient {
 
@@ -24,6 +25,17 @@ public class LogBot extends BotDiscordClient {
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			var data = "[";
+			for (final var tg : tguilds)
+				data += tg.toJSONString() + ',';
+			try {
+				Util.writeFile("tguilds.json", data += ']');
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}));
 	}
 	
 }

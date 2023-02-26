@@ -23,19 +23,8 @@ public final class LogEmbedColor {
 			case ThreadCreate:
 			case AutoModerationRuleCreate:
 				return _created;
-			case ChannelDelete:
-			case ChannelOverwriteDelete:
-			case RoleDelete:
-			case InviteDelete:
-			case WebhookDelete:
-			case EmojiDelete:
-			case IntegrationDelete:
-			case StageInstanceDelete:
-			case StickerDelete:
-			case GuildScheduledEventDelete:
-			case ThreadDelete:
-			case AutoModerationRuleDelete:
-				return _deleted;
+			
+			case GuildUpdate:
 			case ChannelUpdate:
 			case ChannelOverwriteUpdate:
 			case RoleUpdate:
@@ -49,6 +38,21 @@ public final class LogEmbedColor {
 			case ThreadUpdate:
 			case AutoModerationRuleUpdate:
 				return _updated;
+			
+			case ChannelDelete:
+			case ChannelOverwriteDelete:
+			case RoleDelete:
+			case InviteDelete:
+			case WebhookDelete:
+			case EmojiDelete:
+			case IntegrationDelete:
+			case StageInstanceDelete:
+			case StickerDelete:
+			case GuildScheduledEventDelete:
+			case ThreadDelete:
+			case AutoModerationRuleDelete:
+				return _deleted;
+			
 			default:
 				return null;
 		}

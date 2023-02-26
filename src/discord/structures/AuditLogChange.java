@@ -14,11 +14,11 @@ public class AuditLogChange {
 		return data.getString("key");
 	}
 
-	public Object old_value() {
+	public Object oldValue() {
 		return data.get("old_value");
 	}
 
-	public Object new_value() {
+	public Object newValue() {
 		return data.get("new_value");
 	}
 

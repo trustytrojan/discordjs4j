@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 public class BetterMap<K, V> extends TreeMap<K, V> implements Iterable<V> {
 
@@ -20,6 +21,17 @@ public class BetterMap<K, V> extends TreeMap<K, V> implements Iterable<V> {
 
 	public V first() {
 		return firstEntry().getValue();
+	}
+
+	public V ensure(K key, Supplier<V> supplier) {
+		final var existingValue = get(key);
+		final var defaultValue = supplier.get();
+		if (existingValue == null) {
+			put(key, defaultValue);
+			return defaultValue;
+		} else {
+			return existingValue;
+		}
 	}
 
 }

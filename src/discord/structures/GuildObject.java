@@ -2,7 +2,7 @@ package discord.structures;
 
 public interface GuildObject extends DiscordObject {
 
-	default String guild_id() {
+	default String guildId() {
 		return getData().getString("guild_id");
 	}
 

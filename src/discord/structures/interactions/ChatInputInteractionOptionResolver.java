@@ -14,6 +14,10 @@ public class ChatInputInteractionOptionResolver {
 			options.put(option.getString("name"), new ChatInputInteractionOption(option));
 	}
 
+	public boolean none() {
+		return (options.size() == 0);
+	}
+
 	public ChatInputInteractionOption get(String name) {
 		return options.get(name);
 	}
@@ -27,19 +31,23 @@ public class ChatInputInteractionOptionResolver {
 	}
 
 	public String getString(String name) {
-		return (String)get(name).value;
+		final var option = get(name);
+		return (option != null) ? (String)option.value : null;
 	}
 
 	public Long getInteger(String name) {
-		return (Long)get(name).value;
+		final var option = get(name);
+		return (option != null) ? (Long)option.value : null;
 	}
 
 	public Double getDouble(String name) {
-		return (Double)get(name).value;
+		final var option = get(name);
+		return (option != null) ? (Double)option.value : null;
 	}
 
 	public Boolean getBoolean(String name) {
-		return (Boolean)get(name).value;
+		final var option = get(name);
+		return (option != null) ? (Boolean)option.value : null;
 	}
 
 }
