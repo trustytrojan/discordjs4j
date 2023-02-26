@@ -1,4 +1,4 @@
-package test_bot;
+package log_bot;
 
 import discord.client.BotDiscordClient;
 import discord.structures.embed.Embed;

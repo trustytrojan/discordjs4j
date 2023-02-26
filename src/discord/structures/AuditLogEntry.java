@@ -1,29 +1,46 @@
 package discord.structures;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import discord.util.BetterJSONObject;
 import discord.util.BetterMap;
 import discord.client.DiscordClient;
 import discord.enums.AuditLogEvent;
 
-public class AuditLogEntry {
+public class AuditLogEntry implements GuildObject {
 
 	private final BetterJSONObject data;
 	private User executor;
 	private final CompletableFuture<Void> _executor;
+	private Guild guild;
+	private final CompletableFuture<Void> _guild;
 	public final BetterMap<String, AuditLogChange> changes = new BetterMap<>();
 
 	public AuditLogEntry(DiscordClient client, BetterJSONObject data) {
+		System.out.println(data);
 		this.data = data;
+		_guild = client.guilds.fetch(guild_id()).thenAccept((guild) -> this.guild = guild);
 		_executor = client.users.fetch(user_id()).thenAccept((user) -> executor = user);
-		
-		for (final var change_data : data.getObjectArray("changes"))
+		for (final var change_data : data.getObjectArray("changes")) {
 			changes.put(change_data.getString("key"), new AuditLogChange(change_data));
+		}
 	}
 
 	public String id() {
 		return data.getString("id");
+	}
+
+	@Override
+	public Guild guild() {
+		if (guild == null) {
+			try {
+				_guild.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return guild;
 	}
 
 	public String user_id() {
@@ -31,7 +48,13 @@ public class AuditLogEntry {
 	}
 
 	public User executor() {
-		if (executor == null) try { _executor.get(); } catch (Exception e) { throw new RuntimeException(e); }
+		if (executor == null) {
+			try {
+				_executor.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		return executor;
 	}
 
@@ -45,6 +68,31 @@ public class AuditLogEntry {
 
 	public AuditLogEvent action_type() {
 		return AuditLogEvent.get(data.getLong("action_type"));
+	}
+
+	@Override
+	public BetterJSONObject getData() {
+		return data;
+	}
+
+	@Override
+	public void setData(BetterJSONObject data) {
+		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+	}
+
+	@Override
+	public DiscordClient client() {
+		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+	}
+
+	@Override
+	public String api_path() {
+		throw new UnsupportedOperationException("Audit log entries can never be changed!");
+	}
+
+	@Override
+	public CompletableFuture<Void> fetch() {
+		throw new UnsupportedOperationException("Audit log entries can never be changed!");
 	}
 
 }

@@ -1,5 +1,7 @@
 package discord.client;
 
+import java.net.URISyntaxException;
+
 import discord.enums.GatewayIntent;
 import discord.managers.UserManager;
 import discord.managers.ChannelManager;
@@ -34,7 +36,7 @@ public abstract class DiscordClient {
 
 	public ClientUser user;
 
-	public DiscordClient() throws Exception {}
+	public DiscordClient() throws URISyntaxException {}
 
 	public void login(String token, GatewayIntent[] intents) throws Exception {
 		api.setToken(token);

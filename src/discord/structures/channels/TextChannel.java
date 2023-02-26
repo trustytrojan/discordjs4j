@@ -1,6 +1,7 @@
 package discord.structures.channels;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
@@ -34,18 +35,14 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	}
 
 	@Override
-	public String guild_id() {
-		return data.getString("guild_id");
-	}
-
-	@Override
 	public Guild guild() {
-		if (guild == null)
+		if (guild == null) {
 			try {
 				_guild.get();
-			} catch (Exception e) {
+			} catch (InterruptedException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
+		}
 		return guild;
 	}
 

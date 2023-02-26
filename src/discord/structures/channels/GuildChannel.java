@@ -1,14 +1,15 @@
 package discord.structures.channels;
 
-import discord.structures.Guild;
+import discord.structures.GuildObject;
 
-public interface GuildChannel extends Channel {
+public interface GuildChannel extends Channel, GuildObject {
 
 	// public PermissionOverwrites permission_overwrites;
 
-	public String guild_id();
-
-	public Guild guild();
+	@Override
+	default String guild_id() {
+		return getData().getString("guild_id");
+	}
 
 	default String name() {
 		return getData().getString("name");
@@ -20,7 +21,7 @@ public interface GuildChannel extends Channel {
 
 	default CategoryChannel parent() throws Exception {
 		final var parent_id = getData().getString("parent_id");
-		return (CategoryChannel) client().channels.fetch(parent_id).get();
+		return (CategoryChannel)client().channels.fetch(parent_id).get();
 	}
 
 }

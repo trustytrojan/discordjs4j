@@ -1,7 +1,8 @@
-package test_bot;
+package log_bot;
 
 import discord.client.BotDiscordClient;
 import discord.structures.AuditLogEntry;
+import discord.structures.channels.TextBasedChannel;
 import discord.structures.embed.Embed;
 
 final class AuditLogEntryCreate {
@@ -9,10 +10,13 @@ final class AuditLogEntryCreate {
 	private static final BotDiscordClient client = Main.client;
 
 	static void listener(AuditLogEntry log) {
+		final var type = log.action_type();
+		final var guild = log.guild();
 		final var executor = log.executor();
 		final var embed = new Embed();
+		embed.setColor(LogEmbedColor.get(type));
 		embed.setAuthor("By " + executor.tag(), executor.avatarURL(), null);
-		switch (log.action_type()) {
+		switch (type) {
 			case ChannelCreate -> {
 				embed.setTitle("Channel created");
 				try {
@@ -32,6 +36,7 @@ final class AuditLogEntryCreate {
 
 			default -> {}
 		}
+		client.channels.fetch("1071873742210342943").thenAccept((channel) -> ((TextBasedChannel)channel).send(embed));
 	}
 
 }

@@ -1,6 +1,7 @@
 package discord.client;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -25,7 +26,7 @@ public final class GatewayClient extends WebSocketClient {
 	private long heartbeatSentAt;
 	private long ping;
 
-	public GatewayClient(DiscordClient client) throws Exception {
+	public GatewayClient(DiscordClient client) throws URISyntaxException {
 		super(new URI("wss://gateway.discord.gg/"));
 		this.client = client;
 	}
