@@ -19,7 +19,7 @@ public abstract class Interaction {
 	}
 
 	protected final DiscordClient client;
-	private BetterJSONObject data;
+	private final BetterJSONObject data;
 
 	private User user;
 	private final CompletableFuture<Void> _user;

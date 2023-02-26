@@ -13,18 +13,14 @@ public enum CommandOptionType {
 	Number(10),
 	Attachment(11);
 
-	public static CommandOptionType get(long value) {
+	public static CommandOptionType resolve(long value) {
 		for (final var x : CommandOptionType.values()) if (x.value == value) return x;
 		return null;
 	}
 
-	private final int value;
+	public final int value;
 
 	private CommandOptionType(int value) {
 		this.value = value;
-	}
-
-	public int value() {
-		return value;
 	}
 }

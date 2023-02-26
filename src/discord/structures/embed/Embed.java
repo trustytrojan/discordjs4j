@@ -2,7 +2,6 @@ package discord.structures.embed;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.json.simple.JSONObject;
 

@@ -12,11 +12,16 @@ import discord.structures.MessagePayload;
 
 public class ChatInputInteraction extends Interaction implements RepliableInteraction {
 
-	public final ChatInputInteractionOptions options;
+	public final ChatInputInteractionOptionResolver options;
 
 	public ChatInputInteraction(DiscordClient client, BetterJSONObject data) {
 		super(client, data);
-		options = new ChatInputInteractionOptions(innerData().getObjectArray("options"));
+		System.out.println(data);
+		final var raw_options = innerData().getObjectArray("options");
+		ChatInputInteractionOptionResolver options = null;
+		if (raw_options != null)
+			options = new ChatInputInteractionOptionResolver(raw_options);
+		this.options = options;
 	}
 
 	public String commandId() {

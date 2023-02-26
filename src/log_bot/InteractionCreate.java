@@ -1,39 +1,41 @@
 package log_bot;
 
-import discord.client.BotDiscordClient;
 import discord.structures.embed.Embed;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 
 final class InteractionCreate {
 
-	private static final BotDiscordClient client = Main.client;
+	private static final LogBot client = Main.client;
 
 	static void listener(Interaction __) {
 		switch (__) {
-			case ChatInputInteraction ___ -> commandInteractionListener(___);
+			case ChatInputInteraction ___ -> chatInputInteractionListener(___);
 			default -> {}
 		}
 	}
 
-	private static void commandInteractionListener(ChatInputInteraction interaction) {
-		final var options = interaction.options;
-		final var user = interaction.user();
+	private static void chatInputInteractionListener(ChatInputInteraction interaction) {
 		switch (interaction.commandName()) {
-			case "ping" -> interaction.reply('`' + client.gateway.ping() + "ms`");
-			case "test_2" -> {
-				final var int_option = options.getInteger("int_option");
-				final var bool_option = options.getBoolean("bool_option");
+			case "config" -> {
+				final var guild = interaction.guild();
+				final var subcommand = interaction.options.getSubcommand();
+				final var options = subcommand.options;
 				final var embed = new Embed();
-				embed.setAuthor(user.tag(), user.avatarURL(), null);
-				embed.setTitle("Test response");
-				embed.addField("int_option", String.format("You sent `%s`", int_option));
-				String bool_resp;
-				if(bool_option != null)
-					bool_resp = String.format("You sent `%s`", bool_option);
-				else
-					bool_resp = "You did not send this option";
-				embed.addField("bool_option", bool_resp);
+				final var tguild = client.tguilds.get(interaction.guildId());
+				
+				switch (subcommand.name) {
+					case "audit_logger" -> {
+
+						embed.setTitle("Changing audit logger settings");
+						final var enabled = options.getBoolean("enabled");
+						final var channel = (String)options.get("channel").value;
+						if (enabled != null)
+							embed.addField("Enabled", String.format("Set to `%b`", enabled));
+						if (channel != null)
+							embed.addField("Channel", String.format("Set to <#%s>", channel));
+					}
+				}
 				interaction.reply(embed);
 			}
 		}

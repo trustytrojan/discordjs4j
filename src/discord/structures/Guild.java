@@ -1,6 +1,9 @@
 package discord.structures;
 
 import discord.util.BetterJSONObject;
+
+import java.util.concurrent.CompletableFuture;
+
 import discord.client.DiscordClient;
 // import discord.enums.DefaultMessageNotificationLevel;
 // import discord.enums.ExplicitContentFilterLevel;
@@ -47,7 +50,8 @@ public class Guild implements DiscordObject {
 
 	// // Special channels
 	// public String system_channel_id;
-	// //public TextChannel system_channel;
+	private final CompletableFuture<Void> _system_channel;
+	private TextChannel system_channel;
 	// public String rules_channel_id;
 	// //public TextChannel rules_channel;
 	// public String afk_channel_id;
@@ -91,7 +95,7 @@ public class Guild implements DiscordObject {
 		return data.getString("name");
 	}
 
-	public TextChannel system_channel() throws Exception {
+	public TextChannel systemChannel() throws Exception {
 		final var id = data.getString("system_channel_id");
 		return (TextChannel)client.channels.fetch(id).get();
 	}

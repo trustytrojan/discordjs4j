@@ -14,7 +14,7 @@ public class Main {
 	static {
 		try {
 			client = new LogBot();
-			client.login(Util.readFile("token"), intents);
+			client.login(Util.readFile("tokens/java-bot"), intents);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

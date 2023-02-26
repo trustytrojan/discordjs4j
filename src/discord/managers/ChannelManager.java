@@ -46,8 +46,7 @@ public class ChannelManager extends DataManager<Channel> {
 	public CompletableFuture<BetterMap<String, TextBasedChannel>> fetchDMs() {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
-				final var path = "/users/@me/channels";
-				final var raw_dms = JSON.parseObjectArray(client.api.get(path));
+				final var raw_dms = JSON.parseObjectArray(client.api.get("/users/@me/channels"));
 				final var dms = new BetterMap<String, TextBasedChannel>();
 				for (final var raw_dm : raw_dms) {
 					final var dm = (TextBasedChannel)cache(raw_dm);

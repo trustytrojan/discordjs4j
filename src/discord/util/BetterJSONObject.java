@@ -63,8 +63,10 @@ public class BetterJSONObject {
 	}
 
 	public List<BetterJSONObject> getObjectArray(String key) {
+		final var array = getArray(key);
+		if (array == null) return null;
 		final var objects = new ArrayList<BetterJSONObject>();
-		for (final var obj : getArray(key))
+		for (final var obj : array)
 			objects.add(new BetterJSONObject((JSONObject)obj));
 		return objects;
 	}

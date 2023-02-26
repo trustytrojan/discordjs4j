@@ -19,7 +19,7 @@ public class BetterMap<K, V> extends TreeMap<K, V> implements Iterable<V> {
 	}
 
 	public V first() {
-		return iterator().next();
+		return firstEntry().getValue();
 	}
 
 }
