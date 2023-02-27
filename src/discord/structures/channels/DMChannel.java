@@ -27,7 +27,7 @@ public class DMChannel implements TextBasedChannel {
 
 	@Override
 	public ChannelType type() {
-		return ChannelType.get(data.getLong("type"));
+		return ChannelType.resolve(data.getLong("type"));
 	}
 
 	@Override

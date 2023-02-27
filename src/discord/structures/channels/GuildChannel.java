@@ -7,7 +7,7 @@ public interface GuildChannel extends Channel, GuildObject {
 	// public PermissionOverwrites permission_overwrites;
 
 	@Override
-	default String guild_id() {
+	default String guildId() {
 		return getData().getString("guild_id");
 	}
 

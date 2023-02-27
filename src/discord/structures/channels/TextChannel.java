@@ -29,7 +29,7 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
-		_guild = client.guilds.fetch(guild_id()).thenAccept((guild) -> this.guild = guild);
+		_guild = client.guilds.fetch(guildId()).thenAccept((guild) -> this.guild = guild);
 		// _parent = client.channels.fetch(parent_id()).thenAccept((channel) -> parent =
 		// channel);
 	}

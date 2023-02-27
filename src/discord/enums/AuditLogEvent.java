@@ -56,7 +56,7 @@ public enum AuditLogEvent {
 	AutoModerationFlagToChannel(144),
 	AutoModerationUserCommunicationDisabled(145);
 
-	public static AuditLogEvent get(long value) {
+	public static AuditLogEvent resolve(long value) {
 		for (final var x : AuditLogEvent.values()) if (x.value == value) return x;
 		return null;
 	}

@@ -20,7 +20,7 @@ public class CategoryChannel implements GuildChannel {
 	}
 
 	@Override
-	public String guild_id() {
+	public String guildId() {
 		// TODO Auto-generated method stub
 		return null;
 	}

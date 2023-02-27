@@ -12,7 +12,7 @@ public interface Channel extends DiscordObject {
 	}
 
 	default ChannelType type() {
-		return ChannelType.get(getData().getLong("type"));
+		return ChannelType.resolve(getData().getLong("type"));
 	}
 
 	default CompletableFuture<Void> delete() {

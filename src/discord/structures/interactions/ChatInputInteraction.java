@@ -16,7 +16,6 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 
 	public ChatInputInteraction(DiscordClient client, BetterJSONObject data) {
 		super(client, data);
-		System.out.println(data);
 		final var raw_options = innerData().getObjectArray("options");
 		ChatInputInteractionOptionResolver options = null;
 		if (raw_options != null)

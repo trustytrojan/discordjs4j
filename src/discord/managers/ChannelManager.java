@@ -17,7 +17,7 @@ import discord.util.JSON;
 public class ChannelManager extends DataManager<Channel> {
 
 	public Channel createCorrectChannel(BetterJSONObject data) {
-		final var type = ChannelType.get(data.getLong("type"));
+		final var type = ChannelType.resolve(data.getLong("type"));
 		return switch (type) {
 			case GuildText -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);

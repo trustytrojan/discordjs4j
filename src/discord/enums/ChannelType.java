@@ -20,13 +20,15 @@ public enum ChannelType {
 		this.value = value;
 	}
 
-	public static ChannelType get(long value) {
-		for (final var x : ChannelType.values()) if (x.value == value) return x;
+	public static ChannelType resolve(long value) {
+		for (final var x : ChannelType.values())
+			if (x.value == value)
+				return x;
 		return null;
 	}
 
 	public String toString() {
-		return switch(this) {
+		return switch (this) {
 			case GuildText -> "Text Channel";
 			case DM -> "DM Channel";
 			case GuildVoice -> "Voice Channel";

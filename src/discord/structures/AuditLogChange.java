@@ -4,22 +4,14 @@ import discord.util.BetterJSONObject;
 
 public class AuditLogChange {
 	
-	private final BetterJSONObject data;
+	public final String key;
+	public final Object oldValue;
+	public final Object newValue;
 
 	AuditLogChange(BetterJSONObject data) {
-		this.data = data;
-	}
-
-	public String key() {
-		return data.getString("key");
-	}
-
-	public Object oldValue() {
-		return data.get("old_value");
-	}
-
-	public Object newValue() {
-		return data.get("new_value");
+		key = data.getString("key");
+		oldValue = data.get("old_value");
+		newValue = data.get("new_value");
 	}
 
 }

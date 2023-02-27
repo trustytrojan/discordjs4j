@@ -4,24 +4,16 @@ import discord.structures.embed.Embed;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 
-final class InteractionCreate {
+import static log_bot.Util.formatChannel;
+import static log_bot.Util.getTGuild;
 
-	private static final LogBot client = Main.client;
+final class InteractionCreate {
 
 	static void listener(Interaction interaction) {
 		switch (interaction) {
 			case ChatInputInteraction x -> chatInputInteractionListener(x);
 			default -> {}
 		}
-	}
-
-	private static String formatChannel(String channel) {
-		return (channel != null) ? "<#"+channel+'>' : "(none)";
-	}
-
-	private static TGuild getTGuild(Interaction interaction) {
-		final var guildId = interaction.guildId();
-		return client.tguilds.ensure(guildId, () -> new TGuild(guildId));
 	}
 
 	private static void chatInputInteractionListener(ChatInputInteraction interaction) {
