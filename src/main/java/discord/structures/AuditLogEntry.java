@@ -72,6 +72,4 @@ public class AuditLogEntry {
 		return AuditLogEvent.resolve(data.getLong("action_type"));
 	}
 
-	private static final UnsupportedOperationException ex = new UnsupportedOperationException("Audit log entries can never be changed!");
-
 }

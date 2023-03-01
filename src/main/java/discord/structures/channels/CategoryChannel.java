@@ -15,6 +15,11 @@ public class CategoryChannel implements GuildChannel {
 	}
 
 	@Override
+	public String toString() {
+		return mention();
+	}
+
+	@Override
 	public String name() {
 		return data.getString("name");
 	}

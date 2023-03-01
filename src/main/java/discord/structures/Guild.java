@@ -2,9 +2,6 @@ package discord.structures;
 
 import discord.util.BetterJSONObject;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
 import discord.client.DiscordClient;
 // import discord.enums.DefaultMessageNotificationLevel;
 // import discord.enums.ExplicitContentFilterLevel;

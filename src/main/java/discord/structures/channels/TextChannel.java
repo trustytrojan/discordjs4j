@@ -35,6 +35,11 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	}
 
 	@Override
+	public String toString() {
+		return mention();
+	}
+
+	@Override
 	public Guild guild() {
 		if (guild == null) {
 			try {

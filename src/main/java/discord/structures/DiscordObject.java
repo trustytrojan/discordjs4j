@@ -12,13 +12,13 @@ public interface DiscordObject {
 	 * Allows default method implementations of interfaces
 	 * to access the data of this Discord object.
 	 */
-	public BetterJSONObject getData();
+	BetterJSONObject getData();
 
 	/**
 	 * Set this object's internal data.
 	 * @param data new data from Discord
 	 */
-	public void setData(BetterJSONObject data);
+	void setData(BetterJSONObject data);
 
 	public DiscordClient client();
 	public String api_path();

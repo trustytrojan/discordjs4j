@@ -22,6 +22,16 @@ public class GroupDMChannel implements TextBasedChannel {
 		updateRecipients(data.getObjectArray("recipients"));
 	}
 
+	@Override
+	public String url() {
+		return "https://discord.com/channels/@me/"+id();
+	}
+
+	@Override
+	public String toString() {
+		return mention();
+	}
+
 	public String name() {
 		return data.getString("name");
 	}

@@ -20,7 +20,10 @@ public class User implements DiscordObject {
 	}
 
 	public String avatarURL(int size, String extension) {
-		return CDN.avatar(id(), avatar(), size, extension);
+		final var avatarHash = avatarHash();
+		if (avatarHash != null)
+			return CDN.userAvatar(id(), avatarHash, size, extension);
+		return CDN.defaultUserAvatar(discriminator());
 	}
 
 	public String avatarURL(int size) {
@@ -35,31 +38,48 @@ public class User implements DiscordObject {
 		return avatarURL(0, null);
 	}
 
+	public String bannerURL(int size, String extension) {
+		return CDN.guildOrUserBanner(id(), bannerHash(), size, extension);
+	}
+
+	public String bannerURL(int size) {
+		return bannerURL(size, null);
+	}
+
+	public String bannerURL(String extension) {
+		return bannerURL(0, extension);
+	}
+
+	public String bannerURL() {
+		return bannerURL(0, null);
+	}
+
 	public String username() {
 		return data.getString("username");
 	}
 
-	public String discriminator() {
-		return data.getString("discriminator");
+	public short discriminator() {
+		return Short.parseShort(data.getString("discriminator"));
 	}
 
 	public String tag() {
 		return String.format("%s#%s", username(), discriminator());
 	}
 
-	public String avatar() {
+	public String avatarHash() {
 		return data.getString("avatar");
 	}
 
-	public Boolean bot() {
+	public boolean isBot() {
 		return data.getBoolean("bot");
 	}
 
-	public String banner() {
+	public String bannerHash() {
 		return data.getString("banner");
 	}
 
-	// Not in API documentation, but this field can be present
+	// Not in API documentation, but this field is present in user objects
+	// received from the API
 	public String banner_color() {
 		return data.getString("banner_color");
 	}

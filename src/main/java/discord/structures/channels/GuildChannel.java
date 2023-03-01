@@ -7,21 +7,26 @@ public interface GuildChannel extends Channel, GuildObject {
 	// public PermissionOverwrites permission_overwrites;
 
 	@Override
-	default String guildId() {
-		return getData().getString("guild_id");
+	default String url() {
+		return "https://discord.com/channels/"+guildId()+'/'+id();
 	}
 
-	default String name() {
-		return getData().getString("name");
+	@Override
+	default String guildId() {
+		return getData().getString("guild_id");
 	}
 
 	default Long position() {
 		return getData().getLong("position");
 	}
 
-	default CategoryChannel parent() throws Exception {
+	default CategoryChannel parent() {
 		final var parent_id = getData().getString("parent_id");
-		return (CategoryChannel)client().channels.fetch(parent_id).get();
+		try {
+			return (CategoryChannel)client().channels.fetch(parent_id).get();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

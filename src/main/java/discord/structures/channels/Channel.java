@@ -7,6 +7,12 @@ import discord.structures.DiscordObject;
 
 public interface Channel extends DiscordObject {
 
+	public String url();
+
+	default String mention() {
+		return "<#"+id()+'>';
+	}
+
 	default String name() {
 		return getData().getString("name");
 	}
@@ -29,7 +35,7 @@ public interface Channel extends DiscordObject {
 
 	@Override
 	default String api_path() {
-		return String.format("/channels/%s", id());
+		return "/channels/"+id();
 	}
 
 }

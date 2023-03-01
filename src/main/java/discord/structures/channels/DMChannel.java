@@ -21,6 +21,16 @@ public class DMChannel implements TextBasedChannel {
 	}
 
 	@Override
+	public String url() {
+		return "https://discord.com/channels/@me/"+id();
+	}
+
+	@Override
+	public String toString() {
+		return mention();
+	}
+
+	@Override
 	public MessageManager messages() {
 		return messages;
 	}

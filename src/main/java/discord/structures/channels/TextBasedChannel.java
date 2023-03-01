@@ -30,8 +30,7 @@ public interface TextBasedChannel extends Channel {
 					return messages().cache(data);
 				return from_cache;
 			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
+				throw new RuntimeException(e);
 			}
 		});
 	}
