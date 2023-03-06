@@ -29,11 +29,9 @@ public interface DiscordObject {
 
 	default CompletableFuture<Void> fetch() {
 		return CompletableFuture.runAsync(() -> {
-			try {
-				final var raw = client().api.get(api_path());
-				final var obj = JSON.parseObject(raw);
-				setData(obj);
-			} catch (Exception e) { e.printStackTrace(); }
+			final var raw = client().api.get(api_path());
+			final var obj = JSON.parseObject(raw);
+			setData(obj);
 		});
 	}
 

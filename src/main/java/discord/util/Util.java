@@ -2,24 +2,31 @@ package discord.util;
 
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.regex.Pattern;
 
 public final class Util {
 
-	public static String readFile(String filePath) throws IOException {
-		final var stream = new FileInputStream(filePath);
-		final var data = new String(stream.readAllBytes());
-		stream.close();
-		return data;
+	public static String readFile(String filePath) {
+		try {
+			final var stream = new FileInputStream(filePath);
+			final var data = new String(stream.readAllBytes());
+			stream.close();
+			return data;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static void writeFile(String filePath, String data) throws IOException {
-		final var writer = new FileWriter(filePath);
-		writer.write(data);
-		writer.close();
+	public static void writeFile(String filePath, String data) {
+		try {
+			final var writer = new FileWriter(filePath);
+			writer.write(data);
+			writer.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Date longToDate(long ms) {

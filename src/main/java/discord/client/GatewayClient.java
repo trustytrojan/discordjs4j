@@ -1,7 +1,6 @@
 package discord.client;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -17,8 +16,19 @@ import discord.structures.interactions.Interaction;
 // import discord.structures.Presence;
 import discord.util.JSON;
 import discord.util.RunnableRepeater;
+import discord.util.TerminalStyling.Colors;
 
 public final class GatewayClient extends WebSocketClient {
+
+	private static final URI GATEWAY_URI;
+
+	static {
+		try {
+			GATEWAY_URI = new URI("wss://gateway.discord.gg/");
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	private final DiscordClient client;
 	public final RunnableRepeater repeater = new RunnableRepeater();
@@ -26,8 +36,8 @@ public final class GatewayClient extends WebSocketClient {
 	private long heartbeatSentAt;
 	private long ping;
 
-	public GatewayClient(DiscordClient client) throws URISyntaxException {
-		super(new URI("wss://gateway.discord.gg/"));
+	public GatewayClient(DiscordClient client) {
+		super(GATEWAY_URI);
 		this.client = client;
 	}
 
@@ -54,8 +64,12 @@ public final class GatewayClient extends WebSocketClient {
 
 	@Override
 	public void onOpen(ServerHandshake handshake) {
-		System.out.printf(
-			"GatewayClient: Connection to Discord gateway opened\n  Status Code: %d\n  Status Message: %s\n  Content: %s\n",
+		System.out.printf("""
+			[GatewayClient] Connection to Discord gateway opened
+				Status code: %d
+				Status message: %s
+				Content: %s
+			""",
 			handshake.getHttpStatus(),
 			handshake.getHttpStatusMessage(),
 			handshake.getContent()

@@ -1,6 +1,7 @@
 package discord.structures;
 
 import discord.util.BetterJSONObject;
+
 import discord.client.DiscordClient;
 
 public class Application implements DiscordObject {
@@ -18,6 +19,10 @@ public class Application implements DiscordObject {
 
 	public String description() {
 		return data.getString("description");
+	}
+
+	public BetterJSONObject owner() {
+		return data.getObject("owner");
 	}
 
 	// there is more, but i don't care for now

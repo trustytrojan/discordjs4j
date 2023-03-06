@@ -26,8 +26,8 @@ public class MessageManager extends DataManager<Message> {
 	public CompletableFuture<Message> delete(String id) {
 		final var path = String.format("/channels/%s/messages/%s", channel.id(), id);
 		return CompletableFuture.supplyAsync(() -> {
-			try { client.api.delete(path); return cache.remove(id); }
-			catch (Exception e) { e.printStackTrace(); return null; }
+			client.api.delete(path);
+			return cache.remove(id);
 		});
 	}
 
@@ -40,15 +40,13 @@ public class MessageManager extends DataManager<Message> {
 	public CompletableFuture<BetterMap<String, Message>> fetch() {
 		final var path = String.format("/channels/%s/messages", channel.id());
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				final var data = JSON.parseObjectArray(client.api.get(path));
-				final var messages = new BetterMap<String, Message>();
-				for(final var obj : data) {
-					final var message = new Message(client, obj);
-					messages.put(message.id(), message);
-				}
-				return messages;
-			} catch (Exception e) { e.printStackTrace(); return null; }
+			final var data = JSON.parseObjectArray(client.api.get(path));
+			final var messages = new BetterMap<String, Message>();
+			for(final var obj : data) {
+				final var message = new Message(client, obj);
+				messages.put(message.id(), message);
+			}
+			return messages;
 		});
 	}
 

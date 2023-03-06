@@ -19,9 +19,13 @@ public class Main {
 			throw new RuntimeException(e);
 		}
 
-		client.ready.connect(() -> System.out.printf("Logged in as %s!\n", client.user.tag()));
+		client.ready.connect(() -> {
+			System.out.printf("Logged in as %s!\n", client.user.tag());
+			final var owner = client.application.owner();
+			System.out.println(owner);
+		});
 
-		client.guildCreate.connect((guild) -> System.out.printf("Received guild %s %s\n", guild.id(), guild.name()));
+		client.guildCreate.connect((guild) -> System.out.printf("Received guild %s \"%s\"\n", guild.id(), guild.name()));
 
 		client.auditLogEntryCreate.connect(AuditLogEntryCreate::listener);
 		client.interactionCreate.connect(InteractionCreate::listener);

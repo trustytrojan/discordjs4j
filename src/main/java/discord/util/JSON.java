@@ -1,10 +1,8 @@
 package discord.util;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.parser.ParseException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -13,20 +11,32 @@ public final class JSON {
 
 	public static record ObjectEntry(String key, Object value) {}
 
-	public static List<BetterJSONObject> parseObjectArrayFromFile(String filename) throws IOException, ParseException {
-		return parseObjectArray(Util.readFile(filename));
+	public static List<BetterJSONObject> parseObjectArrayFromFile(String filename) {
+		try {
+			return parseObjectArray(Util.readFile(filename));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static BetterJSONObject parseObject(String s) throws ParseException {
-		return new BetterJSONObject((JSONObject)JSONValue.parseWithException(s));
+	public static BetterJSONObject parseObject(String s) {
+		try {
+			return new BetterJSONObject((JSONObject)JSONValue.parseWithException(s));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static JSONArray parseArray(String s) throws ParseException {
-		return (JSONArray)JSONValue.parseWithException(s);
+	public static JSONArray parseArray(String s) {
+		try {
+			return (JSONArray)JSONValue.parseWithException(s);
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<BetterJSONObject> parseObjectArray(String s) throws ParseException {
+	public static List<BetterJSONObject> parseObjectArray(String s) {
 		final var better_objs = new ArrayList<BetterJSONObject>();
 		for (final var obj : (List<JSONObject>)parseArray(s))
 			better_objs.add(new BetterJSONObject(obj));

@@ -27,15 +27,11 @@ public interface TextBasedChannel extends Channel {
 	default CompletableFuture<Message> send(MessagePayload payload) {
 		final var path = String.format("/channels/%s/messages", id());
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				final var data = JSON.parseObject(client().api.post(path, payload.toJSONString()));
-				final var from_cache = messages().cache.get(data.getString("id"));
-				if (from_cache == null)
-					return messages().cache(data);
-				return from_cache;
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
+			final var data = JSON.parseObject(client().api.post(path, payload.toJSONString()));
+			final var from_cache = messages().cache.get(data.getString("id"));
+			if (from_cache == null)
+				return messages().cache(data);
+			return from_cache;
 		});
 	}
 

@@ -23,14 +23,20 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 	}
 
 	/**
-	 * If the object that this data references is cached, give it to
-	 * that object. Otherwise, construct a new object with the data,
-	 * cache it, and return it.
+	 * Creates a new object for this data, caches it,
+	 * and returns it. This is called {@code forceCache}
+	 * because it skips the cache check.
 	 * @param data data from the Discord API
 	 * @return the object
 	 */
 	protected abstract T forceCache(BetterJSONObject data);
 
+	/**
+	 * If an object has already been constructed and needs
+	 * to be cached, call this method.
+	 * @param t The object to cache
+	 * @return The same object
+	 */
 	public T cache(T t) {
 		cache.put(t.id(), t);
 		return t;
@@ -38,15 +44,16 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 
 	/**
 	 * If the object that this data references is cached,
-	 * give it to that object. Otherwise, cache it normally;
+	 * give this data to that object. If not, {@code forceCache}
+	 * is called.
 	 * @param data data from the Discord API
 	 * @return the object
 	 */
 	public T cache(BetterJSONObject data) {
-		final var _t = cache.get(data.getString("id"));
-		if (_t == null) return forceCache(data);
-		_t.setData(data);
-		return _t;
+		final var fromCache = cache.get(data.getString("id"));
+		if (fromCache == null) return forceCache(data);
+		fromCache.setData(data);
+		return fromCache;
 	}
 
 	/**
