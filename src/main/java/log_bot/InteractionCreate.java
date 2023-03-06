@@ -48,6 +48,10 @@ final class InteractionCreate {
 							}
 						}
 					}
+					default -> {
+						interaction.replyEphemeral("Not implemented yet");
+						return;
+					}
 				}
 				interaction.reply(embed);
 			}

@@ -8,7 +8,7 @@ import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
 import discord.enums.CommandType;
 import discord.enums.InteractionCallbackType;
-import discord.structures.MessagePayload;
+import discord.structures.InteractionReplyMessagePayload;
 
 public class ChatInputInteraction extends Interaction implements RepliableInteraction {
 
@@ -36,7 +36,7 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 	}
 
 	@SuppressWarnings("unchecked")
-	public CompletableFuture<Void> _reply(InteractionCallbackType type, MessagePayload payload) {
+	public CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload) {
 		final var path = String.format("/interactions/%s/%s/callback", id(), token());
 		final var obj = new JSONObject();
 		obj.put("type", type.value);

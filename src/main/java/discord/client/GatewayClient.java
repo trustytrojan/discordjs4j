@@ -38,12 +38,12 @@ public final class GatewayClient extends WebSocketClient {
 	public void login(String token, GatewayIntent[] intents) throws Exception {
 		connectBlocking();
 
-		send(JSON.buildObject(
+		send(JSON.objectFrom(
 			JSON.objectEntry("op", GatewayOpcode.Identify.value),
-			JSON.objectEntry("d", JSON.buildObject(
+			JSON.objectEntry("d", JSON.objectFrom(
 				JSON.objectEntry("token", token),
 				JSON.objectEntry("intents", GatewayIntent.sum(intents)),
-				JSON.objectEntry("properties", JSON.buildObject(
+				JSON.objectEntry("properties", JSON.objectFrom(
 					JSON.objectEntry("os", System.getProperty("os.name")),
 					JSON.objectEntry("browser", "discord-java"),
 					JSON.objectEntry("device", "discord-java")
@@ -145,7 +145,7 @@ public final class GatewayClient extends WebSocketClient {
 
 				repeater.repeat(() -> {
 					System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequence_number);
-					this.send(JSON.buildObject(
+					this.send(JSON.objectFrom(
 						JSON.objectEntry("op", GatewayOpcode.Heartbeat.value),
 						JSON.objectEntry("d", sequence_number)
 					).toString());

@@ -2,7 +2,6 @@ package discord.structures.commands;
 
 import org.json.simple.JSONObject;
 
-import discord.util.BetterJSONObject;
 import discord.util.JSONable;
 
 /**
@@ -16,11 +15,12 @@ public record ApplicationCommandOptionChoice(String name, Object value) implemen
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
-		final var obj = new BetterJSONObject();
+		final var obj = new JSONObject();
 		obj.put("name", name);
 		obj.put("value", value);
-		return obj.innerObject;
+		return obj;
 	}
 
 }

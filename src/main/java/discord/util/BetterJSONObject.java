@@ -23,11 +23,6 @@ public class BetterJSONObject {
 		return innerObject.toString();
 	}
 
-	@SuppressWarnings("unchecked")
-	public void put(String key, Object value) {
-		innerObject.put(key, value);
-	}
-
 	public Object get(String key) {
 		return innerObject.get(key);
 	}

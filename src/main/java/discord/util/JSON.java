@@ -34,7 +34,7 @@ public final class JSON {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static JSONObject buildObject(ObjectEntry ...entries) {
+	public static JSONObject objectFrom(ObjectEntry... entries) {
 		final var obj = new JSONObject();
 		for (final var entry : entries)
 			obj.put(entry.key(), entry.value());

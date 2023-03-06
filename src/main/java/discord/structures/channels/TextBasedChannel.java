@@ -13,11 +13,15 @@ public interface TextBasedChannel extends Channel {
 	public MessageManager messages();
 
 	default CompletableFuture<Message> send(String content) {
-		return send(new MessagePayload().setContent(content));
+		final var payload = new MessagePayload();
+		payload.setContent(content);
+		return send(payload);
 	}
 
-	default CompletableFuture<Message> send(Embed embed) {
-		return send(new MessagePayload().addEmbed(embed));
+	default CompletableFuture<Message> send(Embed... embeds) {
+		final var payload = new MessagePayload();
+		payload.addEmbeds(embeds);
+		return send(payload);
 	}
 
 	default CompletableFuture<Message> send(MessagePayload payload) {

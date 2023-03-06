@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import discord.util.BetterJSONObject;
 import discord.enums.CommandOptionType;
 import discord.util.JSONable;
 
@@ -34,13 +33,14 @@ public class ApplicationCommandOptionPayload implements JSONable {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
-		final var obj = new BetterJSONObject();
+		final var obj = new JSONObject();
 		obj.put("type", type.value);
 		obj.put("name", name);
 		obj.put("description", description);
 		if (required) obj.put("required", required);
-		return obj.innerObject;
+		return obj;
 	}
 
 }

@@ -4,7 +4,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>trustytrojan.discord</groupId>
+	<groupId>trustytrojan.discordjs4j</groupId>
 	<artifactId>discordjs4j</artifactId>
 	<version>indev</version>
 
@@ -16,16 +16,8 @@
 				<version>3.11.0</version>
 				<configuration>
 					<source>19</source>
+					<target>19</target>
 					<compilerArgument>--enable-preview</compilerArgument>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.1.0</version>
-				<configuration>
-					<mainClass>log_bot.Main</mainClass>
-					<commandLineArgs>--enable-preview</commandLineArgs>
 				</configuration>
 			</plugin>
 		</plugins>

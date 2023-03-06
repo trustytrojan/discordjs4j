@@ -23,11 +23,12 @@ public class TGuild implements JSONable {
 		}
 
 		@Override
+		@SuppressWarnings("unchecked")
 		public JSONObject toJSONObject() {
-			final var obj = new BetterJSONObject();
+			final var obj = new JSONObject();
 			obj.put("enabled", enabled);
 			obj.put("channel", channel);
-			return obj.innerObject;
+			return obj;
 		}
 
 	}
@@ -50,11 +51,12 @@ public class TGuild implements JSONable {
 			}
 
 			@Override
+			@SuppressWarnings("unchecked")
 			public JSONObject toJSONObject() {
-				final var obj = new BetterJSONObject();
+				final var obj = new JSONObject();
 				obj.put("channel", channel);
 				obj.put("message", message);
-				return obj.innerObject;
+				return obj;
 			}
 
 		}
@@ -76,12 +78,13 @@ public class TGuild implements JSONable {
 		}
 
 		@Override
+		@SuppressWarnings("unchecked")
 		public JSONObject toJSONObject() {
-			final var obj = new BetterJSONObject();
+			final var obj = new JSONObject();
 			obj.put("enabled", enabled);
 			obj.put("welcome", welcome.toJSONObject());
 			obj.put("goodbye", goodbye.toJSONObject());
-			return obj.innerObject;
+			return obj;
 		}
 
 	}
@@ -103,12 +106,13 @@ public class TGuild implements JSONable {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public JSONObject toJSONObject() {
-		final var obj = new BetterJSONObject();
+		final var obj = new JSONObject();
 		obj.put("guild", guild);
 		obj.put("logging", logging.toJSONObject());
 		obj.put("welcomer", welcomer.toJSONObject());
-		return obj.innerObject;
+		return obj;
 	}
 	
 }

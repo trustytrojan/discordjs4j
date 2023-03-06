@@ -10,16 +10,30 @@ import static log_bot.Main.client;
 
 final class AuditLogEntryCreate {
 
+	private static String multilineCodeblockOrNone(Object value) {
+		return (value != null) ? ("```" + value + "```") : "(none)";
+	}
+
 	private static void channelChanges(Embed embed, AuditLogEntry log) {
 		for (final var change : log.changes) {
 			var key = change.key;
 			var valueFormat = "`%s` ➡️ `%s`";
+			String value = null;
 			switch (key) {
-				case "name" -> { key = "Name"; }
-				case "topic" -> { key = "Topic"; valueFormat = "```%s``` ⬇️ ```%s```"; }
-
+				case "name" -> {
+					key = "Name";
+				}
+				case "topic" -> {
+					key = "Topic";
+					final var oldTopic = multilineCodeblockOrNone(change.oldValue);
+					final var newTopic = multilineCodeblockOrNone(change.newValue);
+					value = oldTopic + "\n⬇️\n" + newTopic;
+				}
 			}
-			embed.addField(key, String.format(valueFormat, change.oldValue, change.newValue));
+			if (value == null)
+				embed.addField(key, String.format(valueFormat, change.oldValue, change.newValue));
+			else
+				embed.addField(key, value);
 		}
 	}
 
@@ -50,7 +64,6 @@ final class AuditLogEntryCreate {
 					final var newSplash = CDN.guildIcon(guildId, (String)change.newValue, 0, null);
 					value = String.format("[Old Splash](%s) ➡️ [New Splash](%s)", oldSplash, newSplash);
 				}
-				
 			}
 			if (value == null)
 				embed.addField(key, String.format(valueFormat, change.oldValue, change.newValue));
@@ -84,7 +97,7 @@ final class AuditLogEntryCreate {
 
 			case ChannelUpdate -> {
 				embed.setTitle("Channel updated");
-				embed.setDescription("<#"+targetId+'>');
+				embed.setDescription("<#" + targetId + '>');
 				channelChanges(embed, log);
 			}
 
