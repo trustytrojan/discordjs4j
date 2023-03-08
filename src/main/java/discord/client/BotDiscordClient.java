@@ -1,14 +1,17 @@
 package discord.client;
 
+import java.util.concurrent.CompletableFuture;
+
 import discord.enums.GatewayIntent;
 import discord.managers.CommandManager;
-import discord.structures.Application;
+import discord.structures.ClientApplication;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 
 public class BotDiscordClient extends DiscordClient {
 
-	public final Application application = new Application(this);
+	public final ClientApplication application = new ClientApplication(this);
+	public CompletableFuture<Void> _application;
 
 	public final CommandManager commands = new CommandManager(this);
 
@@ -19,9 +22,9 @@ public class BotDiscordClient extends DiscordClient {
 		api.setBot(true);
 	}
 
-	public void login(String token, GatewayIntent[] intents) throws Exception {
+	public void login(String token, GatewayIntent[] intents) {
 		super.login(token, intents);
-		application.fetch();
+		_application = application.fetch();
 	}
 	
 }

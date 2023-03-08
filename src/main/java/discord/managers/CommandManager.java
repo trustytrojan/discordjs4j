@@ -31,21 +31,16 @@ public class CommandManager extends DataManager<ApplicationCommand> {
 	public CompletableFuture<ApplicationCommand> create(ApplicationCommandPayload payload) {
 		final var path = String.format("/applications/%s/commands", client.application.id());
 		return CompletableFuture.supplyAsync(() -> {
-			try {
-				final var data = JSON.parseObject(client.api.post(path, payload.toJSONString()));
-				return cache(data);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			final var data = JSON.parseObject(client.api.post(path, payload.toJSONString()));
+			return cache(data);
 		});
 	}
 
 	public CompletableFuture<Void> delete(String id) {
 		final var path = commandPath(id);
 		return CompletableFuture.runAsync(() -> {
-			try { client.api.delete(path); cache.remove(id); }
-			catch (Exception e) { e.printStackTrace(); }
+			client.api.delete(path);
+			cache.remove(id);
 		});
 	}
 
@@ -53,10 +48,9 @@ public class CommandManager extends DataManager<ApplicationCommand> {
 		cache.clear();
 		final var path = String.format("/applications/%s/commands", client.application.id());
 		return CompletableFuture.runAsync(() -> {
-			try {
-				final var data = JSON.parseObjectArray(client.api.get(path));
-				for (final var obj : data) forceCache(obj);
-			} catch (Exception e) { e.printStackTrace(); }
+			final var data = JSON.parseObjectArray(client.api.get(path));
+			for (final var obj : data)
+				forceCache(obj);
 		});
 	}
 

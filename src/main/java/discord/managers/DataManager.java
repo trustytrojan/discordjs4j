@@ -84,14 +84,8 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 				final var cached = cache.get(id);
 				if (cached != null) return cached;
 			}
-
-			try {
-				final var data = JSON.parseObject(client.api.get(path));
-				return cache(data);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
+			final var data = JSON.parseObject(client.api.get(path));
+			return cache(data);
 		});
 	}
 

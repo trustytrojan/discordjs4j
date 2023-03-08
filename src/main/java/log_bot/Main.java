@@ -5,24 +5,22 @@ import discord.util.Util;
 
 public class Main {
 
-	static final LogBot client;
+	static final LogBot client = new LogBot();
 	private static final GatewayIntent[] intents = {
 		GatewayIntent.Guilds,
 		GatewayIntent.GuildModeration
 	};
 
 	static {
-		try {
-			client = new LogBot();
-			client.login(Util.readFile("tokens/java-bot"), intents);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		client.login(Util.readFile("tokens/java-bot"), intents);
 
 		client.ready.connect(() -> {
 			System.out.printf("Logged in as %s!\n", client.user.tag());
-			final var owner = client.application.owner();
-			System.out.println(owner);
+			client._application.thenRun(() ->
+				client.application.fetch().thenRun(() -> {
+					System.out.println(client.application.owner());
+				})
+			);
 		});
 
 		client.guildCreate.connect((guild) -> System.out.printf("Received guild %s \"%s\"\n", guild.id(), guild.name()));

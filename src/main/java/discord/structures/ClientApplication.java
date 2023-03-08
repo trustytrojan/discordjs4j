@@ -4,12 +4,12 @@ import discord.util.BetterJSONObject;
 
 import discord.client.DiscordClient;
 
-public class Application implements DiscordObject {
+public class ClientApplication implements DiscordObject {
 
 	private final DiscordClient client;
-	private BetterJSONObject data;
+	public BetterJSONObject data;
 
-	public Application(DiscordClient client) {
+	public ClientApplication(DiscordClient client) {
 		this.client = client;
 	}
 

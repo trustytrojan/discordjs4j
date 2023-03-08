@@ -8,9 +8,11 @@ import org.json.simple.JSONObject;
 
 public class BetterJSONObject {
 
-	public final JSONObject innerObject;
+	private final JSONObject innerObject;
 
 	public BetterJSONObject(JSONObject data) {
+		if (data == null)
+			throw new RuntimeException("Cannot construct BetterJSONObject with null data!");
 		innerObject = data;
 	}
 
