@@ -88,19 +88,19 @@ public final class APIClient {
 
 			final var response = httpClient.send(request_builder.build(), bodyHandler);
 			final var statusCode = response.statusCode();
-			final var response_body = response.body();
+			final var responseBody = response.body();
 
 			// retry on 429
 			if (statusCode == 429) {
-				final var retry_after = (int)(1000 * JSON.parseObject(response_body).getDouble("retry_after"));
-				log("Being rate limited for "+retry_after+"ms");
+				final var retry_after = (int)(1000 * JSON.parseObject(responseBody).getDouble("retry_after"));
+				log("Being rate limited for " + retry_after + "ms");
 				Thread.sleep(retry_after);
 				return sendRequest(method, endpoint, requestBody);
 			}
 			else checkError(response);
 
-			log("Response: "+method+' '+endpoint+" -> "+statusCode);
-			return response_body;
+			log("Response: " + method + ' ' + endpoint+" -> "+statusCode);
+			return responseBody;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
