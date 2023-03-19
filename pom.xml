@@ -6,7 +6,7 @@
 
 	<groupId>trustytrojan.discordjs4j</groupId>
 	<artifactId>discordjs4j</artifactId>
-	<version>indev</version>
+	<version>1.0-SNAPSHOT</version>
 
 	<properties>
 		<maven.compiler.source>17</maven.compiler.source>
