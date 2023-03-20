@@ -28,23 +28,18 @@ public final class APIClient {
 			final var path = resp.uri().getPath();
 			final var method = resp.request().method();
 			final var body = resp.body();
-			throw new DiscordAPIError(method + path + " -> " + statusCode + '\n' + body);
+			throw new DiscordAPIError(method + ' ' + path + " -> " + statusCode + '\n' + body);
 		}
 	}
 
 	private static void log(String message) {
-		System.out.println("[APIClient] "+message);
+		System.out.println("[APIClient] " + message);
 	}
 
-	private boolean bot = false;
 	private String token;
 
 	public void setToken(String token) {
 		this.token = token;
-	}
-
-	public void setBot(boolean bot) {
-		this.bot = bot;
 	}
 
 	/**
@@ -57,49 +52,45 @@ public final class APIClient {
 	 */
 	private String sendRequest(HttpMethod method, String endpoint, String requestBody) {
 		try {
-			var logBeforeResp = "Request: "+method+' '+endpoint;
+			var logBeforeResp = "Request: %s %s".formatted(method, endpoint);
 
 			final var url = baseURL + endpoint;
-			final var request_builder = HttpRequest.newBuilder(new URI(url));
+			final var requestBuilder = HttpRequest.newBuilder(new URI(url));
 			BodyPublisher bp = null;
 
 			if (requestBody != null) {
 				bp = BodyPublishers.ofString(requestBody);
-				logBeforeResp += ("  Body: "+requestBody);
+				logBeforeResp += ("  Body: " + requestBody);
 			}
 
 			log(logBeforeResp);
 
 			switch (method) {
-				case GET: request_builder.GET(); break;
-				case POST: request_builder.POST(bp); break;
-				case PUT: request_builder.PUT(bp); break;
-				case PATCH: request_builder.method("PATCH", bp); break;
-				case DELETE: request_builder.DELETE();
+				case GET: requestBuilder.GET(); break;
+				case POST: requestBuilder.POST(bp); break;
+				case PUT: requestBuilder.PUT(bp); break;
+				case PATCH: requestBuilder.method("PATCH", bp); break;
+				case DELETE: requestBuilder.DELETE();
 			}
 
-			request_builder.header("Content-Type", "application/json");
-			if (token != null) {
-				String authorization = token;
-				if (bot)
-					authorization = "Bot "+token;
-				request_builder.header("authorization", authorization);
-			}
+			requestBuilder.header("Content-Type", "application/json");
+			if (token != null)
+				requestBuilder.header("authorization", token);
 
-			final var response = httpClient.send(request_builder.build(), bodyHandler);
+			final var response = httpClient.send(requestBuilder.build(), bodyHandler);
 			final var statusCode = response.statusCode();
 			final var responseBody = response.body();
 
 			// retry on 429
 			if (statusCode == 429) {
-				final var retry_after = (int)(1000 * JSON.parseObject(responseBody).getDouble("retry_after"));
-				log("Being rate limited for " + retry_after + "ms");
-				Thread.sleep(retry_after);
+				final var retryAfter = (int)(1000 * JSON.parseObject(responseBody).getDouble("retry_after"));
+				log("Being rate limited for " + retryAfter + "ms");
+				Thread.sleep(retryAfter);
 				return sendRequest(method, endpoint, requestBody);
 			}
 			else checkError(response);
 
-			log("Response: " + method + ' ' + endpoint+" -> "+statusCode);
+			log("Response: %s %s -> %s".formatted(method, endpoint, statusCode));
 			return responseBody;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

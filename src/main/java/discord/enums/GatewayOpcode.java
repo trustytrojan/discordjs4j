@@ -1,24 +1,23 @@
 package discord.enums;
 
 public enum GatewayOpcode {
-	Dispatch(0),
-	Heartbeat(1),
-	Identify(2),
-	PresenceUpdate(3),
-	VoiceStateUpdate(4),
-	Resume(6),
-	Reconnect(7),
-	RequestGuildMembers(8),
-	InvalidSession(9),
-	Hello(10),
-	HeartbeatACK(11);
 
-	public static GatewayOpcode get(long value) {
-		return get((int)value);
-	}
+	DISPATCH(0),
+	HEARTBEAT(1),
+	IDENTIFY(2),
+	PRESENCE_UPDATE(3),
+	VOICE_STATE_UPDATE(4),
+	RESUME(6),
+	RECONNECT(7),
+	REQUEST_GUILD_MEMBERS(8),
+	INVALID_SESSION(9),
+	HELLO(10),
+	HEARTBEAT_ACK(11);
 
-	public static GatewayOpcode get(int value) {
-		for (final var x : GatewayOpcode.values()) if (x.value == value) return x;
+	public static GatewayOpcode resolve(long value) {
+		for (final var x : GatewayOpcode.values())
+			if (x.value == value)
+				return x;
 		return null;
 	}
 
@@ -27,4 +26,5 @@ public enum GatewayOpcode {
 	private GatewayOpcode(int value) {
 		this.value = value;
 	}
+
 }

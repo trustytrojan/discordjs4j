@@ -21,9 +21,10 @@ public enum GatewayIntent {
 	AutoModerationConfiguration(1 << 20),
 	AutoModerationExecution(1 << 21);
 
-	public static int sum(GatewayIntent ...intents) {
+	public static int sum(GatewayIntent... intents) {
 		var sum = 0;
-		for (final var i : intents) sum += i.value;
+		for (final var i : intents)
+			sum += i.value;
 		return sum;
 	}
 

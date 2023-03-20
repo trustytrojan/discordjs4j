@@ -16,7 +16,7 @@ public class RunnableRepeater extends Timer {
 	 *            running again
 	 */
 	public void repeat(Runnable r, long repeat_delay_ms) {
-		this.schedule(new TimerTask() {
+		schedule(new TimerTask() {
 			public void run() {
 				r.run();
 			}

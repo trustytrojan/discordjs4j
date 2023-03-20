@@ -2,6 +2,8 @@ package discord.client;
 
 import discord.enums.GatewayIntent;
 import discord.managers.UserManager;
+import discord.signals.Signal0;
+import discord.signals.Signal1;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.structures.AuditLogEntry;
@@ -20,17 +22,17 @@ public abstract class DiscordClient {
 	public final ChannelManager channels = new ChannelManager(this);
 	public final GuildManager guilds = new GuildManager(this);
 
-	public final ClientEvent<Void> ready = new ClientEvent<>();
-	public final ClientEvent<Guild> guildCreate = new ClientEvent<>();
-	public final ClientEvent<Guild> guildUpdate = new ClientEvent<>();
-	public final ClientEvent<Guild> guildDelete = new ClientEvent<>();
-	public final ClientEvent<AuditLogEntry> auditLogEntryCreate = new ClientEvent<>();
-	public final ClientEvent<Channel> channelCreate = new ClientEvent<>();
-	public final ClientEvent<Channel> channelUpdate = new ClientEvent<>();
-	public final ClientEvent<Channel> channelDelete = new ClientEvent<>();
-	public final ClientEvent<Message> messageCreate = new ClientEvent<>();
-	public final ClientEvent<Message> messageUpdate = new ClientEvent<>();
-	public final ClientEvent<Message> messageDelete = new ClientEvent<>();
+	public final Signal0 ready = new Signal0();
+	public final Signal1<Guild> guildCreate = new Signal1<>();
+	public final Signal1<Guild> guildUpdate = new Signal1<>();
+	public final Signal1<Guild> guildDelete = new Signal1<>();
+	public final Signal1<AuditLogEntry> auditLogEntryCreate = new Signal1<>();
+	public final Signal1<Channel> channelCreate = new Signal1<>();
+	public final Signal1<Channel> channelUpdate = new Signal1<>();
+	public final Signal1<Channel> channelDelete = new Signal1<>();
+	public final Signal1<Message> messageCreate = new Signal1<>();
+	public final Signal1<Message> messageUpdate = new Signal1<>();
+	public final Signal1<Message> messageDelete = new Signal1<>();
 
 	public ClientUser user;
 

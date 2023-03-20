@@ -13,7 +13,6 @@ import discord.structures.ClientUser;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.interactions.Interaction;
-// import discord.structures.Presence;
 import discord.util.JSON;
 import discord.util.RunnableRepeater;
 
@@ -31,7 +30,7 @@ public final class GatewayClient extends WebSocketClient {
 	
 	private final DiscordClient client;
 	public final RunnableRepeater repeater = new RunnableRepeater();
-	private long sequence_number;
+	private long sequenceNumber;
 	private long heartbeatSentAt;
 	private long ping;
 
@@ -52,18 +51,20 @@ public final class GatewayClient extends WebSocketClient {
 			System.exit(1);
 		}
 
-		send(JSON.objectFrom(
-			JSON.objectEntry("op", GatewayOpcode.Identify.value),
+		final var obj = JSON.objectFrom(
+			JSON.objectEntry("op", GatewayOpcode.IDENTIFY.value),
 			JSON.objectEntry("d", JSON.objectFrom(
 				JSON.objectEntry("token", token),
 				JSON.objectEntry("intents", GatewayIntent.sum(intents)),
 				JSON.objectEntry("properties", JSON.objectFrom(
 					JSON.objectEntry("os", System.getProperty("os.name")),
-					JSON.objectEntry("browser", "discord-java"),
-					JSON.objectEntry("device", "discord-java")
+					JSON.objectEntry("browser", "discordjs4j"),
+					JSON.objectEntry("device", "discordjs4j")
 				))
 			))
-		).toString());
+		);
+
+		send(obj.toString());
 	}
 
 	@Override
@@ -84,55 +85,59 @@ public final class GatewayClient extends WebSocketClient {
 	public void onMessage(String __) {
 		try {
 			final var obj = JSON.parseObject(__);
-			final var opcode = GatewayOpcode.get(obj.getLong("op"));
+			final var opcode = GatewayOpcode.resolve(obj.getLong("op"));
 			
 			switch (opcode) {
 
-				case Dispatch -> {
-					sequence_number = obj.getLong("s");
+				case DISPATCH -> {
+					sequenceNumber = obj.getLong("s");
 					
 					final var t = obj.getString("t");
 					System.out.printf("[GatewayClient] Event received: %s\n", t);
 
-					switch (GatewayEvent.get(t)) {
+					final var gatewayEvent = GatewayEvent.valueOf(t);
+					if (gatewayEvent == null)
+						return;
 
-						case Ready -> {
+					switch (gatewayEvent) {
+
+						case READY -> {
 							final var d = obj.getObject("d");
 							client.user = (ClientUser)client.users.cache(new ClientUser(client, d.getObject("user")));
 							client.ready.emit();
 						}
 
-						case InteractionCreate -> ((BotDiscordClient)client).interactionCreate.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
+						case INTERACTION_CREATE -> ((BotDiscordClient)client).interactionCreate.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
 
-						case GuildAuditLogEntryCreate -> client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
+						case GUILD_AUDIT_LOG_ENTRY_CREATE -> client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
 
-						case GuildCreate -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
-						case GuildUpdate -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
-						case GuildDelete -> {
+						case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
+						case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
+						case GUILD_DELETE -> {
 							final var id = obj.getObject("d").getString("id");
 							final var removed = client.guilds.cache.remove(id);
 							if (removed == null) return;
 							client.guildDelete.emit(removed);
 						}
 
-						case ChannelCreate -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
-						case ChannelUpdate -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
-						case ChannelDelete -> {
+						case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
+						case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
+						case CHANNEL_DELETE -> {
 							final var id = obj.getObject("d").getString("id");
 							final var removed = client.channels.cache.remove(id);
 							if (removed == null) return;
 							client.channelDelete.emit(removed);
 						}
 
-						case MessageCreate -> client.messageCreate.emit(new Message(client, obj.getObject("d")));
-						case MessageUpdate -> {
+						case MESSAGE_CREATE -> client.messageCreate.emit(new Message(client, obj.getObject("d")));
+						case MESSAGE_UPDATE -> {
 							final var d = obj.getObject("d");
 							client.channels.fetch(d.getString("channel_id")).thenAccept((channel) -> {
 								final var messages = ((TextBasedChannel)channel).messages();
 								client.messageUpdate.emit(messages.cache(d));
 							});
 						}
-						case MessageDelete -> {
+						case MESSAGE_DELETE -> {
 							final var d = obj.getObject("d");
 							client.channels.fetch(d.getString("channel_id")).thenAccept((channel) -> {
 								final var messages = ((TextBasedChannel)channel).messages();
@@ -143,19 +148,20 @@ public final class GatewayClient extends WebSocketClient {
 						}
 						
 						default -> {
-							final var str = obj.get("d").toString();
-							if (str.length() < 1000) System.out.println(str);
+							final var dataString = obj.get("d").toString();
+							if (dataString.length() < 1000)
+								System.out.println(dataString);
 						}
 
 					}
 				}
 
-				case HeartbeatACK -> {
+				case HEARTBEAT_ACK -> {
 					ping = System.currentTimeMillis() - heartbeatSentAt;
 					System.out.printf("[GatewayClient] Heartbeat ACK received; Ping: %sms\n", ping);
 				}
 
-				case Hello -> {
+				case HELLO -> {
 					final var d = obj.getObject("d");
 
 					// Interval in milliseconds that Discord wants us to wait before
@@ -163,10 +169,10 @@ public final class GatewayClient extends WebSocketClient {
 					final var heartbeat_interval = d.getLong("heartbeat_interval");
 
 					repeater.repeat(() -> {
-						System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequence_number);
-						this.send(JSON.objectFrom(
-							JSON.objectEntry("op", GatewayOpcode.Heartbeat.value),
-							JSON.objectEntry("d", sequence_number)
+						System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
+						send(JSON.objectFrom(
+							JSON.objectEntry("op", GatewayOpcode.HEARTBEAT.value),
+							JSON.objectEntry("d", sequenceNumber)
 						).toString());
 						heartbeatSentAt = System.currentTimeMillis();
 					}, heartbeat_interval);
@@ -183,6 +189,7 @@ public final class GatewayClient extends WebSocketClient {
 	@Override
 	public void onClose(int code, String reason, boolean remote) {
 		System.out.printf("[GatewayClient] Connection closed!\n  Code: %d\n  Reason: %s\n  Remote: %b\n", code, reason, remote);
+		System.exit(1);
 	}
 
 	@Override
