@@ -60,4 +60,21 @@ public final class CDN {
 		return dynamicMakeURL("/guilds/"+guildId+"/users/"+userId+'/'+hash, hash, size, extension);
 	}
 
+	public static interface URLFactory {
+		public String hash();
+		public String url(int size, String extension);
+
+		default String url(int size) {
+			return url(size, null);
+		}
+
+		default String url(String extension) {
+			return url(0, extension);
+		}
+
+		default String url() {
+			return url(0, null);
+		}
+	}
+
 }

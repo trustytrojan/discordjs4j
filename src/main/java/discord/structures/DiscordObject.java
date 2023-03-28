@@ -1,10 +1,8 @@
 package discord.structures;
 
-import java.util.concurrent.CompletableFuture;
+import com.alibaba.fastjson2.JSONObject;
 
-import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
-import discord.util.JSON;
 
 public interface DiscordObject {
 
@@ -12,27 +10,14 @@ public interface DiscordObject {
 	 * Allows default method implementations of interfaces
 	 * to access the data of this Discord object.
 	 */
-	BetterJSONObject getData();
+	JSONObject getData();
 
-	/**
-	 * Set this object's internal data.
-	 * @param data new data from Discord
-	 */
-	void setData(BetterJSONObject data);
+	void setData(JSONObject data);
 
-	public DiscordClient client();
-	public String api_path();
+	DiscordClient client();
 
 	default String id() {
 		return getData().getString("id");
-	}
-
-	default CompletableFuture<Void> fetch() {
-		return CompletableFuture.runAsync(() -> {
-			final var raw = client().api.get(api_path());
-			final var obj = JSON.parseObject(raw);
-			setData(obj);
-		});
 	}
 
 }
