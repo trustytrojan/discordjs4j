@@ -1,13 +1,13 @@
 package discord.structures;
 
-import discord.util.BetterJSONObject;
+import com.alibaba.fastjson2.JSONObject;
 
 import discord.client.DiscordClient;
 
 public class ClientApplication implements DiscordObject {
 
 	private final DiscordClient client;
-	public BetterJSONObject data;
+	public JSONObject data;
 
 	public ClientApplication(DiscordClient client) {
 		this.client = client;
@@ -21,31 +21,26 @@ public class ClientApplication implements DiscordObject {
 		return data.getString("description");
 	}
 
-	public BetterJSONObject owner() {
-		return data.getObject("owner");
+	public User owner() {
+		return client.users.fetch(data.getJSONObject("owner").getString("id"));
 	}
 
 	// there is more, but i don't care for now
 	// https://discord.com/developers/docs/resources/application
 
 	@Override
-	public BetterJSONObject getData() {
+	public JSONObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(BetterJSONObject data) {
+	public void setData(JSONObject data) {
 		this.data = data;
 	}
 
 	@Override
 	public DiscordClient client() {
 		return client;
-	}
-
-	@Override
-	public String api_path() {
-		return "/applications/@me";
 	}
 
 }
