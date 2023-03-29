@@ -1,7 +1,7 @@
 package discord.structures.interactions;
 
 import discord.enums.CommandOptionType;
-import discord.util.BetterJSONObject;
+import simple_json.JSONObject;
 
 public class ChatInputInteractionOption {
 	
@@ -10,7 +10,7 @@ public class ChatInputInteractionOption {
 	public final Object value;
 	public final ChatInputInteractionOptionResolver options;
 
-	public ChatInputInteractionOption(BetterJSONObject data) {
+	public ChatInputInteractionOption(JSONObject data) {
 		type = CommandOptionType.resolve(data.getLong("type"));
 		name = data.getString("name");
 		value = data.get("value");

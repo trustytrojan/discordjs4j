@@ -1,8 +1,8 @@
 package discord.structures;
 
-import com.alibaba.fastjson2.JSONObject;
 
 import discord.client.DiscordClient;
+import simple_json.JSONObject;
 
 public class ClientApplication implements DiscordObject {
 
@@ -22,7 +22,7 @@ public class ClientApplication implements DiscordObject {
 	}
 
 	public User owner() {
-		return client.users.fetch(data.getJSONObject("owner").getString("id"));
+		return client.users.fetch(data.getObject("owner").getString("id"));
 	}
 
 	// there is more, but i don't care for now

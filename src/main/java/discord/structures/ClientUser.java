@@ -1,8 +1,7 @@
 package discord.structures;
 
-import com.alibaba.fastjson2.JSONObject;
-
 import discord.client.DiscordClient;
+import simple_json.JSONObject;
 
 public class ClientUser extends User {
 

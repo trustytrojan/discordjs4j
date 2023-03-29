@@ -1,10 +1,9 @@
 package discord.structures;
 
-import com.alibaba.fastjson2.JSONObject;
-
 import discord.client.DiscordClient;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
+import simple_json.JSONObject;
 
 public class User implements DiscordObject {
 

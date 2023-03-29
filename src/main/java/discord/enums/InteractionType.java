@@ -7,8 +7,10 @@ public enum InteractionType {
 	ApplicationCommandAutocomplete(4),
 	ModalSubmit(5);
 
-	public static InteractionType get(long value) {
-		for (final var x : InteractionType.values()) if (x.value == value) return x;
+	public static InteractionType resolve(int value) {
+		for (final var x : InteractionType.values())
+			if (x.value == value)
+				return x;
 		return null;
 	}
 

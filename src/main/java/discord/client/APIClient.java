@@ -11,7 +11,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import com.alibaba.fastjson2.JSON;
+import simple_json.JSON;
 
 /**
  * An HttpClient wrapper for making requests to the Discord REST API.
@@ -95,7 +95,7 @@ public final class APIClient {
 	}
 
 	private static HttpResponse<String> retryAfter(HttpRequest request, String responseBody) {
-		final var retryAfter = (int) (1000 * JSON.parseObject(responseBody).getDoubleValue("retry_after"));
+		final var retryAfter = (int) (1000 * JSON.parseObject(responseBody).getDouble("retry_after"));
 		log("Being rate limited for " + retryAfter + "ms");
 
 		try {

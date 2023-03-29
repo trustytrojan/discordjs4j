@@ -1,49 +1,44 @@
 package discord.structures.interactions;
 
-import java.util.concurrent.CompletableFuture;
-
-import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
 import discord.enums.InteractionType;
 import discord.structures.Guild;
 import discord.structures.User;
 import discord.structures.channels.TextBasedChannel;
+import simple_json.JSONObject;
 
-public abstract class Interaction {
+public class Interaction {
 
-	public static Interaction createCorrectInteraction(DiscordClient client, BetterJSONObject data) {
-		return switch (InteractionType.get(data.getLong("type"))) {
+	public static Interaction createCorrectInteraction(DiscordClient client, JSONObject data) {
+		return switch (InteractionType.resolve(data.getInt("type"))) {
 			case ApplicationCommand -> new ChatInputInteraction(client, data);
 			default -> null;
 		};
 	}
 
 	protected final DiscordClient client;
-	private final BetterJSONObject data;
+	private final JSONObject data;
 
-	private User user;
-	private final CompletableFuture<Void> _user;
-	private TextBasedChannel channel;
-	private final CompletableFuture<Void> _channel;
-	private Guild guild;
-	private final CompletableFuture<Void> _guild;
+	public final User user;
+	public final TextBasedChannel channel;
+	public final Guild guild;
 
-	protected Interaction(DiscordClient client, BetterJSONObject data) {
+	protected Interaction(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 		String user_id;
 		if (inGuild()) {
 			user_id = data.getObject("member").getObject("user").getString("id");
-			_guild = client.guilds.fetch(guildId()).thenAccept((guild) -> this.guild = guild);
+			guild = client.guilds.fetch(guildId());
 		} else {
 			user_id = data.getObject("user").getString("id");
-			_guild = null;
+			guild = null;
 		}
-		_user = client.users.fetch(user_id).thenAccept((user) -> this.user = user);
-		_channel = client.channels.fetch(channelId()).thenAccept((channel) -> this.channel = (TextBasedChannel) channel);
+		user = client.users.fetch(user_id);
+		channel = (TextBasedChannel) client.channels.fetch(channelId());
 	}
 
-	protected BetterJSONObject innerData() {
+	protected JSONObject innerData() {
 		return data.getObject("data");
 	}
 
@@ -52,7 +47,7 @@ public abstract class Interaction {
 	}
 
 	public InteractionType type() {
-		return InteractionType.get(data.getLong("type"));
+		return InteractionType.resolve(data.getInt("type"));
 	}
 
 	public String applicationId() {
@@ -63,27 +58,12 @@ public abstract class Interaction {
 		return (guildId() != null);
 	}
 
-	public User user() {
-		if (user == null) try { _user.get(); } catch (Exception e) { throw new RuntimeException(e); }
-		return user;
-	}
-
 	public String channelId() {
 		return data.getString("channel_id");
 	}
 
-	public TextBasedChannel channel() {
-		if (channel == null) try { _channel.get(); } catch (Exception e) { throw new RuntimeException(e); }
-		return channel;
-	}
-
 	public String guildId() {
 		return data.getString("guild_id");
-	}
-
-	public Guild guild() {
-		if (guild == null) try { _guild.get(); } catch (Exception e) { throw new RuntimeException(e); }
-		return guild;
 	}
 
 	public String token() {

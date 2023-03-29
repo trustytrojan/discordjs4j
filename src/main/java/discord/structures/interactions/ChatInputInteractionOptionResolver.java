@@ -1,15 +1,13 @@
 package discord.structures.interactions;
 
-import java.util.List;
-
-import discord.util.BetterJSONObject;
 import discord.util.BetterMap;
+import simple_json.JSONObject;
 
 public class ChatInputInteractionOptionResolver {
 
 	private final BetterMap<String, ChatInputInteractionOption> options = new BetterMap<>();
 	
-	public ChatInputInteractionOptionResolver(List<BetterJSONObject> raw_options) {
+	public ChatInputInteractionOptionResolver(JSONObject[] raw_options) {
 		for (final var option : raw_options)
 			options.put(option.getString("name"), new ChatInputInteractionOption(option));
 	}

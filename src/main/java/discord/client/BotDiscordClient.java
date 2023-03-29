@@ -1,13 +1,12 @@
 package discord.client;
 
-import com.alibaba.fastjson2.JSON;
-
 import discord.enums.GatewayIntent;
 import discord.managers.CommandManager;
 import discord.structures.ClientApplication;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 import java_signals.Signal1;
+import simple_json.JSON;
 
 public class BotDiscordClient extends DiscordClient {
 
