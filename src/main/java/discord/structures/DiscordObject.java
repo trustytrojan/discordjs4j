@@ -6,10 +6,6 @@ import discord.client.DiscordClient;
 
 public interface DiscordObject {
 
-	/**
-	 * Allows default method implementations of interfaces
-	 * to access the data of this Discord object.
-	 */
 	JSONObject getData();
 
 	void setData(JSONObject data);

@@ -2,16 +2,15 @@ package discord.client;
 
 import discord.enums.GatewayIntent;
 import discord.managers.UserManager;
-import discord.signals.Signal0;
-import discord.signals.Signal1;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.structures.AuditLogEntry;
 import discord.structures.ClientUser;
 import discord.structures.Guild;
 import discord.structures.Message;
-//import discord.structures.Presence;
 import discord.structures.channels.Channel;
+import java_signals.Signal0;
+import java_signals.Signal1;
 
 public abstract class DiscordClient {
 
