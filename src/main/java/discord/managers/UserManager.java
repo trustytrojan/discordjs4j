@@ -1,12 +1,12 @@
 package discord.managers;
 
-import java.util.concurrent.CompletableFuture;
 
-import discord.util.BetterJSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+
 import discord.client.DiscordClient;
 import discord.structures.ClientUser;
 import discord.structures.User;
-import discord.util.JSON;
 
 public class UserManager extends DataManager<User> {
 
@@ -15,25 +15,20 @@ public class UserManager extends DataManager<User> {
 	}
 
 	@Override
-	public User forceCache(BetterJSONObject data) {
-		return cache(new User(client, data));
+	public User cacheNewObject(JSONObject data) {
+		return cacheObject(new User(client, data));
 	}
 
 	@Override
-	public CompletableFuture<User> fetch(String id, boolean force) {
-		final var path = String.format("/users/%s", id);
-		return super.fetch(id, path, force);
+	public User fetch(String id, boolean force) {
+		return super.fetch(id, "/users/" + id, force);
 	}
 
-	public CompletableFuture<ClientUser> fetchMe() {
-		return CompletableFuture.supplyAsync(() -> {
-			try {
-				final var data = JSON.parseObject(client.api.get("/users/@me"));
-				final var me = new ClientUser(client, data);
-				cache.put(me.id(), me);
-				return me;
-			} catch (Exception e) { e.printStackTrace(); return null; }
-		});
+	public ClientUser fetchMe() {
+		final var data = JSON.parseObject(client.api.get("/users/@me"));
+		final var me = new ClientUser(client, data);
+		cache.put(me.id(), me);
+		return me;
 	}
 	
 }

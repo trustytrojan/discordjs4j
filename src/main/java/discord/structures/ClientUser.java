@@ -1,11 +1,12 @@
 package discord.structures;
 
-import discord.util.BetterJSONObject;
+import com.alibaba.fastjson2.JSONObject;
+
 import discord.client.DiscordClient;
 
 public class ClientUser extends User {
 
-	public ClientUser(DiscordClient client, BetterJSONObject data) {
+	public ClientUser(DiscordClient client, JSONObject data) {
 		super(client, data);
 	}	
 
