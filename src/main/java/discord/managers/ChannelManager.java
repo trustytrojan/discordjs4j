@@ -1,8 +1,11 @@
 package discord.managers;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import discord.util.BetterJSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+
 import discord.util.BetterMap;
 import discord.client.DiscordClient;
 import discord.enums.ChannelType;
@@ -12,12 +15,11 @@ import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.channels.TextChannel;
-import discord.util.JSON;
 
 public class ChannelManager extends DataManager<Channel> {
 
-	public Channel createCorrectChannel(BetterJSONObject data) {
-		final var type = ChannelType.resolve(data.getLong("type"));
+	public Channel createCorrectChannel(JSONObject data) {
+		final var type = ChannelType.resolve(data.getIntValue("type"));
 		return switch (type) {
 			case GuildText -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
@@ -33,31 +35,23 @@ public class ChannelManager extends DataManager<Channel> {
 	}
 
 	@Override
-	public Channel forceCache(BetterJSONObject data) {
-		return cache(createCorrectChannel(data));
+	public Channel cacheNewObject(JSONObject data) {
+		return cacheObject(createCorrectChannel(data));
 	}
 
 	@Override
-	public CompletableFuture<Channel> fetch(String id, boolean force) {
-		final var path = String.format("/channels/%s", id);
-		return super.fetch(id, path, force);
+	public Channel fetch(String id, boolean force) {
+		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	public CompletableFuture<BetterMap<String, TextBasedChannel>> fetchDMs() {
-		return CompletableFuture.supplyAsync(() -> {
-			try {
-				final var raw_dms = JSON.parseObjectArray(client.api.get("/users/@me/channels"));
-				final var dms = new BetterMap<String, TextBasedChannel>();
-				for (final var raw_dm : raw_dms) {
-					final var dm = (TextBasedChannel)cache(raw_dm);
-					dms.put(dm.id(), dm);
-				}
-				return dms;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		});
+	public BetterMap<String, TextBasedChannel> fetchDMs() {
+		final var rawChannels = JSON.parseArray(client.api.get("/users/@me/channels"));
+		final var channels = new BetterMap<String, TextBasedChannel>();
+		for (final var rawChannel : rawChannels) {
+			final var channel = (TextBasedChannel) cacheData((JSONObject) rawChannel);
+			channels.put(channel.id(), channel);
+		}
+		return channels;
 	}
 
 }

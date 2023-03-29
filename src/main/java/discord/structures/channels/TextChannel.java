@@ -3,7 +3,8 @@ package discord.structures.channels;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import discord.util.BetterJSONObject;
+import com.alibaba.fastjson2.JSONObject;
+
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.Guild;
@@ -11,7 +12,7 @@ import discord.structures.Guild;
 public class TextChannel implements GuildChannel, TextBasedChannel {
 
 	private final DiscordClient client;
-	public BetterJSONObject data;
+	public JSONObject data;
 	private final MessageManager messages;
 
 	private Guild guild;
@@ -25,7 +26,7 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	// public String topic;
 	// //public Long rate_limit_per_user;
 
-	public TextChannel(DiscordClient client, BetterJSONObject data) {
+	public TextChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
