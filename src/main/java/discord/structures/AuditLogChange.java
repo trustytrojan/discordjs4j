@@ -1,6 +1,6 @@
 package discord.structures;
 
-import discord.util.BetterJSONObject;
+import simple_json.JSONObject;
 
 public class AuditLogChange {
 	
@@ -8,7 +8,7 @@ public class AuditLogChange {
 	public final Object oldValue;
 	public final Object newValue;
 
-	AuditLogChange(BetterJSONObject data) {
+	AuditLogChange(JSONObject data) {
 		key = data.getString("key");
 		oldValue = data.get("old_value");
 		newValue = data.get("new_value");

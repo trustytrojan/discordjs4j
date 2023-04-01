@@ -1,7 +1,0 @@
-{
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "java.format.settings.url": "eclipse-formatter.xml",
-  "maven.view": "hierarchical",
-  "java.dependency.packagePresentation": "hierarchical",
-  "java.debug.settings.onBuildFailureProceed": true
-}

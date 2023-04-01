@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-public class BetterMap<K, V> extends TreeMap<K, V> implements Iterable<V> {
+import discord.structures.DiscordObject;
+
+public class DiscordObjectMap<V extends DiscordObject> extends TreeMap<String, V> implements Iterable<V> {
 
 	@Override
 	public Iterator<V> iterator() {
@@ -23,9 +25,10 @@ public class BetterMap<K, V> extends TreeMap<K, V> implements Iterable<V> {
 		return firstEntry().getValue();
 	}
 
-	public V ensure(K key, Supplier<V> supplier) {
+	public V ensure(String key, Supplier<V> supplier) {
 		final var existingValue = get(key);
 		final var defaultValue = supplier.get();
+		
 		if (existingValue == null) {
 			put(key, defaultValue);
 			return defaultValue;

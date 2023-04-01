@@ -1,6 +1,7 @@
 package discord.client;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -24,7 +25,7 @@ public final class GatewayClient extends WebSocketClient {
 	static {
 		try {
 			GATEWAY_URI = new URI("wss://gateway.discord.gg/");
-		} catch (Exception e) {
+		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -53,24 +54,25 @@ public final class GatewayClient extends WebSocketClient {
 		}
 
 		send(
-				"""
-						{
-							"op": %d,
-							"d": {
-								"token": "%s",
-								"intents": %d,
-								"properties": {
-									"os": %s,
-									"browser": "discordjs4j",
-									"device": "discordjs4j"
-								}
-							}
-						}
-						""".formatted(
-						GatewayOpcode.IDENTIFY.value,
-						token,
-						GatewayIntent.sum(intents),
-						System.getProperty("os.name")));
+			"""
+			{
+				"op": %d,
+				"d": {
+					"token": "%s",
+					"intents": %d,
+					"properties": {
+						"os": %s,
+						"browser": "discordjs4j",
+						"device": "discordjs4j"
+					}
+				}
+			}
+			""".formatted(
+				GatewayOpcode.IDENTIFY.value,
+				token,
+				GatewayIntent.sum(intents),
+				System.getProperty("os.name"))
+		);
 	}
 
 	@Override
@@ -119,8 +121,8 @@ public final class GatewayClient extends WebSocketClient {
 						case GUILD_AUDIT_LOG_ENTRY_CREATE ->
 							client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
 
-						case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
-						case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
+						case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cacheData(obj.getObject("d")));
+						case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cacheData(obj.getObject("d")));
 						case GUILD_DELETE -> {
 							final var id = obj.getObject("d").getString("id");
 							final var removed = client.guilds.cache.remove(id);
@@ -129,8 +131,8 @@ public final class GatewayClient extends WebSocketClient {
 							client.guildDelete.emit(removed);
 						}
 
-						case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
-						case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
+						case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cacheData(obj.getObject("d")));
+						case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cacheData(obj.getObject("d")));
 						case CHANNEL_DELETE -> {
 							final var id = obj.getObject("d").getString("id");
 							final var removed = client.channels.cache.remove(id);
@@ -139,23 +141,23 @@ public final class GatewayClient extends WebSocketClient {
 							client.channelDelete.emit(removed);
 						}
 
-						case MESSAGE_CREATE -> client.messageCreate.emit(new Message(client, obj.getObject("d")));
+						case MESSAGE_CREATE -> {
+							final var d = obj.getObject("d");
+							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
+							final var message = channel.messages().cacheData(d);
+							client.messageCreate.emit(message);
+						}
 						case MESSAGE_UPDATE -> {
 							final var d = obj.getObject("d");
-							client.channels.fetch(d.getString("channel_id")).thenAccept((channel) -> {
-								final var messages = ((TextBasedChannel) channel).messages();
-								client.messageUpdate.emit(messages.cache(d));
-							});
+							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
+							final var message = channel.messages().cacheData(d);
+							client.messageUpdate.emit(message);
 						}
 						case MESSAGE_DELETE -> {
 							final var d = obj.getObject("d");
-							client.channels.fetch(d.getString("channel_id")).thenAccept((channel) -> {
-								final var messages = ((TextBasedChannel) channel).messages();
-								final var removed = messages.cache.remove(d.getString("id"));
-								if (removed == null)
-									return;
-								client.messageDelete.emit(removed);
-							});
+							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
+							final var message = channel.messages().cache.remove(d.getString("id"));
+							client.messageDelete.emit(message);
 						}
 
 						default -> {

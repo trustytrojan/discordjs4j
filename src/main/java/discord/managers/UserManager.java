@@ -1,12 +1,10 @@
 package discord.managers;
 
-
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-
 import discord.client.DiscordClient;
 import discord.structures.ClientUser;
 import discord.structures.User;
+import simple_json.JSON;
+import simple_json.JSONObject;
 
 public class UserManager extends DataManager<User> {
 
@@ -15,8 +13,8 @@ public class UserManager extends DataManager<User> {
 	}
 
 	@Override
-	public User cacheNewObject(JSONObject data) {
-		return cacheObject(new User(client, data));
+	public User cacheNew(JSONObject data) {
+		return cache(new User(client, data));
 	}
 
 	@Override

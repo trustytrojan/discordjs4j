@@ -2,16 +2,15 @@ package discord.managers;
 
 import java.util.Iterator;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-
-import discord.util.BetterMap;
+import discord.util.DiscordObjectMap;
+import simple_json.JSON;
+import simple_json.JSONObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordObject;
 
 public abstract class DataManager<T extends DiscordObject> implements Iterable<T> {
 
-	public final BetterMap<String, T> cache = new BetterMap<String, T>();
+	protected final DiscordObjectMap<T> cache = new DiscordObjectMap<>();
 	protected final DiscordClient client;
 
 	protected DataManager(DiscordClient client) {
@@ -22,7 +21,7 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 		return cache.iterator();
 	}
 
-	protected abstract T cacheNewObject(JSONObject data);
+	protected abstract T cacheNew(JSONObject data);
 
 	/**
 	 * If an object has already been constructed and needs
@@ -31,7 +30,7 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 	 * @param t The object to cache
 	 * @return The same object
 	 */
-	public T cacheObject(T t) {
+	public T cache(T t) {
 		cache.put(t.id(), t);
 		return t;
 	}
@@ -47,7 +46,7 @@ public abstract class DataManager<T extends DiscordObject> implements Iterable<T
 	public T cacheData(JSONObject data) {
 		final var fromCache = cache.get(data.getString("id"));
 		if (fromCache == null)
-			return cacheNewObject(data);
+			return cacheNew(data);
 		fromCache.setData(data);
 		return fromCache;
 	}

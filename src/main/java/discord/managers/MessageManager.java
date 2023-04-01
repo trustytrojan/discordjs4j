@@ -2,12 +2,10 @@ package discord.managers;
 
 import java.util.concurrent.CompletableFuture;
 
-import discord.util.BetterJSONObject;
-import discord.util.BetterMap;
 import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
-import discord.util.JSON;
+import simple_json.JSONObject;
 
 public class MessageManager extends DataManager<Message> {
 
@@ -19,7 +17,7 @@ public class MessageManager extends DataManager<Message> {
 	}
 
 	@Override
-	public Message forceCache(BetterJSONObject data) {
+	public Message cacheNew(JSONObject data) {
 		return cache(new Message(client, data));
 	}
 
