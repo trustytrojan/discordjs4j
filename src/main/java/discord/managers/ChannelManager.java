@@ -10,7 +10,6 @@ import discord.structures.channels.DMBasedChannel;
 import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextChannel;
-import discord.structures.payloads.ChannelPayload;
 import discord.util.DiscordResourceMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
@@ -38,7 +37,7 @@ public class ChannelManager extends DataManager<Channel> {
 		return cache(createCorrectChannel(data));
 	}
 
-	public CompletableFuture<Channel> edit(String id, ChannelPayload payload) {
+	public CompletableFuture<Channel> edit(String id, Channel.Payload payload) {
 		final var channelData = payload.toString();
 		return CompletableFuture.supplyAsync(() -> {
 			final var responseData = JSON.parseObject(client.api.patch("/channels/" + id, channelData));

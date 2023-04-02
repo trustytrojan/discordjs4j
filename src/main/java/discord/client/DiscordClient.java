@@ -7,7 +7,7 @@ import discord.managers.CommandManager;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.structures.Application;
-import discord.structures.AuditLogEntry;
+import discord.structures.AuditLog;
 import discord.structures.ClientUser;
 import discord.structures.Guild;
 import discord.structures.Message;
@@ -31,7 +31,7 @@ public abstract class DiscordClient {
 	public final Signal1<Guild> guildCreate = new Signal1<>();
 	public final Signal1<Guild> guildUpdate = new Signal1<>();
 	public final Signal1<Guild> guildDelete = new Signal1<>();
-	public final Signal1<AuditLogEntry> auditLogEntryCreate = new Signal1<>();
+	public final Signal1<AuditLog.Entry> auditLogEntryCreate = new Signal1<>();
 	public final Signal1<Channel> channelCreate = new Signal1<>();
 	public final Signal1<Channel> channelUpdate = new Signal1<>();
 	public final Signal1<Channel> channelDelete = new Signal1<>();

@@ -1,6 +1,8 @@
 package discord.structures.payloads;
 
-public class InteractionReplyMessagePayload extends MessagePayload {
+import discord.structures.Message;
+
+public class InteractionReplyMessagePayload extends Message.Payload {
 
 	public Boolean ephemeral;
 	

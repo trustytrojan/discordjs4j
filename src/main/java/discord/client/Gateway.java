@@ -6,8 +6,7 @@ import java.net.URISyntaxException;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-import discord.enums.GatewayOpcode;
-import discord.structures.AuditLogEntry;
+import discord.structures.AuditLog;
 import discord.structures.ClientUser;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
@@ -76,6 +75,33 @@ public final class Gateway {
         }
     }
     
+    public static enum Opcode {
+        DISPATCH(0),
+        HEARTBEAT(1),
+        IDENTIFY(2),
+        PRESENCE_UPDATE(3),
+        VOICE_STATE_UPDATE(4),
+        RESUME(6),
+        RECONNECT(7),
+        REQUEST_GUILD_MEMBERS(8),
+        INVALID_SESSION(9),
+        HELLO(10),
+        HEARTBEAT_ACK(11);
+    
+        public static Opcode resolve(long value) {
+            for (final var x : Opcode.values())
+                if (x.value == value)
+                    return x;
+            return null;
+        }
+    
+        public final int value;
+    
+        private Opcode(int value) {
+            this.value = value;
+        }
+    }
+
     public static class Client extends WebSocketClient {
 
         private static final URI GATEWAY_URI;
@@ -127,7 +153,7 @@ public final class Gateway {
                     }
                 }
                 """.formatted(
-                    GatewayOpcode.IDENTIFY.value,
+                    Opcode.IDENTIFY.value,
                     token,
                     Intent.sum(intents),
                     System.getProperty("os.name")
@@ -152,7 +178,7 @@ public final class Gateway {
         @Override
         public void onMessage(String __) {
             final var obj = JSON.parseObject(__);
-            final var opcode = GatewayOpcode.resolve(obj.getLong("op"));
+            final var opcode = Opcode.resolve(obj.getLong("op"));
     
             switch (opcode) {
     
@@ -179,7 +205,7 @@ public final class Gateway {
                             .emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
     
                         case GUILD_AUDIT_LOG_ENTRY_CREATE ->
-                            client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
+                            client.auditLogEntryCreate.emit(new AuditLog.Entry(client, obj.getObject("d")));
     
                         case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
                         case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
@@ -244,7 +270,7 @@ public final class Gateway {
                     repeater.repeat(() -> {
                         System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
                         final var heartbeat = new JSONObject();
-                        heartbeat.put("op", GatewayOpcode.HEARTBEAT.value);
+                        heartbeat.put("op", Opcode.HEARTBEAT.value);
                         heartbeat.put("d", sequenceNumber);
                         send(heartbeat.toString());
                         heartbeatSentAt = System.currentTimeMillis();

@@ -2,9 +2,10 @@ package discord.structures.channels;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.json.simple.JSONAware;
+
 import discord.enums.ChannelType;
 import discord.structures.DiscordResource;
-import discord.structures.payloads.ChannelPayload;
 
 public interface Channel extends DiscordResource {
 
@@ -22,12 +23,16 @@ public interface Channel extends DiscordResource {
 		return ChannelType.resolve(getData().getLong("type"));
 	}
 
-	default CompletableFuture<Channel> edit(ChannelPayload payload) {
+	default CompletableFuture<Channel> edit(Payload payload) {
 		return client().channels.edit(id(), payload);
 	}
 
 	default CompletableFuture<Void> delete() {
 		return client().channels.delete(id());
+	}
+
+	public static class Payload implements JSONAware {
+		
 	}
 
 }

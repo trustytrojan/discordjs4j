@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
-import discord.structures.payloads.MessagePayload;
 import discord.util.DiscordResourceMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
@@ -24,7 +23,7 @@ public class MessageManager extends DataManager<Message> {
 		return cache(new Message(client, data));
 	}
 
-	public CompletableFuture<Message> create(MessagePayload payload) {
+	public CompletableFuture<Message> create(Message.Payload payload) {
 		final var path = "/channels/" + channel.id() + "/messages";
 		final var messageData = payload.toJSONString();
 		return CompletableFuture.supplyAsync(() -> {
