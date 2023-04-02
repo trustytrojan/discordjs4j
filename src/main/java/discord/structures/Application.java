@@ -1,16 +1,16 @@
 package discord.structures;
 
-
 import discord.client.DiscordClient;
 import simple_json.JSONObject;
 
-public class ClientApplication implements DiscordObject {
+public class Application implements DiscordResource {
 
 	private final DiscordClient client;
-	public JSONObject data;
+	private final JSONObject data;
 
-	public ClientApplication(DiscordClient client) {
+	public Application(DiscordClient client, JSONObject data) {
 		this.client = client;
+		this.data = data;
 	}
 
 	public String name() {
@@ -25,17 +25,11 @@ public class ClientApplication implements DiscordObject {
 		return client.users.fetch(data.getObject("owner").getString("id"));
 	}
 
-	// there is more, but i don't care for now
 	// https://discord.com/developers/docs/resources/application
 
 	@Override
 	public JSONObject getData() {
 		return data;
-	}
-
-	@Override
-	public void setData(JSONObject data) {
-		this.data = data;
 	}
 
 	@Override

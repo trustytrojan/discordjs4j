@@ -1,14 +1,16 @@
 package discord.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-import discord.structures.DiscordObject;
+import discord.structures.DiscordResource;
 
-public class DiscordObjectMap<V extends DiscordObject> extends TreeMap<String, V> implements Iterable<V> {
+public class DiscordResourceMap<V extends DiscordResource> extends TreeMap<String, V> implements Iterable<V> {
+
+	private static final Random rand = new Random();
 
 	@Override
 	public Iterator<V> iterator() {
@@ -17,8 +19,7 @@ public class DiscordObjectMap<V extends DiscordObject> extends TreeMap<String, V
 
 	public V random() {
 		final var array = new ArrayList<V>(values());
-		Collections.shuffle(array);
-		return array.get(0);
+		return array.get(rand.nextInt(array.size()));
 	}
 
 	public V first() {
@@ -37,8 +38,8 @@ public class DiscordObjectMap<V extends DiscordObject> extends TreeMap<String, V
 		}
 	}
 
-	public V put(V value) {
-		return super.put(value.id(), value);
+	public V put(V v) {
+		return put(v.id(), v);
 	}
 
 }

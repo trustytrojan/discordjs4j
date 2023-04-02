@@ -47,7 +47,9 @@ public final class GatewayClient extends WebSocketClient {
 
 	public void login(String token, GatewayIntent[] intents) {
 		try {
-			connectBlocking();
+			if (!connectBlocking()) {
+				System.exit(1);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -111,18 +113,18 @@ public final class GatewayClient extends WebSocketClient {
 						case READY -> {
 							final var d = obj.getObject("d");
 							client.user = new ClientUser(client, d.getObject("user"));
-							client.users.cacheObject(client.user);
+							client.users.cache(client.user);
 							client.ready.emit();
 						}
 
 						case INTERACTION_CREATE -> ((BotDiscordClient) client).interactionCreate
-								.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
+							.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
 
 						case GUILD_AUDIT_LOG_ENTRY_CREATE ->
 							client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
 
-						case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cacheData(obj.getObject("d")));
-						case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cacheData(obj.getObject("d")));
+						case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
+						case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
 						case GUILD_DELETE -> {
 							final var id = obj.getObject("d").getString("id");
 							final var removed = client.guilds.cache.remove(id);
@@ -131,8 +133,8 @@ public final class GatewayClient extends WebSocketClient {
 							client.guildDelete.emit(removed);
 						}
 
-						case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cacheData(obj.getObject("d")));
-						case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cacheData(obj.getObject("d")));
+						case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
+						case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
 						case CHANNEL_DELETE -> {
 							final var id = obj.getObject("d").getString("id");
 							final var removed = client.channels.cache.remove(id);
@@ -142,15 +144,14 @@ public final class GatewayClient extends WebSocketClient {
 						}
 
 						case MESSAGE_CREATE -> {
-							final var d = obj.getObject("d");
-							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
-							final var message = channel.messages().cacheData(d);
+							final var message = new Message(client, obj.getObject("d"));
+							message.channel.messages().cache(message);
 							client.messageCreate.emit(message);
 						}
 						case MESSAGE_UPDATE -> {
 							final var d = obj.getObject("d");
 							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
-							final var message = channel.messages().cacheData(d);
+							final var message = channel.messages().cache(d);
 							client.messageUpdate.emit(message);
 						}
 						case MESSAGE_DELETE -> {

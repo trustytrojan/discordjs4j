@@ -1,8 +1,5 @@
 package discord.structures.channels;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.Guild;
@@ -24,39 +21,17 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 		guild = client.guilds.fetch(guildId());
 	}
 
-	@Override
-	public String toString() {
-		return mention();
-	}
-
-	@Override
-	public Guild guild() {
-		if (guild == null) {
-			try {
-				_guild.get();
-			} catch (InterruptedException | ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return guild;
-	}
-
 	public String topic() {
 		return data.getString("topic");
 	}
 
-	public Long rate_limit_per_user() {
+	public Long slowmodeDuration() {
 		return data.getLong("rate_limit_per_user");
 	}
 
 	@Override
-	public BetterJSONObject getData() {
+	public JSONObject getData() {
 		return data;
-	}
-
-	@Override
-	public void setData(BetterJSONObject data) {
-		this.data = data;
 	}
 
 	@Override

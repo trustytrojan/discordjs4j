@@ -5,7 +5,7 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
-public class User implements DiscordObject {
+public class User implements DiscordResource, Mentionable {
 
 	private final DiscordClient client;
 	private JSONObject data;

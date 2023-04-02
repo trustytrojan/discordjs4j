@@ -3,10 +3,10 @@ package discord.structures.channels;
 import java.util.concurrent.CompletableFuture;
 
 import discord.enums.ChannelType;
-import discord.structures.DiscordObject;
+import discord.structures.DiscordResource;
 import discord.structures.payloads.ChannelPayload;
 
-public interface Channel extends DiscordObject {
+public interface Channel extends DiscordResource {
 
 	public String url();
 

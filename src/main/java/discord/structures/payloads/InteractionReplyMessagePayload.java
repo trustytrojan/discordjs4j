@@ -1,7 +1,5 @@
 package discord.structures.payloads;
 
-import org.json.simple.JSONObject;
-
 public class InteractionReplyMessagePayload extends MessagePayload {
 
 	private Boolean ephemeral;
@@ -11,12 +9,14 @@ public class InteractionReplyMessagePayload extends MessagePayload {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSONObject() {
-		final var obj = super.toJSONObject();
-		if (ephemeral != null)
+	public String toJSONString() {
+		final var obj = toJSONObject();
+
+		if (ephemeral != null) {
 			obj.put("ephemeral", ephemeral);
-		return obj;
+		}
+
+		return obj.toString();
 	}
 
 }

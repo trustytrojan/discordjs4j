@@ -1,18 +1,17 @@
 package discord.managers;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.enums.ChannelType;
 import discord.structures.channels.CategoryChannel;
 import discord.structures.channels.Channel;
+import discord.structures.channels.DMBasedChannel;
 import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
-import discord.structures.channels.TextBasedChannel;
 import discord.structures.channels.TextChannel;
 import discord.structures.payloads.ChannelPayload;
-import discord.util.DiscordObjectMap;
+import discord.util.DiscordResourceMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -35,7 +34,7 @@ public class ChannelManager extends DataManager<Channel> {
 	}
 
 	@Override
-	public Channel cacheNew(JSONObject data) {
+	public Channel cache(JSONObject data) {
 		return cache(createCorrectChannel(data));
 	}
 
@@ -56,13 +55,14 @@ public class ChannelManager extends DataManager<Channel> {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	public DiscordObjectMap<TextBasedChannel> fetchDMs() {
-		final var rawChannels = JSON.parseObjectArray(client.api.get("/users/@me/channels"));
-		final var channels = new DiscordObjectMap<TextBasedChannel>();
-		for (final var rawChannel : rawChannels) {
-			final var channel = (TextBasedChannel) cacheData((JSONObject) rawChannel);
+	public DiscordResourceMap<DMBasedChannel> fetchDMs() {
+		final var channels = new DiscordResourceMap<DMBasedChannel>();
+
+		for (final var rawChannel : JSON.parseObjectArray(client.api.get("/users/@me/channels"))) {
+			final var channel = (DMBasedChannel) cache((JSONObject) rawChannel);
 			channels.put(channel);
 		}
+
 		return channels;
 	}
 

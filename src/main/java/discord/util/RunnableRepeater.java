@@ -11,16 +11,16 @@ public class RunnableRepeater extends Timer {
 	 * 
 	 * @param r
 	 *            The Runnable to run
-	 * @param repeat_delay_ms
-	 *            The delay in milliseconds to wait before
+	 * @param ms
+	 *            The time in milliseconds to wait before
 	 *            running again
 	 */
-	public void repeat(Runnable r, long repeat_delay_ms) {
+	public void repeat(Runnable r, long ms) {
 		schedule(new TimerTask() {
 			public void run() {
 				r.run();
 			}
-		}, 0, repeat_delay_ms);
+		}, 0, ms);
 	}
 
 }

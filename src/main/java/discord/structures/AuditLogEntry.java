@@ -1,28 +1,32 @@
 package discord.structures;
 
-import discord.util.BetterMap;
 import simple_json.JSONObject;
+
+import java.util.HashMap;
+
 import discord.client.DiscordClient;
 import discord.enums.AuditLogEvent;
 
-public class AuditLogEntry {
+public class AuditLogEntry implements DiscordResource {
 
+	private final DiscordClient client;
 	private final JSONObject data;
+
 	public final User executor;
 	public final Guild guild;
-	public final BetterMap<String, AuditLogChange> changes = new BetterMap<>();
+	public final HashMap<String, AuditLogChange> changes = new HashMap<>();
 
 	public AuditLogEntry(DiscordClient client, JSONObject data) {
+		this.client = client;
 		this.data = data;
+
 		guild = client.guilds.fetch(guildId());
 		executor = client.users.fetch(executorId());
-		for (final var change_data : data.getObjectArray("changes")) {
-			changes.put(change_data.getString("key"), new AuditLogChange(change_data));
-		}
-	}
 
-	public String id() {
-		return data.getString("id");
+		for (final var changeData : data.getObjectArray("changes")) {
+			final var change = new AuditLogChange(changeData);
+			changes.put(change.key, change);
+		}
 	}
 
 	public String guildId() {
@@ -43,6 +47,14 @@ public class AuditLogEntry {
 
 	public AuditLogEvent actionType() {
 		return AuditLogEvent.resolve(data.getLong("action_type"));
+	}
+
+	public DiscordClient client() {
+		return client;
+	}
+
+	public JSONObject getData() {
+		return data;
 	}
 
 }

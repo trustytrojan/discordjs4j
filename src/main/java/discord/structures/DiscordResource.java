@@ -3,11 +3,9 @@ package discord.structures;
 import discord.client.DiscordClient;
 import simple_json.JSONObject;
 
-public interface DiscordObject {
+public interface DiscordResource {
 
 	JSONObject getData();
-
-	void setData(JSONObject data);
 
 	DiscordClient client();
 

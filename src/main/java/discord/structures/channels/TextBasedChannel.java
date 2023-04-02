@@ -9,7 +9,7 @@ import discord.structures.payloads.MessagePayload;
 
 public interface TextBasedChannel extends Channel {
 
-	public MessageManager messages();
+	MessageManager messages();
 
 	default CompletableFuture<Message> send(String content) {
 		final var payload = new MessagePayload();
@@ -25,6 +25,14 @@ public interface TextBasedChannel extends Channel {
 
 	default CompletableFuture<Message> send(MessagePayload payload) {
 		return messages().create(payload);
+	}
+
+	default String lastMessageId() {
+		return getData().getString("last_message_id");
+	}
+
+	default Message lastMessage() {
+		return messages().fetch(lastMessageId());
 	}
 
 }

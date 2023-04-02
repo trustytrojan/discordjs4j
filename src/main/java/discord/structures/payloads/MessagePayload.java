@@ -2,6 +2,8 @@ package discord.structures.payloads;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
@@ -13,9 +15,9 @@ public class MessagePayload implements JSONAware {
 
 	private String content;
 	private String reply_to;
-	private ArrayList<Embed> embeds = new ArrayList<Embed>();
-	//public ArrayList<MessageComponent> components;
-	//public ArrayList<Attachment> attachments;
+	private List<Embed> embeds = new LinkedList<>();
+	//public List<MessageComponent> components;
+	//public List<Attachment> attachments;
 
 	public void setContent(String content) {
 		this.content = content;
@@ -29,8 +31,8 @@ public class MessagePayload implements JSONAware {
 		Collections.addAll(this.embeds, embeds);
 	}
 
-	@Override
-	public String toJSONString() {
+	// should I make a custom interface for this?
+	public JSONObject toJSONObject() {
 		final var obj = new JSONObject();
 
 		if (content != null) {
@@ -47,7 +49,12 @@ public class MessagePayload implements JSONAware {
 			obj.put("embeds", (JSONArray) embeds);
 		}
 
-		return obj.toString();
+		return obj;
+	}
+
+	@Override
+	public String toJSONString() {
+		return toJSONObject().toString();
 	}
 
 }

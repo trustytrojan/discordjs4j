@@ -1,59 +1,35 @@
 package discord.structures.channels;
 
-import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
+import simple_json.JSONObject;
 
 public class CategoryChannel implements GuildChannel {
 
 	private final DiscordClient client;
-	private BetterJSONObject data;
+	private JSONObject data;
 
-	public CategoryChannel(DiscordClient client, BetterJSONObject data) {
+	public final Guild guild;
+
+	public CategoryChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
+		guild = client.guilds.fetch(guildId());
 	}
 
 	@Override
-	public String toString() {
-		return mention();
-	}
-
-	@Override
-	public String name() {
-		return data.getString("name");
-	}
-
-	@Override
-	public String guildId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Guild guild() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public BetterJSONObject getData() {
+	public JSONObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(BetterJSONObject data) {
+	public void setData(JSONObject data) {
 		this.data = data;
 	}
 
 	@Override
 	public DiscordClient client() {
 		return client;
-	}
-
-	@Override
-	public Long position() {
-		return data.getLong("position");
 	}
 
 }

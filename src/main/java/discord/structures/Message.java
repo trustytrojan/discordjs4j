@@ -4,10 +4,11 @@ import discord.client.DiscordClient;
 import discord.structures.channels.TextBasedChannel;
 import simple_json.JSONObject;
 
-public class Message implements DiscordObject {
+public class Message implements DiscordResource {
 
 	private final DiscordClient client;
-	private JSONObject data;
+	private final JSONObject data;
+	
 	public final User author;
 	public final TextBasedChannel channel;
 
@@ -45,11 +46,6 @@ public class Message implements DiscordObject {
 	@Override
 	public JSONObject getData() {
 		return data;
-	}
-
-	@Override
-	public void setData(JSONObject data) {
-		this.data = data;
 	}
 
 	@Override

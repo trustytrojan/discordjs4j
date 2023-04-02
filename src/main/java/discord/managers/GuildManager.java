@@ -2,11 +2,11 @@ package discord.managers;
 
 import java.util.concurrent.CompletableFuture;
 
-import discord.util.BetterJSONObject;
-import discord.util.BetterMap;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
-import discord.util.JSON;
+import discord.util.DiscordResourceMap;
+import simple_json.JSON;
+import simple_json.JSONObject;
 
 public class GuildManager extends DataManager<Guild> {
 
@@ -15,31 +15,23 @@ public class GuildManager extends DataManager<Guild> {
 	}
 
 	@Override
-	public Guild forceCache(BetterJSONObject data) {
+	public Guild cache(JSONObject data) {
 		return cache(new Guild(client, data));
 	}
 
 	@Override
-	public CompletableFuture<Guild> fetch(String id, boolean force) {
-		final var path = String.format("/guilds/%s", id);
-		return super.fetch(id, path, force);
+	public Guild fetch(String id, boolean force) {
+		return super.fetch(id, "/guilds/" + id, force);
 	}
 
-	public CompletableFuture<BetterMap<String, Guild>> fetch() {
-		return CompletableFuture.supplyAsync(() -> {
-			try {
-				final var partials = JSON.parseObjectArray(client.api.get("/users/@me/guilds"));
-				final var guilds = new BetterMap<String, Guild>();
-				for (final var partial : partials) {
-					final var guild = cache(partial);
-					guilds.put(guild.id(), guild);
-				}
-				return guilds;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		});
+	public DiscordResourceMap<Guild> fetch() {
+		final var guilds = new DiscordResourceMap<Guild>();
+
+		for (final var partialGuild : JSON.parseObjectArray(client.api.get("/users/@me/guilds"))) {
+			guilds.put(client.guilds.fetch(partialGuild.getString("id")));
+		}
+
+		return guilds;
 	}
 
 }

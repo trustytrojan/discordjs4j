@@ -3,37 +3,25 @@ package discord.structures.channels;
 import java.util.ArrayList;
 import java.util.List;
 
-import discord.util.BetterJSONObject;
+import simple_json.JSONObject;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.User;
 
-public class GroupDMChannel implements TextBasedChannel {
+public class GroupDMChannel implements DMBasedChannel {
 
 	private final DiscordClient client;
-	private BetterJSONObject data;
+	private final JSONObject data;
+
 	private final MessageManager messages;
+
 	private final List<User> recipients = new ArrayList<>();
 
-	public GroupDMChannel(DiscordClient client, BetterJSONObject data) {
+	public GroupDMChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
 		setData(data);
 		messages = new MessageManager(client, this);
 		updateRecipients(data.getObjectArray("recipients"));
-	}
-
-	@Override
-	public String url() {
-		return "https://discord.com/channels/@me/"+id();
-	}
-
-	@Override
-	public String toString() {
-		return mention();
-	}
-
-	public String name() {
-		return data.getString("name");
 	}
 
 	public String icon() {

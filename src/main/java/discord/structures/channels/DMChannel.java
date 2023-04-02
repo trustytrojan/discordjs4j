@@ -1,28 +1,23 @@
 package discord.structures.channels;
 
-import discord.util.BetterJSONObject;
 import discord.client.DiscordClient;
-import discord.enums.ChannelType;
 import discord.managers.MessageManager;
 import discord.structures.User;
+import simple_json.JSONObject;
 
-public class DMChannel implements TextBasedChannel {
+public class DMChannel implements DMBasedChannel {
 
 	private final DiscordClient client;
-	private BetterJSONObject data;
+	private JSONObject data;
+
 	private final MessageManager messages;
 	public final User recipient;
 
-	public DMChannel(DiscordClient client, BetterJSONObject data) {
+	public DMChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
-		this.recipient = client.users.cache(data.getObjectArray("recipients").get(0));
-	}
-
-	@Override
-	public String url() {
-		return "https://discord.com/channels/@me/"+id();
+		recipient = client.users.fetch(data.getObjectArray("recipients")[0].getString("id"));
 	}
 
 	@Override
@@ -36,26 +31,21 @@ public class DMChannel implements TextBasedChannel {
 	}
 
 	@Override
-	public ChannelType type() {
-		return ChannelType.resolve(data.getLong("type"));
-	}
-
-	@Override
 	public String name() {
-		return String.format("DM with %s", recipient.tag());
+		return "DM with " + recipient.tag();
 	}
 
-	public String last_message_id() {
+	public String lastMessageId() {
 		return data.getString("last_message_id");
 	}
 
 	@Override
-	public void setData(BetterJSONObject data) {
+	public void setData(JSONObject data) {
 		this.data = data;
 	}
 
 	@Override
-	public BetterJSONObject getData() {
+	public JSONObject getData() {
 		return data;
 	}
 

@@ -4,9 +4,9 @@ import discord.util.BetterJSONObject;
 import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
 import discord.enums.CommandType;
-import discord.structures.DiscordObject;
+import discord.structures.DiscordResource;
 
-public class ApplicationCommand implements DiscordObject {
+public class ApplicationCommand implements DiscordResource {
 
 	private BetterJSONObject data;
 	private final BotDiscordClient client;

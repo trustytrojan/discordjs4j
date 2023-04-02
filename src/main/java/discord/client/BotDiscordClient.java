@@ -1,8 +1,10 @@
 package discord.client;
 
+import java.util.concurrent.CompletableFuture;
+
 import discord.enums.GatewayIntent;
 import discord.managers.CommandManager;
-import discord.structures.ClientApplication;
+import discord.structures.Application;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 import java_signals.Signal1;
@@ -10,7 +12,10 @@ import simple_json.JSON;
 
 public class BotDiscordClient extends DiscordClient {
 
-	public final ClientApplication application = new ClientApplication(this);
+	/**
+	 * Will be null until logged in.
+	 */
+	public Application application;
 
 	public final CommandManager commands = new CommandManager(this);
 
@@ -18,10 +23,16 @@ public class BotDiscordClient extends DiscordClient {
 	public final Signal1<ChatInputInteraction> chatInputInteractionCreate = new Signal1<>();
 
 	public void login(String token, GatewayIntent[] intents) {
-		if (!token.startsWith("Bot "))
+		if (!token.startsWith("Bot ")) {
 			token = "Bot " + token;
+		}
+
 		super.login(token, intents);
-		application.setData(JSON.parseObject(api.get("/oauth2/applications/@me")));
+
+		CompletableFuture.runAsync(() -> {
+			final var applicationData = JSON.parseObject(api.get("/oauth2/applications/@me"));
+			application = new Application(this, applicationData);
+		});
 	}
 	
 }
