@@ -1,4 +1,4 @@
-package discord.structures;
+package discord.structures.payloads;
 
 import org.json.simple.JSONObject;
 

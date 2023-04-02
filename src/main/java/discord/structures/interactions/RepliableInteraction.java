@@ -3,8 +3,8 @@ package discord.structures.interactions;
 import java.util.concurrent.CompletableFuture;
 
 import discord.enums.InteractionCallbackType;
-import discord.structures.InteractionReplyMessagePayload;
 import discord.structures.embed.Embed;
+import discord.structures.payloads.InteractionReplyMessagePayload;
 
 public interface RepliableInteraction {
 

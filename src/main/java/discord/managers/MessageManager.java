@@ -4,8 +4,8 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.structures.Message;
-import discord.structures.MessagePayload;
 import discord.structures.channels.TextBasedChannel;
+import discord.structures.payloads.MessagePayload;
 import discord.util.DiscordObjectMap;
 import simple_json.JSON;
 import simple_json.JSONObject;

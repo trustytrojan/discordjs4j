@@ -123,6 +123,14 @@ public final class APIClient {
 		return _sendRequest(HttpMethod.POST, path, body);
 	}
 
+	public String put(String path, String body) {
+		return _sendRequest(HttpMethod.PUT, path, body);
+	}
+
+	public String patch(String path, String body) {
+		return _sendRequest(HttpMethod.PATCH, path, body);
+	}
+
 	public String delete(String path) {
 		return _sendRequest(HttpMethod.DELETE, path);
 	}

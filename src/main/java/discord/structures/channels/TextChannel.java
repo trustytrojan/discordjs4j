@@ -3,36 +3,25 @@ package discord.structures.channels;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import com.alibaba.fastjson2.JSONObject;
-
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.Guild;
+import simple_json.JSONObject;
 
 public class TextChannel implements GuildChannel, TextBasedChannel {
 
 	private final DiscordClient client;
-	public JSONObject data;
+	private JSONObject data;
+
 	private final MessageManager messages;
 
-	private Guild guild;
-	private final CompletableFuture<Void> _guild;
-	// private CategoryChannel parent;
-	// private final CompletableFuture<Void> _parent;
-
-	// data from Discord
-	// public Message last_message;
-	// //public ChannelFlags flags;
-	// public String topic;
-	// //public Long rate_limit_per_user;
+	public final Guild guild;
 
 	public TextChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
-		_guild = client.guilds.fetch(guildId()).thenAccept((guild) -> this.guild = guild);
-		// _parent = client.channels.fetch(parent_id()).thenAccept((channel) -> parent =
-		// channel);
+		guild = client.guilds.fetch(guildId());
 	}
 
 	@Override

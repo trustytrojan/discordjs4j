@@ -20,7 +20,7 @@ public enum ChannelType {
 		this.value = value;
 	}
 
-	public static ChannelType resolve(int value) {
+	public static ChannelType resolve(long value) {
 		for (final var x : ChannelType.values())
 			if (x.value == value)
 				return x;

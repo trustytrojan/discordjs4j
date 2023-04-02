@@ -4,13 +4,14 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.enums.ChannelType;
 import discord.structures.DiscordObject;
+import discord.structures.payloads.ChannelPayload;
 
 public interface Channel extends DiscordObject {
 
 	public String url();
 
 	default String mention() {
-		return "<#"+id()+'>';
+		return "<#" + id() + '>';
 	}
 
 	default String name() {
@@ -21,21 +22,12 @@ public interface Channel extends DiscordObject {
 		return ChannelType.resolve(getData().getLong("type"));
 	}
 
-	default CompletableFuture<Void> delete() {
-		return CompletableFuture.runAsync(() -> {
-			try {
-				final var client = client();
-				client.api.delete(api_path());
-				client.channels.cache.remove(id());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+	default CompletableFuture<Channel> edit(ChannelPayload payload) {
+		return client().channels.edit(id(), payload);
 	}
 
-	@Override
-	default String api_path() {
-		return "/channels/"+id();
+	default CompletableFuture<Void> delete() {
+		return client().channels.delete(id());
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.enums.CommandType;
 import discord.enums.InteractionCallbackType;
-import discord.structures.InteractionReplyMessagePayload;
+import discord.structures.payloads.InteractionReplyMessagePayload;
 import simple_json.JSONObject;
 
 public class ChatInputInteraction extends Interaction implements RepliableInteraction {

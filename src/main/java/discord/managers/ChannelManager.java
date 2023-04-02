@@ -3,10 +3,6 @@ package discord.managers;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-
-import discord.util.BetterMap;
 import discord.client.DiscordClient;
 import discord.enums.ChannelType;
 import discord.structures.channels.CategoryChannel;
@@ -15,11 +11,15 @@ import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.channels.TextChannel;
+import discord.structures.payloads.ChannelPayload;
+import discord.util.DiscordObjectMap;
+import simple_json.JSON;
+import simple_json.JSONObject;
 
 public class ChannelManager extends DataManager<Channel> {
 
 	public Channel createCorrectChannel(JSONObject data) {
-		final var type = ChannelType.resolve(data.getIntValue("type"));
+		final var type = ChannelType.resolve(data.getLong("type"));
 		return switch (type) {
 			case GuildText -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
@@ -35,8 +35,20 @@ public class ChannelManager extends DataManager<Channel> {
 	}
 
 	@Override
-	public Channel cacheNewObject(JSONObject data) {
-		return cacheObject(createCorrectChannel(data));
+	public Channel cacheNew(JSONObject data) {
+		return cache(createCorrectChannel(data));
+	}
+
+	public CompletableFuture<Channel> edit(String id, ChannelPayload payload) {
+		final var channelData = payload.toString();
+		return CompletableFuture.supplyAsync(() -> {
+			final var responseData = JSON.parseObject(client.api.patch("/channels/" + id, channelData));
+			return createCorrectChannel(responseData);
+		});
+	}
+
+	public CompletableFuture<Void> delete(String id) {
+		return CompletableFuture.runAsync(() -> client.api.delete("/channels/" + id));
 	}
 
 	@Override
@@ -44,12 +56,12 @@ public class ChannelManager extends DataManager<Channel> {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	public BetterMap<String, TextBasedChannel> fetchDMs() {
-		final var rawChannels = JSON.parseArray(client.api.get("/users/@me/channels"));
-		final var channels = new BetterMap<String, TextBasedChannel>();
+	public DiscordObjectMap<TextBasedChannel> fetchDMs() {
+		final var rawChannels = JSON.parseObjectArray(client.api.get("/users/@me/channels"));
+		final var channels = new DiscordObjectMap<TextBasedChannel>();
 		for (final var rawChannel : rawChannels) {
 			final var channel = (TextBasedChannel) cacheData((JSONObject) rawChannel);
-			channels.put(channel.id(), channel);
+			channels.put(channel);
 		}
 		return channels;
 	}
