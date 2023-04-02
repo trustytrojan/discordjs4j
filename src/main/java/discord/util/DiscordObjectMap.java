@@ -37,4 +37,8 @@ public class DiscordObjectMap<V extends DiscordObject> extends TreeMap<String, V
 		}
 	}
 
+	public V put(V value) {
+		return super.put(value.id(), value);
+	}
+
 }

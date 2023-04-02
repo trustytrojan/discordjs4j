@@ -6,7 +6,6 @@ import discord.managers.MessageManager;
 import discord.structures.Message;
 import discord.structures.MessagePayload;
 import discord.structures.embed.Embed;
-import discord.util.JSON;
 
 public interface TextBasedChannel extends Channel {
 

@@ -3,13 +3,13 @@ package discord.structures;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
 
 import discord.structures.embed.Embed;
-import discord.util.JSON;
-import discord.util.JSONable;
+import simple_json.JSONObject;
 
-public class MessagePayload implements JSONable {
+public class MessagePayload implements JSONAware {
 
 	private String content;
 	private String reply_to;
@@ -30,18 +30,24 @@ public class MessagePayload implements JSONable {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSONObject() {
+	public String toJSONString() {
 		final var obj = new JSONObject();
-		if (content != null)
+
+		if (content != null) {
 			obj.put("content", content);
-		if (reply_to != null)
-			obj.put("message_reference", JSON.objectFrom(
-				JSON.objectEntry("message_id", reply_to)
-			));
-		if (embeds.size() > 0)
-			obj.put("embeds", JSON.buildArray(embeds));
-		return obj;
+		}
+
+		if (reply_to != null) {
+			final var message_reference = new JSONObject();
+			message_reference.put("message_id", reply_to);
+			obj.put("message_reference", message_reference);
+		}
+
+		if (embeds.size() > 0) {
+			obj.put("embeds", (JSONArray) embeds);
+		}
+
+		return obj.toString();
 	}
 
 }
