@@ -8,7 +8,7 @@ public class UserDiscordClient extends DiscordClient {
 
 	public void login(String token, GatewayIntent[] intents) {
 		super.login(token, intents);
-		guilds.fetch().thenAccept((guilds) -> System.out.printf("[UserDiscordClient] Fetched %d guilds\n", guilds.size()));
+		guilds.fetchAsync().thenAccept((guilds) -> System.out.printf("[UserDiscordClient] Fetched %d guilds\n", guilds.size()));
 	}
 	
 }

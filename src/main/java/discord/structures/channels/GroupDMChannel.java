@@ -1,7 +1,6 @@
 package discord.structures.channels;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 import simple_json.JSONObject;
 import discord.client.DiscordClient;
@@ -15,44 +14,31 @@ public class GroupDMChannel implements DMBasedChannel {
 
 	private final MessageManager messages;
 
-	private final List<User> recipients = new ArrayList<>();
+	public final User[] recipients;
 
 	public GroupDMChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
-		setData(data);
+		this.data = data;
 		messages = new MessageManager(client, this);
-		updateRecipients(data.getObjectArray("recipients"));
+
+		final var recipients = new LinkedList<User>();
+		for (final var recipientData : data.getObjectArray("recipients")) {
+			recipients.add(client.users.fetch(recipientData.getString("id")));
+		}
+		this.recipients = (User[]) recipients.toArray();
 	}
 
 	public String icon() {
 		return data.getString("icon");
 	}
 
-	public String last_message_id() {
-		return data.getString("last_message_id");
-	}
-
-	public String owner_id() {
+	public String ownerId() {
 		return data.getString("owner_id");
 	}
 
-	public List<User> recipients() {
-		return recipients;
-	}
-
-	public void updateRecipients(List<BetterJSONObject> raw_recipients) {
-		for (final var raw_user : raw_recipients)
-			recipients.add(client.users.cache(raw_user));
-	}
-
 	@Override
-	public BetterJSONObject getData() {
+	public JSONObject getData() {
 		return data;
-	}
-
-	@Override
-	public void setData(BetterJSONObject data) {
-		this.data = data;
 	}
 
 	@Override

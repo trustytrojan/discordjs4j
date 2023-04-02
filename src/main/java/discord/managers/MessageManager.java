@@ -6,7 +6,7 @@ import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.payloads.MessagePayload;
-import discord.util.DiscordObjectMap;
+import discord.util.DiscordResourceMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -20,7 +20,7 @@ public class MessageManager extends DataManager<Message> {
 	}
 
 	@Override
-	public Message cacheNew(JSONObject data) {
+	public Message cache(JSONObject data) {
 		return cache(new Message(client, data));
 	}
 
@@ -43,14 +43,14 @@ public class MessageManager extends DataManager<Message> {
 		return super.fetch(id, "/channels/" + channel.id() + "/messages/" + id, force);
 	}
 
-	public DiscordObjectMap<Message> fetch() {
+	public DiscordResourceMap<Message> fetch() {
 		final var path = "/channels/" + channel.id() + "/messages";
-		final var data = JSON.parseObjectArray(client.api.get(path));
-		final var messages = new DiscordObjectMap<Message>();
-		for (final var obj : data) {
-			final var message = new Message(client, obj);
-			messages.put(message);
+		final var messages = new DiscordResourceMap<Message>();
+
+		for (final var messageData : JSON.parseObjectArray(client.api.get(path))) {
+			messages.put(new Message(client, messageData));
 		}
+
 		return messages;
 	}
 

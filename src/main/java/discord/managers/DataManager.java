@@ -1,6 +1,7 @@
 package discord.managers;
 
 import java.util.Iterator;
+import java.util.concurrent.CompletableFuture;
 
 import discord.util.DiscordResourceMap;
 import simple_json.JSON;
@@ -40,17 +41,19 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 		return t;
 	}
 
-	/**
-	 * Fetches the resource from 
-	 * 
-	 * @param id
-	 * @return
-	 */
 	public T fetch(String id) {
 		return fetch(id, false);
 	}
 
+	public CompletableFuture<T> fetchAsync(String id) {
+		return CompletableFuture.supplyAsync(() -> fetch(id, false));
+	}
+
 	abstract public T fetch(String id, boolean force);
+
+	public CompletableFuture<T> fetchAsync(String id, boolean force) {
+		return CompletableFuture.supplyAsync(() -> fetch(id, force));
+	}
 
 	protected T fetch(String id, String path, boolean force) {
 		if (!force) {

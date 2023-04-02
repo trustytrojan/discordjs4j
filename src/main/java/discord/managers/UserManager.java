@@ -13,7 +13,7 @@ public class UserManager extends DataManager<User> {
 	}
 
 	@Override
-	public User cacheNew(JSONObject data) {
+	public User cache(JSONObject data) {
 		return cache(new User(client, data));
 	}
 
@@ -25,7 +25,7 @@ public class UserManager extends DataManager<User> {
 	public ClientUser fetchMe() {
 		final var data = JSON.parseObject(client.api.get("/users/@me"));
 		final var me = new ClientUser(client, data);
-		cache.put(me.id(), me);
+		cache.put(me);
 		return me;
 	}
 	

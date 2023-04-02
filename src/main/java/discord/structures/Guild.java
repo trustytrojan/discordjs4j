@@ -3,6 +3,8 @@ package discord.structures;
 import discord.client.DiscordClient;
 import discord.managers.GuildChannelManager;
 import discord.structures.channels.TextChannel;
+import discord.util.CDN;
+import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
 public class Guild implements DiscordResource {
@@ -29,6 +31,18 @@ public class Guild implements DiscordResource {
 	public TextChannel systemChannel() {
 		return (TextChannel) client.channels.fetch(systemChannelId());
 	}
+
+	public final URLFactory icon = new URLFactory() {
+		@Override
+		public String hash() {
+			return data.getString("icon");
+		}
+
+		@Override
+		public String url(int size, String extension) {
+			return CDN.guildIcon(id(), hash(), size, extension);
+		}
+	};
 
 	@Override
 	public JSONObject getData() {

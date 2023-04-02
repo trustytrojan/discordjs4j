@@ -92,118 +92,114 @@ public final class GatewayClient extends WebSocketClient {
 
 	@Override
 	public void onMessage(String __) {
-		try {
-			final var obj = JSON.parseObject(__);
-			final var opcode = GatewayOpcode.resolve(obj.getLong("op"));
+		final var obj = JSON.parseObject(__);
+		final var opcode = GatewayOpcode.resolve(obj.getLong("op"));
 
-			switch (opcode) {
+		switch (opcode) {
 
-				case DISPATCH -> {
-					sequenceNumber = obj.getLong("s");
+			case DISPATCH -> {
+				sequenceNumber = obj.getLong("s");
 
-					final var t = obj.getString("t");
-					System.out.printf("[GatewayClient] Event received: %s\n", t);
+				final var t = obj.getString("t");
+				System.out.printf("[GatewayClient] Event received: %s\n", t);
 
-					final var gatewayEvent = GatewayEvent.valueOf(t);
-					if (gatewayEvent == null)
-						return;
+				final var gatewayEvent = GatewayEvent.valueOf(t);
+				if (gatewayEvent == null)
+					return;
 
-					switch (gatewayEvent) {
+				switch (gatewayEvent) {
 
-						case READY -> {
-							final var d = obj.getObject("d");
-							client.user = new ClientUser(client, d.getObject("user"));
-							client.users.cache(client.user);
-							client.ready.emit();
-						}
+					case READY -> {
+						final var d = obj.getObject("d");
+						client.user = new ClientUser(client, d.getObject("user"));
+						client.users.cache(client.user);
+						client.ready.emit();
+					}
 
-						case INTERACTION_CREATE -> ((BotDiscordClient) client).interactionCreate
-							.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
+					case INTERACTION_CREATE -> ((BotDiscordClient) client).interactionCreate
+						.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
 
-						case GUILD_AUDIT_LOG_ENTRY_CREATE ->
-							client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
+					case GUILD_AUDIT_LOG_ENTRY_CREATE ->
+						client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
 
-						case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
-						case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
-						case GUILD_DELETE -> {
-							final var id = obj.getObject("d").getString("id");
-							final var removed = client.guilds.cache.remove(id);
-							if (removed == null)
-								return;
-							client.guildDelete.emit(removed);
-						}
+					case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
+					case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
+					case GUILD_DELETE -> {
+						final var id = obj.getObject("d").getString("id");
+						final var removed = client.guilds.cache.remove(id);
+						if (removed == null)
+							return;
+						client.guildDelete.emit(removed);
+					}
 
-						case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
-						case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
-						case CHANNEL_DELETE -> {
-							final var id = obj.getObject("d").getString("id");
-							final var removed = client.channels.cache.remove(id);
-							if (removed == null)
-								return;
-							client.channelDelete.emit(removed);
-						}
+					case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
+					case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
+					case CHANNEL_DELETE -> {
+						final var id = obj.getObject("d").getString("id");
+						final var removed = client.channels.cache.remove(id);
+						if (removed == null)
+							return;
+						client.channelDelete.emit(removed);
+					}
 
-						case MESSAGE_CREATE -> {
-							final var message = new Message(client, obj.getObject("d"));
-							message.channel.messages().cache(message);
-							client.messageCreate.emit(message);
-						}
-						case MESSAGE_UPDATE -> {
-							final var d = obj.getObject("d");
-							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
-							final var message = channel.messages().cache(d);
-							client.messageUpdate.emit(message);
-						}
-						case MESSAGE_DELETE -> {
-							final var d = obj.getObject("d");
-							final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
-							final var message = channel.messages().cache.remove(d.getString("id"));
+					case MESSAGE_CREATE -> {
+						final var message = new Message(client, obj.getObject("d"));
+						message.channel.messages().cache(message);
+						client.messageCreate.emit(message);
+					}
+					case MESSAGE_UPDATE -> {
+						final var message = new Message(client, obj.getObject("d"));
+						message.channel.messages().cache(message);
+						client.messageUpdate.emit(message);
+					}
+					case MESSAGE_DELETE -> {
+						final var d = obj.getObject("d");
+						final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
+						final var message = channel.messages().cache.remove(d.getString("id"));
+						if (message != null) {
 							client.messageDelete.emit(message);
 						}
-
-						default -> {
-							final var dataString = obj.get("d").toString();
-							if (dataString.length() < 1000)
-								System.out.println(dataString);
-						}
-
 					}
+
+					default -> {
+						final var dataString = obj.get("d").toString();
+						if (dataString.length() < 1000)
+							System.out.println(dataString);
+					}
+
 				}
-
-				case HEARTBEAT_ACK -> {
-					ping = System.currentTimeMillis() - heartbeatSentAt;
-					System.out.printf("[GatewayClient] Heartbeat ACK received; Ping: %sms\n", ping);
-				}
-
-				case HELLO -> {
-					final var d = obj.getObject("d");
-
-					// Interval in milliseconds that Discord wants us to wait before
-					// sending another heartbeat.
-					final var heartbeat_interval = d.getLong("heartbeat_interval");
-
-					repeater.repeat(() -> {
-						System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
-						send(JSON.objectFrom(
-								JSON.objectEntry("op", GatewayOpcode.HEARTBEAT.value),
-								JSON.objectEntry("d", sequenceNumber)).toString());
-						heartbeatSentAt = System.currentTimeMillis();
-					}, heartbeat_interval);
-				}
-
-				default -> {
-				}
-
 			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+
+			case HEARTBEAT_ACK -> {
+				ping = System.currentTimeMillis() - heartbeatSentAt;
+				System.out.printf("[GatewayClient] Heartbeat ACK received; Ping: %sms\n", ping);
+			}
+
+			case HELLO -> {
+				final var d = obj.getObject("d");
+
+				// Interval in milliseconds that Discord wants us to wait before
+				// sending another heartbeat.
+				final var heartbeat_interval = d.getLong("heartbeat_interval");
+
+				repeater.repeat(() -> {
+					System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
+					final var heartbeat = new JSONObject();
+					heartbeat.put("op", GatewayOpcode.HEARTBEAT.value);
+					heartbeat.put("d", sequenceNumber);
+					send(heartbeat.toString());
+					heartbeatSentAt = System.currentTimeMillis();
+				}, heartbeat_interval);
+			}
+
+			default -> {}
+
 		}
 	}
 
 	@Override
 	public void onClose(int code, String reason, boolean remote) {
-		System.out.printf("[GatewayClient] Connection closed!\n  Code: %d\n  Reason: %s\n  Remote: %b\n", code, reason,
-				remote);
+		System.out.printf("[GatewayClient] Connection closed!\n  Code: %d\n  Reason: %s\n  Remote: %b\n", code, reason, remote);
 		System.exit(1);
 	}
 

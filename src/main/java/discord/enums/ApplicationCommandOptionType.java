@@ -1,6 +1,6 @@
 package discord.enums;
 
-public enum CommandOptionType {
+public enum ApplicationCommandOptionType {
 	Subcommand(1),
 	SubcommandGroup(2),
 	String(3),
@@ -13,14 +13,14 @@ public enum CommandOptionType {
 	Number(10),
 	Attachment(11);
 
-	public static CommandOptionType resolve(long value) {
-		for (final var x : CommandOptionType.values()) if (x.value == value) return x;
+	public static ApplicationCommandOptionType resolve(long value) {
+		for (final var x : ApplicationCommandOptionType.values()) if (x.value == value) return x;
 		return null;
 	}
 
 	public final int value;
 
-	private CommandOptionType(int value) {
+	private ApplicationCommandOptionType(int value) {
 		this.value = value;
 	}
 }

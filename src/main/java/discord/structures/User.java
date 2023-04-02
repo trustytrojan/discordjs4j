@@ -73,11 +73,6 @@ public class User implements DiscordResource, Mentionable {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
-		this.data = data;
-	}
-
-	@Override
 	public DiscordClient client() {
 		return client;
 	}

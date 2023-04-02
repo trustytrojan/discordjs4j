@@ -3,58 +3,54 @@ package discord.structures.embed;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONAware;
 
-import discord.util.JSON;
-import discord.util.JSONable;
 import discord.util.Util;
+import simple_json.JSONObject;
 
-public class Embed implements JSONable {
+public class Embed implements JSONAware {
 
 	private EmbedAuthor author;
-	private String title;
-	private String url;
-	private String description;
-	private List<EmbedField> fields = new ArrayList<>();
-	private String image;
 	private EmbedFooter footer;
-	private String thumbnail;
-	private Long color;
+
+	public String title;
+	public String url;
+	public String description;
+
+	public String imageURL;
+	public String thumbnailURL;
+
+	public Integer color;
+	
+	public List<EmbedField> fields = new ArrayList<>();
 
 	public void setColor(String hexColor) throws IllegalArgumentException {
-		color = (long)Util.resolveColor(hexColor);
+		color = Util.resolveColor(hexColor);
 	}
 
-	public void setColor(Long color) {
+	public void setColor(int color) {
 		this.color = color;
 	}
 
-	public void setAuthor(String name, String icon_url, String url) {
-		author = new EmbedAuthor(name, url, icon_url);
+	public void setAuthor(String name, String iconURL, String url) {
+		author = new EmbedAuthor(name, url, iconURL);
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setAuthor(String name, String iconURL) {
+		setAuthor(name, iconURL, null);
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setAuthor(String name) {
+		setAuthor(name, null);
+	}
+	
+	public void setFooter(String text, String iconURL) {
+		footer = new EmbedFooter(text, iconURL);
 	}
 
-	public void setURL(String url) {
-		this.url = url;
-	}
-
-	public void setImage(String url) {
-		image = url;
-	}
-
-	public void setThumbnail(String url) {
-		thumbnail = url;
-	}
-
-	public void setFooter(String text, String icon_url) {
-		footer = new EmbedFooter(text, icon_url);
+	public void setFooter(String text) {
+		setFooter(text, null);
 	}
 
 	public void addField(String name, String value, boolean inline) {
@@ -65,8 +61,8 @@ public class Embed implements JSONable {
 		addField(name, value, false);
 	}
 
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSONObject() {
+	@Override
+	public String toJSONString() {
 		final var obj = new JSONObject();
 
 		if (title != null) {
@@ -81,35 +77,35 @@ public class Embed implements JSONable {
 			obj.put("description", description);
 		}
 
-		if (this.image != null) {
+		if (imageURL != null) {
 			final var image = new JSONObject();
-			image.put("url", this.image);
+			image.put("url", imageURL);
 			obj.put("image", image);
 		}
 
-		if (this.thumbnail != null) {
+		if (thumbnailURL != null) {
 			final var thumbnail = new JSONObject();
-			thumbnail.put("url", this.thumbnail);
+			thumbnail.put("url", thumbnailURL);
 			obj.put("thumbnail", thumbnail);
 		}
 
 		if (author != null) {
-			obj.put("author", author.toJSONObject());
+			obj.put("author", author);
 		}
 
 		if (footer != null) {
-			obj.put("footer", footer.toJSONObject());
+			obj.put("footer", footer);
 		}
 
 		if (fields.size() > 0) {
-			obj.put("fields", JSON.buildArray(fields));
+			obj.put("fields", (JSONArray) fields);
 		}
 
 		if (color != null) {
 			obj.put("color", color);
 		}
 
-		return obj;
+		return obj.toString();
 	}
 
 }

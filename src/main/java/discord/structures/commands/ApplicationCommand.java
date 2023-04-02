@@ -1,23 +1,23 @@
 package discord.structures.commands;
 
-import discord.util.BetterJSONObject;
 import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
-import discord.enums.CommandType;
+import discord.enums.ApplicationCommandType;
 import discord.structures.DiscordResource;
+import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
 
-	private BetterJSONObject data;
+	private final JSONObject data;
 	private final BotDiscordClient client;
 
-	public ApplicationCommand(BotDiscordClient client, BetterJSONObject data) {
+	public ApplicationCommand(BotDiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 	}
 
-	public CommandType type() {
-		return CommandType.get(data.getLong("type"));
+	public ApplicationCommandType type() {
+		return ApplicationCommandType.get(data.getLong("type"));
 	}
 
 	public String name() {
@@ -29,23 +29,13 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	@Override
-	public BetterJSONObject getData() {
+	public JSONObject getData() {
 		return data;
-	}
-
-	@Override
-	public void setData(BetterJSONObject data) {
-		this.data = data;
 	}
 
 	@Override
 	public DiscordClient client() {
 		return client;
-	}
-
-	@Override
-	public String api_path() {
-		return String.format("/applications/%s/commands/%s", client.application.id(), id());
 	}
 
 }

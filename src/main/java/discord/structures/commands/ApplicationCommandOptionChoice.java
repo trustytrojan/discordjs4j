@@ -1,26 +1,20 @@
 package discord.structures.commands;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONAware;
 
-import discord.util.JSONable;
+import simple_json.JSONObject;
 
 /**
  * value should be one of String, Long, or Double
  */
-public record ApplicationCommandOptionChoice(String name, Object value) implements JSONable {
+public record ApplicationCommandOptionChoice(String name, Object value) implements JSONAware {
 
 	@Override
 	public String toJSONString() {
-		return toJSONObject().toJSONString();
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSONObject() {
 		final var obj = new JSONObject();
 		obj.put("name", name);
 		obj.put("value", value);
-		return obj;
+		return obj.toString();
 	}
 
 }

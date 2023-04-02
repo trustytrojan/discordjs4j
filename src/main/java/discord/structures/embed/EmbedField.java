@@ -1,23 +1,23 @@
 package discord.structures.embed;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONAware;
 
-import discord.util.JSONable;
+import simple_json.JSONObject;
 
-public record EmbedField(String name, String value, boolean inline) implements JSONable {
-
-	public EmbedField(String name, String value) {
-		this(name, value, false);
-	}
+record EmbedField(String name, String value, boolean inline) implements JSONAware {
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSONObject() {
+	public String toJSONString() {
 		final var obj = new JSONObject();
+		
 		obj.put("name", name);
 		obj.put("value", value);
-		obj.put("inline", inline);
-		return obj;
+
+		if (inline) {
+			obj.put("inline", inline);
+		}
+
+		return obj.toString();
 	}
 
 }

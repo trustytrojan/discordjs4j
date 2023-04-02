@@ -34,4 +34,8 @@ public class GuildManager extends DataManager<Guild> {
 		return guilds;
 	}
 
+	public CompletableFuture<DiscordResourceMap<Guild>> fetchAsync() {
+		return CompletableFuture.supplyAsync(this::fetch);
+	}
+
 }

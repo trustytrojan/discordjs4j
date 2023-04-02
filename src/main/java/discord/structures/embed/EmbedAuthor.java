@@ -1,19 +1,26 @@
 package discord.structures.embed;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONAware;
 
-import discord.util.JSONable;
+import simple_json.JSONObject;
 
-public record EmbedAuthor(String name, String url, String icon_url) implements JSONable {
+record EmbedAuthor(String name, String iconURL, String url) implements JSONAware {
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public JSONObject toJSONObject() {
+	public String toJSONString() {
 		final var obj = new JSONObject();
+
 		obj.put("name", name);
-		if (url != null) obj.put("url", url);
-		if (icon_url != null) obj.put("icon_url", icon_url);
-		return obj;
+
+		if (url != null) {
+			obj.put("url", url);
+		}
+
+		if (iconURL != null) {
+			obj.put("icon_url", iconURL);
+		}
+
+		return obj.toString();
 	}
 
 }

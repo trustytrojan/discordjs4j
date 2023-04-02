@@ -1,18 +1,18 @@
 package discord.enums;
 
-public enum CommandType {
+public enum ApplicationCommandType {
 	ChatInput(1),
 	Message(2),
 	User(3);
 
-	public static CommandType get(long value) {
-		for (final var x : CommandType.values()) if (x.value == value) return x;
+	public static ApplicationCommandType get(long value) {
+		for (final var x : ApplicationCommandType.values()) if (x.value == value) return x;
 		return null;
 	}
 
 	public final int value;
 
-	private CommandType(int value) {
+	private ApplicationCommandType(int value) {
 		this.value = value;
 	}
 

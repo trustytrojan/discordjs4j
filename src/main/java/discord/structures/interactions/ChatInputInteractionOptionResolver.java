@@ -1,15 +1,18 @@
 package discord.structures.interactions;
 
-import discord.util.BetterMap;
+import java.util.HashMap;
+
 import simple_json.JSONObject;
 
 public class ChatInputInteractionOptionResolver {
 
-	private final BetterMap<String, ChatInputInteractionOption> options = new BetterMap<>();
+	private final HashMap<String, ChatInputInteractionOption> options = new HashMap<>();
 	
-	public ChatInputInteractionOptionResolver(JSONObject[] raw_options) {
-		for (final var option : raw_options)
-			options.put(option.getString("name"), new ChatInputInteractionOption(option));
+	public ChatInputInteractionOptionResolver(JSONObject[] data) {
+		for (final var optionData : data) {
+			final var option = new ChatInputInteractionOption(optionData);
+			options.put(option.name, option);
+		}
 	}
 
 	public boolean none() {
@@ -25,27 +28,27 @@ public class ChatInputInteractionOptionResolver {
 	 * @return the name of the subcommand
 	 */
 	public ChatInputInteractionOption getSubcommand() {
-		return options.first();
+		return options.entrySet().iterator().next().getValue();
 	}
 
 	public String getString(String name) {
 		final var option = get(name);
-		return (option != null) ? (String)option.value : null;
+		return (option != null) ? ((String) option.value) : null;
 	}
 
-	public Long getInteger(String name) {
+	public Integer getInteger(String name) {
 		final var option = get(name);
-		return (option != null) ? (Long)option.value : null;
+		return (option != null) ? ((Integer) option.value) : null;
 	}
 
 	public Double getDouble(String name) {
 		final var option = get(name);
-		return (option != null) ? (Double)option.value : null;
+		return (option != null) ? ((Double) option.value) : null;
 	}
 
 	public Boolean getBoolean(String name) {
 		final var option = get(name);
-		return (option != null) ? (Boolean)option.value : null;
+		return (option != null) ? ((Boolean) option.value) : null;
 	}
 
 }

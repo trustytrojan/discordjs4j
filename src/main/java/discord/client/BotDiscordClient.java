@@ -3,7 +3,7 @@ package discord.client;
 import java.util.concurrent.CompletableFuture;
 
 import discord.enums.GatewayIntent;
-import discord.managers.CommandManager;
+import discord.managers.ApplicationCommandManager;
 import discord.structures.Application;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
@@ -17,7 +17,7 @@ public class BotDiscordClient extends DiscordClient {
 	 */
 	public Application application;
 
-	public final CommandManager commands = new CommandManager(this);
+	public ApplicationCommandManager commands = new ApplicationCommandManager(this);
 
 	public final Signal1<Interaction> interactionCreate = new Signal1<>();
 	public final Signal1<ChatInputInteraction> chatInputInteractionCreate = new Signal1<>();
