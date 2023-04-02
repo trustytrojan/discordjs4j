@@ -2,7 +2,7 @@ package discord.structures.payloads;
 
 public class InteractionReplyMessagePayload extends MessagePayload {
 
-	private Boolean ephemeral;
+	public Boolean ephemeral;
 	
 	public void setEphemeral(boolean ephemeral) {
 		this.ephemeral = ephemeral;

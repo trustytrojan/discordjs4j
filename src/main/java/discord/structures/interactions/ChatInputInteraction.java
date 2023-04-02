@@ -33,20 +33,17 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 		return ApplicationCommandType.get(innerData().getLong("type"));
 	}
 
-	@SuppressWarnings("unchecked")
 	public CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload) {
 		final var path = "/interactions/" + id() + '/' + token() + "/callback";
 		final var obj = new JSONObject();
+
 		obj.put("type", type.value);
-		if (payload != null)
-			obj.put("data", payload.toJSONObject());
-		return CompletableFuture.runAsync(() -> {
-			try {
-				client.api.post(path, obj.toJSONString());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+
+		if (payload != null) {
+			obj.put("data", payload);
+		}
+
+		return CompletableFuture.runAsync(() -> client.api.post(path, obj.toString()));
 	}
 
 }

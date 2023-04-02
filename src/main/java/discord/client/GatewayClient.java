@@ -55,15 +55,14 @@ public final class GatewayClient extends WebSocketClient {
 			System.exit(1);
 		}
 
-		send(
-			"""
+		final var str = """
 			{
 				"op": %d,
 				"d": {
 					"token": "%s",
 					"intents": %d,
 					"properties": {
-						"os": %s,
+						"os": "%s",
 						"browser": "discordjs4j",
 						"device": "discordjs4j"
 					}
@@ -73,8 +72,10 @@ public final class GatewayClient extends WebSocketClient {
 				GatewayOpcode.IDENTIFY.value,
 				token,
 				GatewayIntent.sum(intents),
-				System.getProperty("os.name"))
-		);
+				System.getProperty("os.name")
+			);
+
+		send(str);
 	}
 
 	@Override

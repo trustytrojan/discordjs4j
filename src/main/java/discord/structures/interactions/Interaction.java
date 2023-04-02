@@ -10,7 +10,7 @@ import simple_json.JSONObject;
 public class Interaction {
 
 	public static Interaction createCorrectInteraction(DiscordClient client, JSONObject data) {
-		return switch (InteractionType.resolve(data.getInt("type"))) {
+		return switch (InteractionType.resolve(data.getLong("type").intValue())) {
 			case ApplicationCommand -> new ChatInputInteraction(client, data);
 			default -> null;
 		};
@@ -26,15 +26,17 @@ public class Interaction {
 	protected Interaction(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
-		String user_id;
+
+		String userId;
 		if (inGuild()) {
-			user_id = data.getObject("member").getObject("user").getString("id");
+			userId = data.getObject("member").getObject("user").getString("id");
 			guild = client.guilds.fetch(guildId());
 		} else {
-			user_id = data.getObject("user").getString("id");
+			userId = data.getObject("user").getString("id");
 			guild = null;
 		}
-		user = client.users.fetch(user_id);
+
+		user = client.users.fetch(userId);
 		channel = (TextBasedChannel) client.channels.fetch(channelId());
 	}
 
@@ -47,7 +49,7 @@ public class Interaction {
 	}
 
 	public InteractionType type() {
-		return InteractionType.resolve(data.getInt("type"));
+		return InteractionType.resolve(data.getLong("type").intValue());
 	}
 
 	public String applicationId() {

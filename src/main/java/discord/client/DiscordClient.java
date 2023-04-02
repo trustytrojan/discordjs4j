@@ -32,7 +32,6 @@ public abstract class DiscordClient {
 	public final Signal1<Message> messageCreate = new Signal1<>();
 	public final Signal1<Message> messageUpdate = new Signal1<>();
 	public final Signal1<Message> messageDelete = new Signal1<>();
-	
 
 	public ClientUser user;
 

@@ -1,10 +1,14 @@
 package discord.managers;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import org.json.simple.JSONArray;
 
 import discord.client.BotDiscordClient;
 import discord.structures.commands.ApplicationCommand;
 import discord.structures.commands.ApplicationCommandPayload;
+import discord.util.DiscordResourceMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -39,6 +43,21 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 		return CompletableFuture.supplyAsync(() -> {
 			final var data = JSON.parseObject(client.api.post(commandsPath(), payload.toString()));
 			return cache(data);
+		});
+	}
+
+	public CompletableFuture<DiscordResourceMap<ApplicationCommand>> set(List<ApplicationCommandPayload> commands) {
+		final var dataToSend = commands.toString();
+		return CompletableFuture.supplyAsync(() -> {
+			final var responseData = JSON.parseObjectArray(client.api.put(commandsPath(), dataToSend));
+			final var commandsSet = new DiscordResourceMap<ApplicationCommand>();
+
+			for (final var commandData : responseData) {
+				final var command = new ApplicationCommand(client, commandData);
+				commandsSet.put(command);
+			}
+
+			return commandsSet;
 		});
 	}
 
