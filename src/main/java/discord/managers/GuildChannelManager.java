@@ -1,5 +1,7 @@
 package discord.managers;
 
+import java.util.concurrent.CompletableFuture;
+
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
@@ -24,6 +26,13 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 	@Override
 	public GuildChannel fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
+	}
+
+	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
+		return CompletableFuture.supplyAsync(() -> {
+			final var updatedChannelData = JSON.parseObject(client.api.patch("/channels/" + id, payload.toString()));
+			return (GuildChannel) client.channels.createCorrectChannel(updatedChannelData);
+		});
 	}
 
 	public DiscordResourceMap<GuildChannel> fetch() {

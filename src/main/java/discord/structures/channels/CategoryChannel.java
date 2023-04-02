@@ -18,6 +18,11 @@ public class CategoryChannel implements GuildChannel {
 	}
 
 	@Override
+	public Guild guild() {
+		return guild;
+	}
+
+	@Override
 	public JSONObject getData() {
 		return data;
 	}

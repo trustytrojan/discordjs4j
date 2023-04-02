@@ -1,6 +1,9 @@
 package discord.structures.channels;
 
+import org.json.simple.JSONAware;
+
 import discord.structures.GuildObject;
+import simple_json.JSONObject;
 
 public interface GuildChannel extends GuildObject, Channel {
 
@@ -21,6 +24,30 @@ public interface GuildChannel extends GuildObject, Channel {
 
 	default CategoryChannel parent() {
 		return (CategoryChannel) client().channels.fetch(parentId());
+	}
+
+	// https://discord.com/developers/docs/resources/channel#modify-channel
+	// subclasses MUST implement JSONAware
+	public abstract static class Payload implements JSONAware {
+		public String name;
+		public Integer position;
+		// permission overwrites
+
+		public JSONObject toJSONObject() {
+			final var obj = new JSONObject();
+
+			if (name != null) {
+				obj.put("name", name);
+			}
+
+			if (position != null) {
+				obj.put("position", position);
+			}
+
+			// overwrites
+			
+			return obj;
+		}
 	}
 
 }

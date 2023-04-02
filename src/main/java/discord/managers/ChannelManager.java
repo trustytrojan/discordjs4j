@@ -37,13 +37,7 @@ public class ChannelManager extends DataManager<Channel> {
 		return cache(createCorrectChannel(data));
 	}
 
-	public CompletableFuture<Channel> edit(String id, Channel.Payload payload) {
-		final var channelData = payload.toString();
-		return CompletableFuture.supplyAsync(() -> {
-			final var responseData = JSON.parseObject(client.api.patch("/channels/" + id, channelData));
-			return createCorrectChannel(responseData);
-		});
-	}
+	// edit group dm channels
 
 	public CompletableFuture<Void> delete(String id) {
 		return CompletableFuture.runAsync(() -> client.api.delete("/channels/" + id));

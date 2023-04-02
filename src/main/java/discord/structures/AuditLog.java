@@ -8,12 +8,12 @@ import discord.client.DiscordClient;
 
 public final class AuditLog {
 	
-	static class Change {
+	public static class Change {
 		public final String key;
 		public final Object oldValue;
 		public final Object newValue;
 	
-		Change(JSONObject data) {
+		private Change(JSONObject data) {
 			key = data.getString("key");
 			oldValue = data.get("old_value");
 			newValue = data.get("new_value");

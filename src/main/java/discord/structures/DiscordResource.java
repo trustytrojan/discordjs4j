@@ -7,6 +7,8 @@ public interface DiscordResource {
 
 	JSONObject getData();
 
+	void setData(JSONObject data);
+
 	DiscordClient client();
 
 	default String id() {

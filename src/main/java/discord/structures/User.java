@@ -20,6 +20,7 @@ public class User implements DiscordResource, Mentionable {
 		return mention();
 	}
 
+	@Override
 	public String mention() {
 		return "<@" + id() + '>';
 	}
@@ -70,6 +71,11 @@ public class User implements DiscordResource, Mentionable {
 	@Override
 	public JSONObject getData() {
 		return data;
+	}
+
+	@Override
+	public void setData(JSONObject data) {
+		
 	}
 
 	@Override

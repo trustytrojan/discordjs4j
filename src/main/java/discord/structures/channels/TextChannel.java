@@ -5,7 +5,7 @@ import discord.managers.MessageManager;
 import discord.structures.Guild;
 import simple_json.JSONObject;
 
-public class TextChannel implements GuildChannel, TextBasedChannel {
+public class TextChannel implements GuildTextBasedChannel {
 
 	private final DiscordClient client;
 	private JSONObject data;
@@ -42,6 +42,11 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	@Override
 	public MessageManager messages() {
 		return messages;
+	}
+
+	@Override
+	public Guild guild() {
+		return guild;
 	}
 
 }

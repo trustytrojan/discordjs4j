@@ -188,11 +188,11 @@ public final class Gateway {
                     final var t = obj.getString("t");
                     System.out.printf("[GatewayClient] Event received: %s\n", t);
     
-                    final var gatewayEvent = Event.valueOf(t);
-                    if (gatewayEvent == null)
+                    final var event = Event.valueOf(t);
+                    if (event == null)
                         return;
     
-                    switch (gatewayEvent) {
+                    switch (event) {
     
                         case READY -> {
                             final var d = obj.getObject("d");

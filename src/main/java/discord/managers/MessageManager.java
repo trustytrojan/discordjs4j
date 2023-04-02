@@ -23,30 +23,41 @@ public class MessageManager extends DataManager<Message> {
 		return cache(new Message(client, data));
 	}
 
+	private String messagesPath() {
+		return "/channels/" + channel.id() + "/messages";
+	}
+
+	private String messagesPath(String id) {
+		return messagesPath() + '/' + id;
+	}
+
 	public CompletableFuture<Message> create(Message.Payload payload) {
-		final var path = "/channels/" + channel.id() + "/messages";
-		final var messageData = payload.toJSONString();
 		return CompletableFuture.supplyAsync(() -> {
-			final var responseData = client.api.post(path, messageData);
-			return new Message(client, JSON.parseObject(responseData));
+			final var createdMessageData = client.api.post(messagesPath(), payload.toString());
+			return new Message(client, JSON.parseObject(createdMessageData));
+		});
+	}
+
+	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
+		return CompletableFuture.supplyAsync(() -> {
+			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toString());
+			return new Message(client, JSON.parseObject(updatedMessageData));
 		});
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		final var path = "/channels/" + channel.id() + "/messages/" + id;
-		return CompletableFuture.runAsync(() -> client.api.delete(path));
+		return CompletableFuture.runAsync(() -> client.api.delete(messagesPath(id)));
 	}
 
 	@Override
 	public Message fetch(String id, boolean force) {
-		return super.fetch(id, "/channels/" + channel.id() + "/messages/" + id, force);
+		return super.fetch(id, messagesPath(id), force);
 	}
 
 	public DiscordResourceMap<Message> fetch() {
-		final var path = "/channels/" + channel.id() + "/messages";
 		final var messages = new DiscordResourceMap<Message>();
 
-		for (final var messageData : JSON.parseObjectArray(client.api.get(path))) {
+		for (final var messageData : JSON.parseObjectArray(client.api.get(messagesPath()))) {
 			messages.put(new Message(client, messageData));
 		}
 
