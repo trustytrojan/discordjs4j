@@ -113,6 +113,9 @@ public class Application implements DiscordResource {
 				}
 			}
 	
+			/**
+			 * {@code value} should be either a {@code String} or a {@code Number}.
+			 */
 			public static record Choice(String name, Object value) implements JSONAware {
 				@Override
 				public String toJSONString() {
