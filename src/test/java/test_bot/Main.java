@@ -1,18 +1,18 @@
 package test_bot;
 
-import discord.client.BotDiscordClient;
-import discord.enums.GatewayIntent;
+import discord.client.DiscordClient;
+import discord.client.Gateway;
 import discord.util.Util;
 
 public class Main {
 
 	public static void main(String[] __) {
-		final var client = new BotDiscordClient();
+		final var client = new DiscordClient.Bot();
 
-		final GatewayIntent[] intents = {
-			GatewayIntent.DirectMessages,
-			GatewayIntent.GuildMessages,
-			GatewayIntent.MessageContent
+		final Gateway.Intent[] intents = {
+			Gateway.Intent.DIRECT_MESSAGES,
+			Gateway.Intent.GUILD_MESSAGES,
+			Gateway.Intent.MESSAGE_CONTENT
 		};
 
 		client.ready.connect(() -> System.out.println("Logged in as " + client.user.tag() + '!'));

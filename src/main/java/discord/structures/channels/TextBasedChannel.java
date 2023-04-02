@@ -3,8 +3,8 @@ package discord.structures.channels;
 import java.util.concurrent.CompletableFuture;
 
 import discord.managers.MessageManager;
+import discord.structures.Embed;
 import discord.structures.Message;
-import discord.structures.embed.Embed;
 import discord.structures.payloads.MessagePayload;
 
 public interface TextBasedChannel extends Channel {

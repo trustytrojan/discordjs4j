@@ -3,27 +3,24 @@ package discord.managers;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.json.simple.JSONArray;
-
-import discord.client.BotDiscordClient;
-import discord.structures.commands.ApplicationCommand;
-import discord.structures.commands.ApplicationCommandPayload;
+import discord.structures.Application.Command;
+import discord.client.DiscordClient;
 import discord.util.DiscordResourceMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
-public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
+public class CommandManager extends DataManager<Command> {
 
-	private final BotDiscordClient client;
+	private final DiscordClient.Bot client;
 
-	public ApplicationCommandManager(BotDiscordClient client) {
+	public CommandManager(DiscordClient.Bot client) {
 		super(client);
 		this.client = client;
 	}
 
-	@Override
-	public ApplicationCommand cache(JSONObject data) {
-		return cache(new ApplicationCommand(client, data));
+    @Override
+	public Command cache(JSONObject data) {
+		return cache(new Command(client, data));
 	}
 
 	private String commandsPath() {
@@ -35,25 +32,25 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 	}
 
 	@Override
-	public ApplicationCommand fetch(String id, boolean force) {
+	public Command fetch(String id, boolean force) {
 		return super.fetch(id, commandsPath(id), force);
 	}
 
-	public CompletableFuture<ApplicationCommand> create(ApplicationCommandPayload payload) {
+	public CompletableFuture<Command> create(Command.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
 			final var data = JSON.parseObject(client.api.post(commandsPath(), payload.toString()));
 			return cache(data);
 		});
 	}
 
-	public CompletableFuture<DiscordResourceMap<ApplicationCommand>> set(List<ApplicationCommandPayload> commands) {
+	public CompletableFuture<DiscordResourceMap<Command>> set(List<Command.Payload> commands) {
 		final var dataToSend = commands.toString();
 		return CompletableFuture.supplyAsync(() -> {
 			final var responseData = JSON.parseObjectArray(client.api.put(commandsPath(), dataToSend));
-			final var commandsSet = new DiscordResourceMap<ApplicationCommand>();
+			final var commandsSet = new DiscordResourceMap<Command>();
 
 			for (final var commandData : responseData) {
-				final var command = new ApplicationCommand(client, commandData);
+				final var command = new Command(client, commandData);
 				commandsSet.put(command);
 			}
 

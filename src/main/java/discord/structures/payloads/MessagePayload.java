@@ -7,7 +7,7 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 
-import discord.structures.embed.Embed;
+import discord.structures.Embed;
 import simple_json.JSONObject;
 
 public class MessagePayload implements JSONAware {

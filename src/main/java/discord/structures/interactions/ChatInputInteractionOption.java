@@ -1,17 +1,17 @@
 package discord.structures.interactions;
 
-import discord.enums.ApplicationCommandOptionType;
+import discord.structures.Application.Command;
 import simple_json.JSONObject;
 
 public class ChatInputInteractionOption {
 	
-	public final ApplicationCommandOptionType type;
+	public final Command.Option.Type type;
 	public final String name;
 	public final Object value;
 	public final ChatInputInteractionOptionResolver options;
 
 	public ChatInputInteractionOption(JSONObject data) {
-		type = ApplicationCommandOptionType.resolve(data.getLong("type"));
+		type = Command.Option.Type.resolve(data.getLong("type"));
 		name = data.getString("name");
 		value = data.get("value");
 

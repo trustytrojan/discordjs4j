@@ -1,4 +1,4 @@
-package discord.structures.embed;
+package discord.structures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,30 +11,73 @@ import simple_json.JSONObject;
 
 public class Embed implements JSONAware {
 
-	private EmbedAuthor author;
-	private EmbedFooter footer;
+	private static record Author(String name, String iconURL, String url) implements JSONAware {
+		@Override
+		public String toJSONString() {
+			final var obj = new JSONObject();
+	
+			obj.put("name", name);
+	
+			if (url != null) {
+				obj.put("url", url);
+			}
+	
+			if (iconURL != null) {
+				obj.put("icon_url", iconURL);
+			}
+	
+			return obj.toString();
+		}
+	}
+
+	private static record Field(String name, String value, boolean inline) implements JSONAware {
+		@Override
+		public String toJSONString() {
+			final var obj = new JSONObject();
+			
+			obj.put("name", name);
+			obj.put("value", value);
+	
+			if (inline) {
+				obj.put("inline", inline);
+			}
+	
+			return obj.toString();
+		}
+	}
+	
+	private static record Footer(String text, String iconURL) implements JSONAware {
+		@Override
+		public String toJSONString() {
+			final var obj = new JSONObject();
+	
+			obj.put("text", text);
+	
+			if (iconURL != null) {
+				obj.put("icon_url", iconURL);
+			}
+	
+			return obj.toString();
+		}
+	}
+	
+	private Author author;
+	private Footer footer;
+	private List<Field> fields = new ArrayList<>();
 
 	public String title;
 	public String url;
 	public String description;
-
 	public String imageURL;
 	public String thumbnailURL;
-
 	public Integer color;
 	
-	public List<EmbedField> fields = new ArrayList<>();
-
 	public void setColor(String hexColor) throws IllegalArgumentException {
 		color = Util.resolveColor(hexColor);
 	}
 
-	public void setColor(int color) {
-		this.color = color;
-	}
-
 	public void setAuthor(String name, String iconURL, String url) {
-		author = new EmbedAuthor(name, url, iconURL);
+		author = new Author(name, url, iconURL);
 	}
 
 	public void setAuthor(String name, String iconURL) {
@@ -46,7 +89,7 @@ public class Embed implements JSONAware {
 	}
 	
 	public void setFooter(String text, String iconURL) {
-		footer = new EmbedFooter(text, iconURL);
+		footer = new Footer(text, iconURL);
 	}
 
 	public void setFooter(String text) {
@@ -54,7 +97,7 @@ public class Embed implements JSONAware {
 	}
 
 	public void addField(String name, String value, boolean inline) {
-		fields.add(new EmbedField(name, value, inline));
+		fields.add(new Field(name, value, inline));
 	}
 
 	public void addField(String name, String value) {

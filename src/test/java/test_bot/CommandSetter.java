@@ -1,36 +1,32 @@
 package test_bot;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.json.simple.JSONArray;
 
-import discord.client.BotDiscordClient;
-import discord.enums.ApplicationCommandOptionType;
-import discord.managers.ApplicationCommandManager;
-import discord.structures.commands.ApplicationCommandOptionPayload;
-import discord.structures.commands.ApplicationCommandPayload;
+import discord.client.DiscordClient;
+import discord.managers.CommandManager;
+import discord.structures.Application.Command;
 import discord.util.Util;
 
 public class CommandSetter {
 
-	public static List<ApplicationCommandPayload> getCommands() {
+	public static List<Command.Payload> getCommands() {
 		final var commands = new JSONArray();
-		var command = new ApplicationCommandPayload("test_string", "testing string option");
-		command.options.add(new ApplicationCommandOptionPayload(ApplicationCommandOptionType.String, "string", "enter string"));
+		var command = new Command.Payload("test_string", "testing string option");
+		command.options.add(new Command.Option.Payload(Command.Option.Type.STRING, "string", "enter string"));
 		commands.add(command);
-		command = new ApplicationCommandPayload("test_2_integers", "this has 2 integer options, one required");
-		command.options.add(new ApplicationCommandOptionPayload(ApplicationCommandOptionType.Integer, "int1", "enter integer 1", true));
-		command.options.add(new ApplicationCommandOptionPayload(ApplicationCommandOptionType.Integer, "int2", "enter integer 2"));
+		command = new Command.Payload("test_2_integers", "this has 2 integer options, one required");
+		command.options.add(new Command.Option.Payload(Command.Option.Type.INTEGER, "int1", "enter integer 1", true));
+		command.options.add(new Command.Option.Payload(Command.Option.Type.INTEGER, "int2", "enter integer 2"));
 		commands.add(command);
 		return commands;
 	}
 	
 	public static void main(String[] __) {
-		final var client = new BotDiscordClient();
+		final var client = new DiscordClient.Bot();
 		client.api.setToken(Util.readFile("./token"));
-		client.commands = new ApplicationCommandManager(client);
+		client.commands = new CommandManager(client);
 		client.commands.set(getCommands()).thenAccept(System.out::println);
 	}
 

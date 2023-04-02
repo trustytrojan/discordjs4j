@@ -3,7 +3,7 @@ package discord.structures.interactions;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.enums.ApplicationCommandType;
+import discord.structures.Application.Command;
 import discord.enums.InteractionCallbackType;
 import discord.structures.payloads.InteractionReplyMessagePayload;
 import simple_json.JSONObject;
@@ -29,8 +29,8 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 		return innerData().getString("name");
 	}
 
-	public ApplicationCommandType commandType() {
-		return ApplicationCommandType.get(innerData().getLong("type"));
+	public Command.Type commandType() {
+		return Command.Type.resolve(innerData().getLong("type"));
 	}
 
 	public CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload) {
