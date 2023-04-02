@@ -7,6 +7,8 @@ import java.util.HashMap;
 import discord.client.DiscordClient;
 
 public final class AuditLog {
+
+	private AuditLog() {}
 	
 	public static class Change {
 		public final String key;
@@ -20,20 +22,22 @@ public final class AuditLog {
 		}
 	}
 
-	public static class Entry implements DiscordResource {
-		private final DiscordClient client;
-		private final JSONObject data;
-	
+	public static class Entry implements Identifiable {
+		public final String id;
 		public final User executor;
 		public final Guild guild;
+		public final Event actionType;
+		public final String targetId;
+		public final String reason;
 		public final HashMap<String, Change> changes = new HashMap<>();
 	
-		public Entry(DiscordClient client, JSONObject data) {
-			this.client = client;
-			this.data = data;
-	
-			guild = client.guilds.fetch(guildId());
-			executor = client.users.fetch(executorId());
+		public Entry(DiscordClient client, JSONObject data) {	
+			id = data.getString("id");
+			guild = client.guilds.fetch(data.getString("guild_id"));
+			executor = client.users.fetch(data.getString("user_id"));
+			targetId = data.getString("target_id");
+			reason = data.getString("reason");
+			actionType = Event.resolve(data.getLong("action_type"));
 	
 			for (final var changeData : data.getObjectArray("changes")) {
 				final var change = new Change(changeData);
@@ -41,32 +45,9 @@ public final class AuditLog {
 			}
 		}
 	
-		public String guildId() {
-			return data.getString("guild_id");
-		}
-	
-		public String executorId() {
-			return data.getString("user_id");
-		}
-	
-		public String targetId() {
-			return data.getString("target_id");
-		}
-	
-		public String reason() {
-			return data.getString("reason");
-		}
-	
-		public Event actionType() {
-			return Event.resolve(data.getLong("action_type"));
-		}
-	
-		public DiscordClient client() {
-			return client;
-		}
-	
-		public JSONObject getData() {
-			return data;
+		@Override
+		public String id() {
+			return id;
 		}
 	}	
 

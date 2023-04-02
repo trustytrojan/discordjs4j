@@ -13,7 +13,7 @@ import simple_json.JSONObject;
 public class Message implements DiscordResource {
 
 	private final DiscordClient client;
-	private final JSONObject data;
+	private JSONObject data;
 	
 	public final User author;
 	public final TextBasedChannel channel;
@@ -21,32 +21,22 @@ public class Message implements DiscordResource {
 	public Message(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
-		author = client.users.fetch(authorId());
-		channel = (TextBasedChannel) client.channels.fetch(channelId());
-	}
 
-	public String channelId() {
-		return data.getString("channel_id");
-	}
-
-	public String authorId() {
-		return data.getObject("author").getString("id");
+		author = client.users.fetch(data.getObject("author").getString("id"));
+		channel = (TextBasedChannel) client.channels.fetch(data.getString("channel_id"));
 	}
 
 	public String content() {
 		return data.getString("content");
 	}
 
-	public Boolean isTTS() {
-		return data.getBoolean("tts");
-	}
-
-	public Boolean mentionsEveryone() {
-		return data.getBoolean("mention_everyone");
-	}
-
 	public Boolean isPinned() {
 		return data.getBoolean("pinned");
+	}
+
+	@Override
+	public DiscordClient client() {
+		return client;
 	}
 
 	@Override
@@ -55,8 +45,8 @@ public class Message implements DiscordResource {
 	}
 
 	@Override
-	public DiscordClient client() {
-		return client;
+	public void setData(JSONObject data) {
+		this.data = data;
 	}
 
 	public static class Payload implements JSONAware {

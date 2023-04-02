@@ -10,7 +10,7 @@ import discord.structures.User;
 public class GroupDMChannel implements DMBasedChannel {
 
 	private final DiscordClient client;
-	private final JSONObject data;
+	private JSONObject data;
 
 	private final MessageManager messages;
 
@@ -39,6 +39,11 @@ public class GroupDMChannel implements DMBasedChannel {
 	@Override
 	public JSONObject getData() {
 		return data;
+	}
+
+	@Override
+	public void setData(JSONObject data) {
+		this.data = data;
 	}
 
 	@Override

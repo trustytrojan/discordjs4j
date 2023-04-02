@@ -7,7 +7,7 @@ import simple_json.JSONObject;
 public class VoiceChannel implements GuildChannel {
 
 	private final DiscordClient client;
-	private final JSONObject data;
+	private JSONObject data;
 
 	public final Guild guild;
 
@@ -25,6 +25,11 @@ public class VoiceChannel implements GuildChannel {
 	@Override
 	public JSONObject getData() {
 		return data;
+	}
+
+	@Override
+	public void setData(JSONObject data) {
+		this.data = data;
 	}
 
 	@Override

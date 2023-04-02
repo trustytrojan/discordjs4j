@@ -6,9 +6,9 @@ import java.util.Random;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
-import discord.structures.DiscordResource;
+import discord.structures.Identifiable;
 
-public class DiscordResourceMap<V extends DiscordResource> extends TreeMap<String, V> implements Iterable<V> {
+public class IdMap<V extends Identifiable> extends TreeMap<String, V> implements Iterable<V> {
 
 	private static final Random rand = new Random();
 

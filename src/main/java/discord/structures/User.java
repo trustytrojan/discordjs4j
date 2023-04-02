@@ -16,11 +16,6 @@ public class User implements DiscordResource, Mentionable {
 	}
 
 	@Override
-	public String toString() {
-		return mention();
-	}
-
-	@Override
 	public String mention() {
 		return "<@" + id() + '>';
 	}

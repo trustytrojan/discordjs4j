@@ -26,12 +26,4 @@ public interface TextBasedChannel extends Channel {
 		return messages().create(payload);
 	}
 
-	default String lastMessageId() {
-		return getData().getString("last_message_id");
-	}
-
-	default Message lastMessage() {
-		return messages().fetch(lastMessageId());
-	}
-
 }

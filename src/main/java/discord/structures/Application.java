@@ -11,7 +11,7 @@ import simple_json.JSONObject;
 public class Application implements DiscordResource {
 
 	private final DiscordClient client;
-	private final JSONObject data;
+	private JSONObject data;
 
 	public Application(DiscordClient client, JSONObject data) {
 		this.client = client;
@@ -33,19 +33,24 @@ public class Application implements DiscordResource {
 	// https://discord.com/developers/docs/resources/application
 
 	@Override
+	public DiscordClient client() {
+		return client;
+	}
+	
+	@Override
 	public JSONObject getData() {
 		return data;
 	}
 
 	@Override
-	public DiscordClient client() {
-		return client;
+	public void setData(JSONObject data) {
+		this.data = data;
 	}
 
 	public static class Command implements DiscordResource {
 
-		private final JSONObject data;
 		private final DiscordClient.Bot client;
+		private JSONObject data;
 	
 		public Command(DiscordClient.Bot client, JSONObject data) {
 			this.client = client;
@@ -65,13 +70,18 @@ public class Application implements DiscordResource {
 		}
 	
 		@Override
+		public DiscordClient client() {
+			return client;
+		}
+
+		@Override
 		public JSONObject getData() {
 			return data;
 		}
-	
+
 		@Override
-		public DiscordClient client() {
-			return client;
+		public void setData(JSONObject data) {
+			this.data = data;
 		}
 		
 		public static class Option {

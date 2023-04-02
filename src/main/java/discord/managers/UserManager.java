@@ -13,8 +13,8 @@ public class UserManager extends DataManager<User> {
 	}
 
 	@Override
-	public User cache(JSONObject data) {
-		return cache(new User(client, data));
+	public User construct(JSONObject data) {
+		return new User(client, data);
 	}
 
 	@Override

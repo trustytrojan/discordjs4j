@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
-import discord.util.DiscordResourceMap;
+import discord.util.IdMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -19,8 +19,8 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 	}
 
 	@Override
-	public GuildChannel cache(JSONObject data) {
-		return cache((GuildChannel) client.channels.createCorrectChannel(data));
+	public GuildChannel construct(JSONObject data) {
+		return (GuildChannel) client.channels.createCorrectChannel(data);
 	}
 
 	@Override
@@ -35,9 +35,9 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 		});
 	}
 
-	public DiscordResourceMap<GuildChannel> fetch() {
+	public IdMap<GuildChannel> fetch() {
 		final var path = "/guilds/" + guild.id() + "/channels";
-		final var channels = new DiscordResourceMap<GuildChannel>();
+		final var channels = new IdMap<GuildChannel>();
 
 		for (final var channelData : JSON.parseObjectArray(client.api.get(path))) {
 			channels.put((GuildChannel) cache(channelData));

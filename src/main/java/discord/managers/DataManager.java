@@ -3,7 +3,7 @@ package discord.managers;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 
-import discord.util.DiscordResourceMap;
+import discord.util.IdMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 import discord.client.DiscordClient;
@@ -11,7 +11,7 @@ import discord.structures.DiscordResource;
 
 public abstract class DataManager<T extends DiscordResource> implements Iterable<T> {
 
-	public final DiscordResourceMap<T> cache = new DiscordResourceMap<>();
+	public final IdMap<T> cache = new IdMap<>();
 	protected final DiscordClient client;
 
 	protected DataManager(DiscordClient client) {
@@ -22,23 +22,15 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 		return cache.iterator();
 	}
 
-	/**
-	 * Constructs the {@code DiscordObject}, then caches it.
-	 * 
-	 * @param data The data to construct the {@code DiscordObject} with
-	 * @return The cached {@code DiscordObject}
-	 */
-	public abstract T cache(JSONObject data);
+	public abstract T construct(JSONObject data);
 
-	/**
-	 * Caches {@code t}, then returns it.
-	 * 
-	 * @param t The {@code DiscordObject} to cache
-	 * @return {@code t}
-	 */
-	public T cache(T t) {
-		cache.put(t.id(), t);
-		return t;
+	public T cache(JSONObject data) {
+		final var cached = cache.get(data.getString("id"));
+		if (cached == null) {
+			cache.put(construct(data));
+		}
+		cached.setData(data);
+		return cached;
 	}
 
 	public T fetch(String id) {
@@ -49,7 +41,7 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 		return CompletableFuture.supplyAsync(() -> fetch(id, false));
 	}
 
-	abstract public T fetch(String id, boolean force);
+	public abstract T fetch(String id, boolean force);
 
 	public CompletableFuture<T> fetchAsync(String id, boolean force) {
 		return CompletableFuture.supplyAsync(() -> fetch(id, force));

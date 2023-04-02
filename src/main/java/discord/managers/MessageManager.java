@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
-import discord.util.DiscordResourceMap;
+import discord.util.IdMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -17,10 +17,10 @@ public class MessageManager extends DataManager<Message> {
 		super(client);
 		this.channel = channel;
 	}
-
+	
 	@Override
-	public Message cache(JSONObject data) {
-		return cache(new Message(client, data));
+	public Message construct(JSONObject data) {
+		return new Message(client, data);
 	}
 
 	private String messagesPath() {
@@ -54,8 +54,8 @@ public class MessageManager extends DataManager<Message> {
 		return super.fetch(id, messagesPath(id), force);
 	}
 
-	public DiscordResourceMap<Message> fetch() {
-		final var messages = new DiscordResourceMap<Message>();
+	public IdMap<Message> fetch() {
+		final var messages = new IdMap<Message>();
 
 		for (final var messageData : JSON.parseObjectArray(client.api.get(messagesPath()))) {
 			messages.put(new Message(client, messageData));

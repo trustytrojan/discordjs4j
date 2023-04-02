@@ -189,15 +189,15 @@ public final class Gateway {
                     System.out.printf("[GatewayClient] Event received: %s\n", t);
     
                     final var event = Event.valueOf(t);
-                    if (event == null)
+                    if (event == null) {
                         return;
+                    }
     
                     switch (event) {
     
                         case READY -> {
-                            final var d = obj.getObject("d");
-                            client.user = new ClientUser(client, d.getObject("user"));
-                            client.users.cache(client.user);
+                            client.user = new ClientUser(client, obj.getObject("d").getObject("user"));
+                            client.users.cache.put(client.user);
                             client.ready.emit();
                         }
     
@@ -229,12 +229,12 @@ public final class Gateway {
     
                         case MESSAGE_CREATE -> {
                             final var message = new Message(client, obj.getObject("d"));
-                            message.channel.messages().cache(message);
+                            message.channel.messages().cache.put(message);
                             client.messageCreate.emit(message);
                         }
                         case MESSAGE_UPDATE -> {
                             final var message = new Message(client, obj.getObject("d"));
-                            message.channel.messages().cache(message);
+                            message.channel.messages().cache.put(message);
                             client.messageUpdate.emit(message);
                         }
                         case MESSAGE_DELETE -> {

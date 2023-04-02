@@ -10,7 +10,7 @@ public class TextChannel implements GuildTextBasedChannel {
 	private final DiscordClient client;
 	private JSONObject data;
 
-	private final MessageManager messages;
+	public final MessageManager messages;
 
 	public final Guild guild;
 
@@ -32,6 +32,11 @@ public class TextChannel implements GuildTextBasedChannel {
 	@Override
 	public JSONObject getData() {
 		return data;
+	}
+
+	@Override
+	public void setData(JSONObject data) {
+		this.data = data;
 	}
 
 	@Override

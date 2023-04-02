@@ -10,7 +10,7 @@ import discord.structures.channels.DMBasedChannel;
 import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextChannel;
-import discord.util.DiscordResourceMap;
+import discord.util.IdMap;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -33,8 +33,8 @@ public class ChannelManager extends DataManager<Channel> {
 	}
 
 	@Override
-	public Channel cache(JSONObject data) {
-		return cache(createCorrectChannel(data));
+	public Channel construct(JSONObject data) {
+		return createCorrectChannel(data);
 	}
 
 	// edit group dm channels
@@ -48,8 +48,8 @@ public class ChannelManager extends DataManager<Channel> {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	public DiscordResourceMap<DMBasedChannel> fetchDMs() {
-		final var channels = new DiscordResourceMap<DMBasedChannel>();
+	public IdMap<DMBasedChannel> fetchDMs() {
+		final var channels = new IdMap<DMBasedChannel>();
 
 		for (final var rawChannel : JSON.parseObjectArray(client.api.get("/users/@me/channels"))) {
 			final var channel = (DMBasedChannel) cache((JSONObject) rawChannel);

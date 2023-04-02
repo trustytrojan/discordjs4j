@@ -10,7 +10,7 @@ import simple_json.JSONObject;
 public class Guild implements DiscordResource {
 
 	private final DiscordClient client;
-	private final JSONObject data;
+	private JSONObject data;
 
 	public final GuildChannelManager channels;
 
@@ -52,6 +52,11 @@ public class Guild implements DiscordResource {
 	@Override
 	public DiscordClient client() {
 		return client;
+	}
+
+	@Override
+	public void setData(JSONObject data) {
+		this.data = data;
 	}
 
 }
