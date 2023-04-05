@@ -1,8 +1,8 @@
 package discord.structures;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 
 import discord.client.DiscordClient;
@@ -133,7 +133,7 @@ public class Application implements DiscordResource {
 				public String name;
 				public String description;
 				public boolean required;
-				public final ArrayList<Choice> choices = new ArrayList<>();
+				public final List<Choice> choices = new LinkedList<>();
 			
 				public Payload(Type type, String name, String description, boolean required) {
 					this.type = type;
@@ -159,7 +159,7 @@ public class Application implements DiscordResource {
 					}
 			
 					if (choices.size() > 0) {
-						obj.put("choices", (JSONArray) choices);
+						obj.put("choices", choices);
 					}
 			
 					return obj.toString();
@@ -191,7 +191,7 @@ public class Application implements DiscordResource {
 			public Type type;
 			public String name;
 			public String description;
-			public final ArrayList<Option.Payload> options = new ArrayList<>();
+			public final List<Option.Payload> options = new LinkedList<>();
 		
 			public Payload(Type type, String name, String description) {
 				this.type = type;
@@ -215,7 +215,7 @@ public class Application implements DiscordResource {
 				obj.put("description", description);
 		
 				if (options.size() > 0) {
-					obj.put("options", (JSONArray) options);
+					obj.put("options", options);
 				}
 		
 				return obj.toString();

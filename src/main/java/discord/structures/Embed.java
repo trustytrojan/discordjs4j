@@ -3,7 +3,6 @@ package discord.structures;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 
 import discord.util.Util;
@@ -141,7 +140,7 @@ public class Embed implements JSONAware {
 		}
 
 		if (fields.size() > 0) {
-			obj.put("fields", (JSONArray) fields);
+			obj.put("fields", fields);
 		}
 
 		if (color != null) {

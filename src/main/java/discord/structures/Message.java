@@ -2,8 +2,8 @@ package discord.structures;
 
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 
 import discord.client.DiscordClient;
@@ -52,7 +52,7 @@ public class Message implements DiscordResource {
 	public static class Payload implements JSONAware {
 		private String content;
 		private String reply_to;
-		private LinkedList<Embed> embeds = new LinkedList<>();
+		private List<Embed> embeds = new LinkedList<>();
 		//public List<MessageComponent> components;
 		//public List<Attachment> attachments;
 
@@ -83,7 +83,7 @@ public class Message implements DiscordResource {
 			}
 
 			if (embeds.size() > 0) {
-				obj.put("embeds", (JSONArray) embeds);
+				obj.put("embeds", embeds);
 			}
 
 			return obj;
