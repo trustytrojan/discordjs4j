@@ -4,9 +4,11 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.enums.InteractionCallbackType;
 import discord.structures.Embed;
-import discord.structures.payloads.InteractionReplyMessagePayload;
+import discord.structures.InteractionReplyMessagePayload;
 
 public interface RepliableInteraction {
+
+	CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload);
 
 	default CompletableFuture<Void> deferReply() {
 		return _reply(InteractionCallbackType.DeferredChannelMessageWithSource, null);
@@ -41,7 +43,5 @@ public interface RepliableInteraction {
 	default CompletableFuture<Void> reply(InteractionReplyMessagePayload payload) {
 		return _reply(InteractionCallbackType.ChannelMessageWithSource, payload);
 	}
-
-	public CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload);
 
 }

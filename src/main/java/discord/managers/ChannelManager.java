@@ -11,7 +11,6 @@ import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextChannel;
 import discord.util.IdMap;
-import simple_json.JSON;
 import simple_json.JSONObject;
 
 public class ChannelManager extends DataManager<Channel> {
@@ -51,7 +50,7 @@ public class ChannelManager extends DataManager<Channel> {
 	public IdMap<DMBasedChannel> fetchDMs() {
 		final var channels = new IdMap<DMBasedChannel>();
 
-		for (final var rawChannel : JSON.parseObjectArray(client.api.get("/users/@me/channels"))) {
+		for (final var rawChannel : client.api.get("/users/@me/channels").toJsonObjectArray()) {
 			final var channel = (DMBasedChannel) cache((JSONObject) rawChannel);
 			channels.put(channel);
 		}

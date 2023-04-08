@@ -1,6 +1,4 @@
-package discord.structures.payloads;
-
-import discord.structures.Message;
+package discord.structures;
 
 public class InteractionReplyMessagePayload extends Message.Payload {
 

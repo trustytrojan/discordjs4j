@@ -3,7 +3,7 @@ package discord.client;
 import java.util.concurrent.CompletableFuture;
 
 import discord.managers.UserManager;
-import discord.managers.CommandManager;
+import discord.managers.ApplicationCommandManager;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.structures.Application;
@@ -16,7 +16,6 @@ import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 import java_signals.Signal0;
 import java_signals.Signal1;
-import simple_json.JSON;
 
 public abstract class DiscordClient {
 
@@ -52,7 +51,7 @@ public abstract class DiscordClient {
 		 */
 		public Application application;
 	
-		public CommandManager commands = new CommandManager(this);
+		public final ApplicationCommandManager commands = new ApplicationCommandManager(this);
 	
 		public final Signal1<Interaction> interactionCreate = new Signal1<>();
 		public final Signal1<ChatInputInteraction> chatInputInteractionCreate = new Signal1<>();
@@ -65,7 +64,7 @@ public abstract class DiscordClient {
 			super.login(token, intents);
 	
 			CompletableFuture.runAsync(() -> {
-				final var applicationData = JSON.parseObject(api.get("/oauth2/applications/@me"));
+				final var applicationData = api.get("/oauth2/applications/@me").toJsonObject();
 				application = new Application(this, applicationData);
 			});
 		}

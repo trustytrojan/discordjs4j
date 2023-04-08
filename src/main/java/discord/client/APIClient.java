@@ -12,6 +12,7 @@ import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
 
 import simple_json.JSON;
+import simple_json.JSONObject;
 
 /**
  * An HttpClient wrapper for making requests to the Discord REST API.
@@ -109,32 +110,37 @@ public final class APIClient {
 		return sendRequest(request);
 	}
 
-	private String _sendRequest(HttpMethod method, String path, String body) {
-		return sendRequest(buildRequest(method, path, body)).body();
+	public class JsonHttpResponse {
+		public final String body;
+		public JsonHttpResponse(String body) { this.body = body; }
+		public JSONObject toJsonObject() { return JSON.parseObject(body); }
+		public JSONObject[] toJsonObjectArray() { return JSON.parseObjectArray(body); }
 	}
 
-	private String _sendRequest(HttpMethod method, String path) {
-		return _sendRequest(method, path, null);
+	private JsonHttpResponse _sendRequest(HttpMethod method, String path, String body) {
+		final var request = buildRequest(method, path, body);
+		final var response = sendRequest(request);
+		return new JsonHttpResponse(response.body());
 	}
 
-	public String get(String path) {
-		return _sendRequest(HttpMethod.GET, path);
+	public JsonHttpResponse get(String path) {
+		return _sendRequest(HttpMethod.GET, path, null);
 	}
 
-	public String post(String path, String body) {
+	public JsonHttpResponse post(String path, String body) {
 		return _sendRequest(HttpMethod.POST, path, body);
 	}
 
-	public String put(String path, String body) {
+	public JsonHttpResponse put(String path, String body) {
 		return _sendRequest(HttpMethod.PUT, path, body);
 	}
 
-	public String patch(String path, String body) {
+	public JsonHttpResponse patch(String path, String body) {
 		return _sendRequest(HttpMethod.PATCH, path, body);
 	}
 
-	public String delete(String path) {
-		return _sendRequest(HttpMethod.DELETE, path);
+	public JsonHttpResponse delete(String path) {
+		return _sendRequest(HttpMethod.DELETE, path, null);
 	}
 
 }

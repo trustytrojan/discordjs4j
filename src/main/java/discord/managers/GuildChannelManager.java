@@ -6,7 +6,6 @@ import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
 import discord.util.IdMap;
-import simple_json.JSON;
 import simple_json.JSONObject;
 
 public class GuildChannelManager extends DataManager<GuildChannel> {
@@ -30,7 +29,7 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 
 	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var updatedChannelData = JSON.parseObject(client.api.patch("/channels/" + id, payload.toString()));
+			final var updatedChannelData = client.api.patch("/channels/" + id, payload.toString()).toJsonObject();
 			return (GuildChannel) client.channels.createCorrectChannel(updatedChannelData);
 		});
 	}
@@ -39,7 +38,7 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 		final var path = "/guilds/" + guild.id() + "/channels";
 		final var channels = new IdMap<GuildChannel>();
 
-		for (final var channelData : JSON.parseObjectArray(client.api.get(path))) {
+		for (final var channelData : client.api.get(path).toJsonObjectArray()) {
 			channels.put((GuildChannel) cache(channelData));
 		}
 

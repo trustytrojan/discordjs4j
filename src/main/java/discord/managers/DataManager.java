@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 
 import discord.util.IdMap;
-import simple_json.JSON;
 import simple_json.JSONObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
@@ -26,9 +25,13 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 
 	public T cache(JSONObject data) {
 		final var cached = cache.get(data.getString("id"));
+		
 		if (cached == null) {
-			cache.put(construct(data));
+			final var constructed = construct(data);
+			cache.put(constructed);
+			return constructed;
 		}
+
 		cached.setData(data);
 		return cached;
 	}
@@ -54,8 +57,7 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 				return cached;
 			}
 		}
-		final var data = JSON.parseObject(client.api.get(path));
-		return cache(data);
+		return cache(client.api.get(path).toJsonObject());
 	}
 
 }

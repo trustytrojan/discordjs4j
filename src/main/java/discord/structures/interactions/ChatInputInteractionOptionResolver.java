@@ -7,7 +7,7 @@ import simple_json.JSONObject;
 public class ChatInputInteractionOptionResolver {
 
 	private final HashMap<String, ChatInputInteractionOption> options = new HashMap<>();
-	
+
 	public ChatInputInteractionOptionResolver(JSONObject[] data) {
 		for (final var optionData : data) {
 			final var option = new ChatInputInteractionOption(optionData);
@@ -25,6 +25,7 @@ public class ChatInputInteractionOptionResolver {
 
 	/**
 	 * If a subcommand was used, it will be the only option
+	 * 
 	 * @return the name of the subcommand
 	 */
 	public ChatInputInteractionOption getSubcommand() {

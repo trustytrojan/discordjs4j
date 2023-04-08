@@ -6,7 +6,6 @@ import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.util.IdMap;
-import simple_json.JSON;
 import simple_json.JSONObject;
 
 public class MessageManager extends DataManager<Message> {
@@ -17,7 +16,7 @@ public class MessageManager extends DataManager<Message> {
 		super(client);
 		this.channel = channel;
 	}
-	
+
 	@Override
 	public Message construct(JSONObject data) {
 		return new Message(client, data);
@@ -33,15 +32,15 @@ public class MessageManager extends DataManager<Message> {
 
 	public CompletableFuture<Message> create(Message.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var createdMessageData = client.api.post(messagesPath(), payload.toString());
-			return new Message(client, JSON.parseObject(createdMessageData));
+			final var createdMessageData = client.api.post(messagesPath(), payload.toString()).toJsonObject();
+			return new Message(client, createdMessageData);
 		});
 	}
 
 	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toString());
-			return new Message(client, JSON.parseObject(updatedMessageData));
+			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toString()).toJsonObject();
+			return new Message(client, updatedMessageData);
 		});
 	}
 
@@ -57,7 +56,7 @@ public class MessageManager extends DataManager<Message> {
 	public IdMap<Message> fetch() {
 		final var messages = new IdMap<Message>();
 
-		for (final var messageData : JSON.parseObjectArray(client.api.get(messagesPath()))) {
+		for (final var messageData : client.api.get(messagesPath()).toJsonObjectArray()) {
 			messages.put(new Message(client, messageData));
 		}
 
