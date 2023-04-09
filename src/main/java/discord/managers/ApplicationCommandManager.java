@@ -19,7 +19,7 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 		this.client = client;
 	}
 
-    @Override
+	@Override
 	public ApplicationCommand construct(JSONObject data) {
 		return new ApplicationCommand(client, data);
 	}
@@ -46,14 +46,11 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 
 	public CompletableFuture<IdMap<ApplicationCommand>> set(List<ApplicationCommand.Payload> commands) {
 		final var dataToSend = JSONArray.toJSONString(commands);
-
 		return CompletableFuture.supplyAsync(() -> {
-			final var responseData = client.api.put(commandsPath(), dataToSend).toJsonObjectArray();
 			final var commandsSet = new IdMap<ApplicationCommand>();
-
-			for (final var commandData : responseData)
+			final var resp = client.api.put(commandsPath(), dataToSend).toJsonObjectArray();
+			for (final var commandData : resp)
 				commandsSet.put(cache(commandData));
-
 			return commandsSet;
 		});
 	}

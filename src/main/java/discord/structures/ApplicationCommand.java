@@ -9,13 +9,18 @@ import discord.client.DiscordClient;
 import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
-	
+
 	private final DiscordClient.Bot client;
 	private JSONObject data;
 
 	public ApplicationCommand(DiscordClient.Bot client, JSONObject data) {
 		this.client = client;
 		this.data = data;
+	}
+
+	@Override
+	public String toString() {
+		return getData().toString();
 	}
 
 	public Type type() {
@@ -44,21 +49,21 @@ public class ApplicationCommand implements DiscordResource {
 	public void setData(JSONObject data) {
 		this.data = data;
 	}
-	
+
 	public static enum Type {
 		CHAT_INPUT(1),
 		MESSAGE(2),
 		USER(3);
-	
+
 		public static Type resolve(long value) {
 			for (final var x : Type.values())
 				if (x.value == value)
 					return x;
 			return null;
 		}
-	
+
 		public final int value;
-	
+
 		private Type(int value) {
 			this.value = value;
 		}
@@ -68,7 +73,7 @@ public class ApplicationCommand implements DiscordResource {
 		public Type type;
 		public String name;
 		public String description;
-		public final List<ApplicationCommandOption.Payload> options = new LinkedList<>();
+		private final List<ApplicationCommandOption.Payload> options = new LinkedList<>();
 
 		public Payload(Type type, String name, String description) {
 			this.type = type;
@@ -78,6 +83,18 @@ public class ApplicationCommand implements DiscordResource {
 
 		public Payload(String name, String description) {
 			this(null, name, description);
+		}
+
+		public void addOption(ApplicationCommandOption.Type type, String name, String description, boolean required) {
+			options.add(new ApplicationCommandOption.Payload(type, name, description, required));
+		}
+
+		public void addOption(ApplicationCommandOption.Type type, String name, String description) {
+			options.add(new ApplicationCommandOption.Payload(type, name, description));
+		}
+
+		public void addOption(ApplicationCommandOption.Payload option) {
+			options.add(option);
 		}
 
 		@Override

@@ -25,9 +25,9 @@ public final class APIClient {
 
 	private static class DiscordAPIException extends RuntimeException {
 		public DiscordAPIException(HttpRequest request, HttpResponse<String> response) {
-			super(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + response.statusCode() + '\n'
-				+ response.body() + '\n' + "Request body: " + request.bodyPublisher().get()
-			);
+			super(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> "
+					+ response.statusCode() + '\n'
+					+ response.body() + '\n' + "Request body: " + request.bodyPublisher().get());
 		}
 	}
 
@@ -112,9 +112,18 @@ public final class APIClient {
 
 	public class JsonHttpResponse {
 		public final String body;
-		public JsonHttpResponse(String body) { this.body = body; }
-		public JSONObject toJsonObject() { return JSON.parseObject(body); }
-		public JSONObject[] toJsonObjectArray() { return JSON.parseObjectArray(body); }
+
+		public JsonHttpResponse(String body) {
+			this.body = body;
+		}
+
+		public JSONObject toJsonObject() {
+			return JSON.parseObject(body);
+		}
+
+		public JSONObject[] toJsonObjectArray() {
+			return JSON.parseObjectArray(body);
+		}
 	}
 
 	private JsonHttpResponse _sendRequest(HttpMethod method, String path, String body) {
