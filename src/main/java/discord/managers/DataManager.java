@@ -57,7 +57,7 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 				return cached;
 			}
 		}
-		return cache(client.api.get(path).toJsonObject());
+		return cache(client.api.get(path).toJSONObject());
 	}
 
 }

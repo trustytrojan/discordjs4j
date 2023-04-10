@@ -5,16 +5,16 @@ import java.util.concurrent.CompletableFuture;
 
 import org.json.simple.JSONArray;
 
-import discord.client.DiscordClient;
+import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
 import discord.util.IdMap;
 import simple_json.JSONObject;
 
 public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 
-	private final DiscordClient.Bot client;
+	private final BotDiscordClient client;
 
-	public ApplicationCommandManager(DiscordClient.Bot client) {
+	public ApplicationCommandManager(BotDiscordClient client) {
 		super(client);
 		this.client = client;
 	}
@@ -39,7 +39,7 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 
 	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var data = client.api.post(commandsPath(), payload.toString()).toJsonObject();
+			final var data = client.api.post(commandsPath(), payload.toString()).toJSONObject();
 			return cache(data);
 		});
 	}
@@ -48,7 +48,7 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 		final var dataToSend = JSONArray.toJSONString(commands);
 		return CompletableFuture.supplyAsync(() -> {
 			final var commandsSet = new IdMap<ApplicationCommand>();
-			final var resp = client.api.put(commandsPath(), dataToSend).toJsonObjectArray();
+			final var resp = client.api.put(commandsPath(), dataToSend).toJSONObjectArray();
 			for (final var commandData : resp)
 				commandsSet.put(cache(commandData));
 			return commandsSet;
@@ -65,7 +65,7 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 	public CompletableFuture<Void> refresh() {
 		cache.clear();
 		return CompletableFuture.runAsync(() -> {
-			for (final var obj : client.api.get(commandsPath()).toJsonObjectArray())
+			for (final var obj : client.api.get(commandsPath()).toJSONObjectArray())
 				cache(obj);
 		});
 	}

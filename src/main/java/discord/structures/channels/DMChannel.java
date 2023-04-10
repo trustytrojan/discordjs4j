@@ -17,7 +17,7 @@ public class DMChannel implements DMBasedChannel {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
-		recipient = client.users.fetch(data.getObjectArray("recipients")[0].getString("id"));
+		recipient = client.users.fetch(data.getObjectArray("recipients").get(0).getString("id"));
 	}
 
 	@Override

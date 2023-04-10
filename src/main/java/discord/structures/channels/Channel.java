@@ -2,7 +2,6 @@ package discord.structures.channels;
 
 import java.util.concurrent.CompletableFuture;
 
-import discord.enums.ChannelType;
 import discord.structures.DiscordResource;
 
 public interface Channel extends DiscordResource {
@@ -17,8 +16,8 @@ public interface Channel extends DiscordResource {
 		return getData().getString("name");
 	}
 
-	default ChannelType type() {
-		return ChannelType.resolve(getData().getLong("type"));
+	default Type type() {
+		return Type.resolve(getData().getLong("type"));
 	}
 
 	default CompletableFuture<Void> delete() {

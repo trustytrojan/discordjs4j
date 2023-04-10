@@ -32,14 +32,14 @@ public class MessageManager extends DataManager<Message> {
 
 	public CompletableFuture<Message> create(Message.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var createdMessageData = client.api.post(messagesPath(), payload.toString()).toJsonObject();
+			final var createdMessageData = client.api.post(messagesPath(), payload.toJSONString()).toJSONObject();
 			return new Message(client, createdMessageData);
 		});
 	}
 
 	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toString()).toJsonObject();
+			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toJSONString()).toJSONObject();
 			return new Message(client, updatedMessageData);
 		});
 	}
@@ -56,7 +56,7 @@ public class MessageManager extends DataManager<Message> {
 	public IdMap<Message> fetch() {
 		final var messages = new IdMap<Message>();
 
-		for (final var messageData : client.api.get(messagesPath()).toJsonObjectArray()) {
+		for (final var messageData : client.api.get(messagesPath()).toJSONObjectArray()) {
 			messages.put(new Message(client, messageData));
 		}
 

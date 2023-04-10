@@ -18,11 +18,11 @@ public class UserManager extends DataManager<User> {
 
 	@Override
 	public User fetch(String id, boolean force) {
-		return super.fetch(id, "/users/" + id, force);
+		return construct(client.api.get("/users/" + id).toJSONObject());
 	}
 
 	public ClientUser fetchMe() {
-		final var data = client.api.get("/users/@me").toJsonObject();
+		final var data = client.api.get("/users/@me").toJSONObject();
 		final var me = new ClientUser(client, data);
 		cache.put(me);
 		return me;

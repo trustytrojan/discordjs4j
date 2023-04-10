@@ -13,6 +13,7 @@ import discord.structures.AuditLogEntry;
 import discord.structures.ClientUser;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
+import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
 import discord.util.RunnableRepeater;
 import simple_json.JSON;
@@ -113,8 +114,16 @@ public class GatewayClient extends WebSocketClient {
 						client.ready.emit();
 					}
 
-					case INTERACTION_CREATE -> ((DiscordClient.Bot) client).interactionCreate
-							.emit(Interaction.createCorrectInteraction(client, obj.getObject("d")));
+					case INTERACTION_CREATE -> {
+						final var bot = (BotDiscordClient) client;
+						final var d = obj.getObject("d");
+						switch (Interaction.Type.resolve(d.getLong("type"))) {
+							case APPLICATION_COMMAND ->
+								bot.chatInputInteractionCreate.emit(new ChatInputInteraction(bot, obj.getObject("d")));
+							default -> {
+							}
+						}
+					}
 
 					case GUILD_AUDIT_LOG_ENTRY_CREATE ->
 						client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));

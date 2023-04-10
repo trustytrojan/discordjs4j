@@ -5,15 +5,16 @@ import java.util.List;
 
 import org.json.simple.JSONAware;
 
+import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
 import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
 
-	private final DiscordClient.Bot client;
+	private final BotDiscordClient client;
 	private JSONObject data;
 
-	public ApplicationCommand(DiscordClient.Bot client, JSONObject data) {
+	public ApplicationCommand(BotDiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 	}

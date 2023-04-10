@@ -1,6 +1,7 @@
 package discord.structures.interactions;
 
 import java.util.HashMap;
+import java.util.List;
 
 import simple_json.JSONObject;
 
@@ -8,7 +9,7 @@ public class ChatInputInteractionOptionResolver {
 
 	private final HashMap<String, ChatInputInteractionOption> options = new HashMap<>();
 
-	public ChatInputInteractionOptionResolver(JSONObject[] data) {
+	public ChatInputInteractionOptionResolver(List<JSONObject> data) {
 		for (final var optionData : data) {
 			final var option = new ChatInputInteractionOption(optionData);
 			options.put(option.name, option);

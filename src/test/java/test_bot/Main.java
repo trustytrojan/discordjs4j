@@ -1,18 +1,17 @@
 package test_bot;
 
-import discord.client.DiscordClient;
-import discord.client.Gateway;
+import discord.client.BotDiscordClient;
+import discord.enums.GatewayIntent;
 import discord.util.Util;
 
 public class Main {
-
 	public static void main(String[] __) {
-		final var client = new DiscordClient.Bot();
+		final var client = new BotDiscordClient();
 
-		final Gateway.Intent[] intents = {
-			Gateway.Intent.DIRECT_MESSAGES,
-			Gateway.Intent.GUILD_MESSAGES,
-			Gateway.Intent.MESSAGE_CONTENT
+		final GatewayIntent[] intents = {
+			GatewayIntent.DIRECT_MESSAGES,
+			GatewayIntent.GUILD_MESSAGES,
+			GatewayIntent.MESSAGE_CONTENT
 		};
 
 		client.ready.connect(() -> System.out.println("Logged in as " + client.user.tag() + '!'));
@@ -25,5 +24,4 @@ public class Main {
 
 		client.login(Util.readFile("token"), intents);
 	}
-
 }

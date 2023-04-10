@@ -1,29 +1,31 @@
 package discord.structures.interactions;
 
-import discord.client.DiscordClient;
+import discord.client.BotDiscordClient;
 import discord.structures.User;
 import discord.structures.channels.TextBasedChannel;
+
 import simple_json.JSONObject;
 
 public abstract class Interaction {
 
-	public static Interaction createCorrectInteraction(DiscordClient client, JSONObject data) {
+	public static Interaction createCorrectInteraction(BotDiscordClient client, JSONObject data) {
 		return switch (Type.resolve(data.getLong("type").intValue())) {
 			case APPLICATION_COMMAND -> new ChatInputInteraction(client, data);
 			default -> null;
 		};
 	}
 
-	protected final DiscordClient client;
+	protected final BotDiscordClient client;
 
 	public final String id;
 	public final Type type;
 	public final User user;
 	public final TextBasedChannel channel;
+	
 	protected final JSONObject innerData;
 	protected final String token;
 
-	protected Interaction(DiscordClient client, JSONObject data) {
+	protected Interaction(BotDiscordClient client, JSONObject data) {
 		this.client = client;
 
 		id = data.getString("id");
@@ -40,16 +42,16 @@ public abstract class Interaction {
 		MESSAGE_COMPONENT(3),
 		APPLICATION_COMMAND_AUTOCOMPLETE(4),
 		MODAL_SUBMIT(5);
-	
+
 		public static Type resolve(long value) {
 			for (final var x : Type.values())
 				if (x.value == value)
 					return x;
 			return null;
 		}
-	
+
 		public final int value;
-	
+
 		private Type(int value) {
 			this.value = value;
 		}

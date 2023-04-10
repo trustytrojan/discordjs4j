@@ -2,7 +2,7 @@ package discord.structures.interactions;
 
 import java.util.concurrent.CompletableFuture;
 
-import discord.client.DiscordClient;
+import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
 import discord.structures.InteractionReplyMessagePayload;
 import discord.enums.InteractionCallbackType;
@@ -15,7 +15,7 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 	public final String commandName;
 	public final ApplicationCommand.Type commandType;
 
-	public ChatInputInteraction(DiscordClient client, JSONObject data) {
+	public ChatInputInteraction(BotDiscordClient client, JSONObject data) {
 		super(client, data);
 
 		final var raw_options = innerData.getObjectArray("options");

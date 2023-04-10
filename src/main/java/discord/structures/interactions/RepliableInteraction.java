@@ -11,7 +11,7 @@ public interface RepliableInteraction {
 	CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload);
 
 	default CompletableFuture<Void> deferReply() {
-		return _reply(InteractionCallbackType.DeferredChannelMessageWithSource, null);
+		return _reply(InteractionCallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE, null);
 	}
 
 	default CompletableFuture<Void> reply(String content) {
@@ -41,7 +41,7 @@ public interface RepliableInteraction {
 	}
 
 	default CompletableFuture<Void> reply(InteractionReplyMessagePayload payload) {
-		return _reply(InteractionCallbackType.ChannelMessageWithSource, payload);
+		return _reply(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload);
 	}
 
 }

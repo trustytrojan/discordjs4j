@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.List;
 
 import simple_json.JSON;
 import simple_json.JSONObject;
@@ -18,16 +19,15 @@ import simple_json.JSONObject;
  * An HttpClient wrapper for making requests to the Discord REST API.
  */
 public final class APIClient {
-
-	private static enum HttpMethod {
-		GET, POST, PUT, PATCH, DELETE
-	};
+	private static record HttpRequestWithBody(HttpRequest request, String body) {}
+	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
 
 	private static class DiscordAPIException extends RuntimeException {
-		public DiscordAPIException(HttpRequest request, HttpResponse<String> response) {
-			super(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> "
+		public DiscordAPIException(HttpRequestWithBody r, HttpResponse<String> response) {
+			super(r.request.method() + ' ' + r.request.uri().getPath().replace("/api/v10", "") + " -> "
 					+ response.statusCode() + '\n'
-					+ response.body() + '\n' + "Request body: " + request.bodyPublisher().get());
+					+ response.body() + '\n'
+					+ "Request body: " + r.body);
 		}
 	}
 
@@ -45,12 +45,12 @@ public final class APIClient {
 		this.token = token;
 	}
 
-	private HttpRequest buildRequest(HttpMethod method, String path, String requestBody) {
+	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String requestBody) {
 		HttpRequest.Builder requestBuilder;
 
 		try {
 			requestBuilder = HttpRequest.newBuilder(new URI(BASE_URL + path));
-		} catch (URISyntaxException e) {
+		} catch (final URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -72,10 +72,11 @@ public final class APIClient {
 		if (token != null)
 			requestBuilder.header("authorization", token);
 
-		return requestBuilder.build();
+		return new HttpRequestWithBody(requestBuilder.build(), requestBody);
 	}
 
-	private static HttpResponse<String> sendRequest(HttpRequest request) {
+	private static HttpResponse<String> sendRequest(HttpRequestWithBody requestWrapper) {
+		final var request = requestWrapper.request;
 		HttpResponse<String> response;
 
 		try {
@@ -88,16 +89,19 @@ public final class APIClient {
 		final var responseBody = response.body();
 
 		if (statusCode == 429)
-			return retryAfter(request, responseBody);
-		else if (statusCode >= 400)
-			throw new DiscordAPIException(request, response);
+			return retryAfter(requestWrapper, responseBody);
+		else if (statusCode >= 400) {
+			final var e = new DiscordAPIException(requestWrapper, response);
+			e.printStackTrace();
+			throw e;
+		}
 
 		log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);
 
 		return response;
 	}
 
-	private static HttpResponse<String> retryAfter(HttpRequest request, String responseBody) {
+	private static HttpResponse<String> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
 		final var retryAfter = (int) (1000 * JSON.parseObject(responseBody).getDouble("retry_after"));
 		log("Being rate limited for " + retryAfter + "ms");
 
@@ -107,49 +111,48 @@ public final class APIClient {
 			throw new RuntimeException(e);
 		}
 
-		return sendRequest(request);
+		return sendRequest(requestWrapper);
 	}
 
-	public class JsonHttpResponse {
+	public class JSONHttpResponse {
 		public final String body;
 
-		public JsonHttpResponse(String body) {
+		public JSONHttpResponse(String body) {
 			this.body = body;
 		}
 
-		public JSONObject toJsonObject() {
+		public JSONObject toJSONObject() {
 			return JSON.parseObject(body);
 		}
 
-		public JSONObject[] toJsonObjectArray() {
+		public List<JSONObject> toJSONObjectArray() {
 			return JSON.parseObjectArray(body);
 		}
 	}
 
-	private JsonHttpResponse _sendRequest(HttpMethod method, String path, String body) {
+	private JSONHttpResponse _sendRequest(HttpMethod method, String path, String body) {
 		final var request = buildRequest(method, path, body);
 		final var response = sendRequest(request);
-		return new JsonHttpResponse(response.body());
+		return new JSONHttpResponse(response.body());
 	}
 
-	public JsonHttpResponse get(String path) {
+	public JSONHttpResponse get(String path) {
 		return _sendRequest(HttpMethod.GET, path, null);
 	}
 
-	public JsonHttpResponse post(String path, String body) {
+	public JSONHttpResponse post(String path, String body) {
 		return _sendRequest(HttpMethod.POST, path, body);
 	}
 
-	public JsonHttpResponse put(String path, String body) {
+	public JSONHttpResponse put(String path, String body) {
 		return _sendRequest(HttpMethod.PUT, path, body);
 	}
 
-	public JsonHttpResponse patch(String path, String body) {
+	public JSONHttpResponse patch(String path, String body) {
 		return _sendRequest(HttpMethod.PATCH, path, body);
 	}
 
-	public JsonHttpResponse delete(String path) {
+	public JSONHttpResponse delete(String path) {
 		return _sendRequest(HttpMethod.DELETE, path, null);
 	}
-
 }
