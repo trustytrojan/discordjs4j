@@ -1,12 +1,12 @@
 package discord.structures;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.json.simple.JSONAware;
 
+import discord.util.Util;
 import simple_json.JSONObject;
 
 public final class ApplicationCommandOption {
@@ -31,22 +31,7 @@ public final class ApplicationCommandOption {
 	}
 
 	public Iterable<Choice> choices() {
-		final var itr = choices.iterator();
-		return new Iterable<>() {
-			@Override
-			public Iterator<Choice> iterator() {
-				return new Iterator<>() {
-					@Override
-					public boolean hasNext() {
-						return itr.hasNext();
-					}
-					@Override
-					public Choice next() {
-						return itr.next();
-					}
-				};
-			}
-		};
+		return Util.constView(choices);
 	}
 
 	public enum Type {
