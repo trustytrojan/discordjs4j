@@ -1,5 +1,6 @@
 package discord.structures;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,16 +8,27 @@ import org.json.simple.JSONAware;
 
 import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
+import discord.util.Util;
 import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
 
 	private final BotDiscordClient client;
 	private JSONObject data;
+	private final List<ApplicationCommandOption> options = new ArrayList<>();
 
 	public ApplicationCommand(BotDiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
+
+		final var rawOptions = data.getObjectArray("options");
+		if (rawOptions != null)
+			for (final var rawOption : rawOptions)
+				options.add(new ApplicationCommandOption(rawOption));
+	}
+
+	public Iterable<ApplicationCommandOption> options() {
+		return Util.constView(options);
 	}
 
 	@Override
@@ -67,6 +79,15 @@ public class ApplicationCommand implements DiscordResource {
 
 		private Type(int value) {
 			this.value = value;
+		}
+
+		@Override
+		public String toString() {
+			return switch (this) {
+				case CHAT_INPUT -> "Chat Input";
+				case MESSAGE -> "Message";
+				case USER -> "User";
+			};
 		}
 	}
 

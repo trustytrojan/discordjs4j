@@ -1,48 +1,96 @@
 package command_manager;
 
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import discord.structures.ApplicationCommand;
+
+import static command_manager.Discord.client;
+
 class Swing {
 
-	static final JFrame FRAME = new JFrame("DCM");
-	static final DefaultTableModel TABLE_MODEL = new DefaultTableModel() {
+
+	static final JFrame frame = new JFrame("DCM");
+	static final CommandDialog commandDialog = new CommandDialog(frame);
+
+	static final DefaultTableModel model = new DefaultTableModel() {
 		@Override
 		public boolean isCellEditable(int _1, int _2) {
 			return false;
 		}
 	};
-	static final JTable TABLE = new JTable(TABLE_MODEL);
-	static final JScrollPane SCROLL_PANE = new JScrollPane(TABLE);
+	static final JTable table = new JTable(model);
+	static final JScrollPane scrollPane = new JScrollPane(table);
+
+	static int selectedRow = -1;
+	static ApplicationCommand selectedCommand;
+
+	static final JPopupMenu editDeletePopupMenu = new JPopupMenu();
+	static {
+		final var edit = editDeletePopupMenu.add("Edit");
+		SwingUtils.onAction(edit, (e) -> {
+			commandDialog.setFields(selectedCommand);
+			commandDialog.show();
+		});
+
+		final var delete = editDeletePopupMenu.add("Delete");
+		SwingUtils.onAction(delete, (e) -> {
+			final var option = JOptionPane.showConfirmDialog(delete, "Delete command?");
+			if (option == JOptionPane.OK_OPTION && selectedRow >= 0)
+				model.removeRow(selectedRow);
+		});
+	}
+
+	static final JLabel commandTypeLabel = new JLabel("Type:");
+	static final JComboBox<ApplicationCommand.Type> commandTypeDropdown = new JComboBox<>();
+	static {
+		commandTypeDropdown.addItem(ApplicationCommand.Type.CHAT_INPUT);
+		commandTypeDropdown.addItem(ApplicationCommand.Type.MESSAGE);
+		commandTypeDropdown.addItem(ApplicationCommand.Type.USER);
+		SwingUtils.onAction(commandTypeDropdown, (e) -> {
+			final var value = (ApplicationCommand.Type) commandTypeDropdown.getSelectedItem();
+			System.out.println(value);
+		});
+	}
+
+	static final JPopupMenu createPopupMenu = new JPopupMenu();
+	static {
+		final var create = createPopupMenu.add("Create");
+		SwingUtils.onAction(create, (e) -> {
+			commandDialog.show();
+		});
+	}
 
 	static {
-		TABLE_MODEL.setColumnIdentifiers(new String[] { "ID", "Name", "Description" });
+		model.setColumnIdentifiers(new String[] { "ID", "Name", "Description", "Type" });
 
-		TABLE_MODEL.addRow(new String[] {"nig1", "nig2", "nig3"});
-
-		final var popup = new JPopupMenu();
-
-		final var edit = popup.add("Edit");
-		SwingUtils.onAction(edit, (e) -> {
-			JOptionPane.showMessageDialog(edit, "Edited");
+		// when a command is right clicked
+		SwingUtils.onRightClick(table, (e) -> {
+			final var point = e.getPoint();
+			selectedRow = table.rowAtPoint(point);
+			final var data = (String) table.getValueAt(selectedRow, 0);
+			selectedCommand = client.commands.fetch(data);
+			editDeletePopupMenu.show(table, e.getX(), e.getY());
+			System.out.println(data);
 		});
 
-		final var delete = popup.add("Delete");
-		SwingUtils.onAction(delete, (e) -> {
-			JOptionPane.showMessageDialog(delete, "Deleted");
+		// when right clicked below table
+		SwingUtils.onRightClick(scrollPane, (e) -> {
+			createPopupMenu.show(scrollPane, e.getX(), e.getY());
 		});
 
-		SwingUtils.registerPopupMenu(TABLE, popup);
-
-		FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		FRAME.add(SCROLL_PANE);
-		FRAME.validate();
-		FRAME.pack();
-		FRAME.setVisible(true);
+		frame.setPreferredSize(null);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(scrollPane);
+		frame.validate();
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 	public static void main(String[] __) {

@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -44,6 +45,18 @@ final class SwingUtils {
 	}
 
 	static ActionListener onAction(AbstractButton comp, Consumer<ActionEvent> c) {
+		final var al = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				c.accept(e);
+			}
+		};
+		comp.addActionListener(al);
+		return al;
+	}
+
+	@SuppressWarnings("rawtypes")
+	static ActionListener onAction(JComboBox comp, Consumer<ActionEvent> c) {
 		final var al = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
