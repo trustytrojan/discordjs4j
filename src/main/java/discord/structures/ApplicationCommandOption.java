@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.json.simple.JSONAware;
 
-import discord.util.Util;
 import simple_json.JSONObject;
 
 public final class ApplicationCommandOption {
@@ -31,7 +30,7 @@ public final class ApplicationCommandOption {
 	}
 
 	public Iterable<Choice> choices() {
-		return Util.constView(choices);
+		return choices;
 	}
 
 	public enum Type {
@@ -106,10 +105,10 @@ public final class ApplicationCommandOption {
 	}
 
 	public static class Payload implements JSONAware {
-		public Type type;
-		public String name;
-		public String description;
-		public boolean required;
+		private Type type;
+		private String name;
+		private String description;
+		private boolean required;
 		private final List<Choice> choices = new LinkedList<>();
 
 		public Payload(Type type, String name, String description, boolean required) {

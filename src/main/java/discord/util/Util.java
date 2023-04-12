@@ -4,11 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.regex.Pattern;
 
 public final class Util {
-
 	public static String readFile(String filePath) {
 		try {
 			final var stream = new FileInputStream(filePath);
@@ -40,28 +38,4 @@ public final class Util {
 			throw new IllegalArgumentException("Hex color string is not in correct format");
 		return Integer.parseInt(hexColor, 16);
 	}
-
-	public static <T> Iterable<T> constView(Iterable<T> iterable) {
-		return constView(iterable.iterator());
-	}
-
-	public static <T> Iterable<T> constView(Iterator<T> iterator) {
-		return new Iterable<>() {
-			@Override
-			public Iterator<T> iterator() {
-				return new Iterator<>() {
-					@Override
-					public boolean hasNext() {
-						return iterator.hasNext();
-					}
-
-					@Override
-					public T next() {
-						return iterator.next();
-					}
-				};
-			}
-		};
-	}
-
 }

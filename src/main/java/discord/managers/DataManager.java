@@ -26,12 +26,14 @@ public abstract class DataManager<T extends DiscordResource> implements Iterable
 	public T cache(JSONObject data) {
 		final var cached = cache.get(data.getString("id"));
 		
+		// if not already cached, construct new object
 		if (cached == null) {
 			final var constructed = construct(data);
 			cache.put(constructed);
 			return constructed;
 		}
 
+		// if an object is cached, just set its data
 		cached.setData(data);
 		return cached;
 	}

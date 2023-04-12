@@ -3,12 +3,12 @@ package discord.structures;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.json.simple.JSONAware;
 
 import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
-import discord.util.Util;
 import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
@@ -28,7 +28,7 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	public Iterable<ApplicationCommandOption> options() {
-		return Util.constView(options);
+		return options;
 	}
 
 	@Override
@@ -46,6 +46,14 @@ public class ApplicationCommand implements DiscordResource {
 
 	public String description() {
 		return data.getString("description");
+	}
+
+	public CompletableFuture<ApplicationCommand> edit(Payload payload) {
+		return client.commands.edit(id(), payload);
+	}
+
+	public CompletableFuture<Void> delete() {
+		return client.commands.delete(id());
 	}
 
 	@Override

@@ -44,14 +44,10 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 		});
 	}
 
-	public CompletableFuture<IdMap<ApplicationCommand>> set(List<ApplicationCommand.Payload> commands) {
-		final var dataToSend = JSONArray.toJSONString(commands);
+	public CompletableFuture<ApplicationCommand> edit(String id, ApplicationCommand.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var commandsSet = new IdMap<ApplicationCommand>();
-			final var resp = client.api.put(commandsPath(), dataToSend).toJSONObjectArray();
-			for (final var commandData : resp)
-				commandsSet.put(cache(commandData));
-			return commandsSet;
+			final var data = client.api.patch(commandsPath(id), payload.toJSONString()).toJSONObject();
+			return cache(data);
 		});
 	}
 
@@ -59,6 +55,18 @@ public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
 		return CompletableFuture.runAsync(() -> {
 			client.api.delete(commandsPath(id));
 			cache.remove(id);
+		});
+	}
+
+	public CompletableFuture<IdMap<ApplicationCommand>> set(List<ApplicationCommand.Payload> commands) {
+		cache.clear();
+		final var dataToSend = JSONArray.toJSONString(commands);
+		return CompletableFuture.supplyAsync(() -> {
+			final var commandsSet = new IdMap<ApplicationCommand>();
+			final var resp = client.api.put(commandsPath(), dataToSend).toJSONObjectArray();
+			for (final var commandData : resp)
+				commandsSet.put(cache(commandData));
+			return commandsSet;
 		});
 	}
 
