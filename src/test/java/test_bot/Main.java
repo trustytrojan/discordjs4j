@@ -8,11 +8,7 @@ public class Main {
 	public static void main(String[] __) {
 		final var client = new BotDiscordClient();
 
-		final GatewayIntent[] intents = {
-			GatewayIntent.DIRECT_MESSAGES,
-			GatewayIntent.GUILD_MESSAGES,
-			GatewayIntent.MESSAGE_CONTENT
-		};
+		final GatewayIntent[] intents = {};
 
 		client.ready.connect(() -> System.out.println("Logged in as " + client.user.tag() + '!'));
 
@@ -22,6 +18,24 @@ public class Main {
 			}
 		});
 
-		client.login(Util.readFile("token"), intents);
+		client.chatInputInteractionCreate.connect((interaction) -> {
+			switch (interaction.commandName) {
+				case "test_2_integers" -> {
+					final var int1 = interaction.options.getInteger("int1");
+					final var int2 = interaction.options.getInteger("int2");
+					interaction.reply("""
+							%s
+							%s
+							(%d, %d)""".formatted(
+								interaction.user.tag(),
+								interaction.member.nickname(),
+								int1,
+								int2
+							));
+				}
+			}
+		});
+
+		client.login(Util.readFile("tokens/java-bot"), intents);
 	}
 }

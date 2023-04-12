@@ -38,9 +38,9 @@ public class ChatInputInteractionOptionResolver {
 		return (option != null) ? ((String) option.value) : null;
 	}
 
-	public Integer getInteger(String name) {
+	public Long getInteger(String name) {
 		final var option = get(name);
-		return (option != null) ? ((Integer) option.value) : null;
+		return (option != null) ? ((Long) option.value) : null;
 	}
 
 	public Double getDouble(String name) {

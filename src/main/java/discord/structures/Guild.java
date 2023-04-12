@@ -1,7 +1,7 @@
 package discord.structures;
 
 import discord.client.DiscordClient;
-import discord.managers.GuildChannelManager;
+import discord.managers.guild.GuildChannelManager;
 import discord.structures.channels.TextChannel;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;

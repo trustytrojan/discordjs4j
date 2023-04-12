@@ -1,6 +1,7 @@
-package discord.managers;
+package discord.managers.guild;
 
 import discord.client.DiscordClient;
+import discord.managers.DataManager;
 import discord.structures.Guild;
 import simple_json.JSONObject;
 

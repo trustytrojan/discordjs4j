@@ -28,7 +28,10 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 
 	public CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload) {
 		final var path = "/interactions/" + id + '/' + token + "/callback";
-		return CompletableFuture.runAsync(() -> client.api.post(path, payload.toJSONString()));
+		final var data = new JSONObject();
+		data.put("type", type.value);
+		data.put("data", payload);
+		return CompletableFuture.runAsync(() -> client.api.post(path, data.toJSONString()));
 	}
 
 }

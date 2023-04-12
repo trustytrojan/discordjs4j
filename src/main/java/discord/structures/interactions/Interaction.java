@@ -1,6 +1,8 @@
 package discord.structures.interactions;
 
 import discord.client.BotDiscordClient;
+import discord.structures.Guild;
+import discord.structures.GuildMember;
 import discord.structures.User;
 import discord.structures.channels.TextBasedChannel;
 
@@ -19,6 +21,8 @@ public abstract class Interaction {
 
 	public final String id;
 	public final Type type;
+	public final Guild guild;
+	public final GuildMember member;
 	public final User user;
 	public final TextBasedChannel channel;
 	
@@ -30,10 +34,21 @@ public abstract class Interaction {
 
 		id = data.getString("id");
 		type = Type.resolve(data.getLong("type"));
-		user = client.users.fetch(data.getObject("user").getString("id"));
+		
 		channel = (TextBasedChannel) client.channels.fetch(data.getObject("channel").getString("id"));
 		innerData = data.getObject("data");
 		token = data.getString("token");
+
+		final var guildId = data.getString("guild_id");
+		if (guildId == null) {
+			user = client.users.fetch(data.getObject("user").getString("id"));
+			guild = null;
+			member = null;
+		} else {
+			guild = client.guilds.fetch(data.getString("guild_id"));
+			member = new GuildMember(client, guild, data.getObject("member"));
+			user = member.user;
+		}
 	}
 
 	public static enum Type {

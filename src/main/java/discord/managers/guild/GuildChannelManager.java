@@ -1,4 +1,4 @@
-package discord.managers;
+package discord.managers.guild;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -8,13 +8,9 @@ import discord.structures.channels.GuildChannel;
 import discord.util.IdMap;
 import simple_json.JSONObject;
 
-public class GuildChannelManager extends DataManager<GuildChannel> {
-
-	public final Guild guild;
-
+public class GuildChannelManager extends GuildDataManager<GuildChannel> {
 	public GuildChannelManager(DiscordClient client, Guild guild) {
-		super(client);
-		this.guild = guild;
+		super(client, guild);
 	}
 
 	@Override
@@ -44,5 +40,4 @@ public class GuildChannelManager extends DataManager<GuildChannel> {
 
 		return channels;
 	}
-
 }
