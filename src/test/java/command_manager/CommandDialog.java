@@ -38,20 +38,82 @@ final class CommandDialog extends MyDialog {
 	private final CommandOptionsTable optionsTable = new CommandOptionsTable();
 	private final JButton addOptionButton = new JButton("Add Option");
 
-	public final Signal1<ApplicationCommand.Payload> commandCreated = new Signal1<>();
+	public final Signal1<ApplicationCommand.Payload> createRequested = new Signal1<>();
+	public final Signal1<ApplicationCommand.Payload> editRequested = new Signal1<>();
 
 	CommandDialog(final Window owner) {
 		super(owner, "Create/Edit Command");
 
 		typeDropdownInit();
 		addOptionButton.addActionListener((final var e) -> optionsTable.addRow());
-		
-		// Block calling thread when visible
-		//setModalityType(ModalityType.APPLICATION_MODAL);
 
 		add(panelInit());
 		validate();
 		pack();
+	}
+
+	void clearInputs() {
+		typeInput.setSelectedItem(null);
+		nameInput.setText(null);
+		descInput.setText(null);
+		optionsTable.clear();
+	}
+
+	void fillInputs(final ApplicationCommand command) {
+		typeInput.setSelectedItem(command.type());
+		nameInput.setText(command.name());
+		descInput.setText(command.description());
+		for (final var option : command.options()) {
+			optionsTable.addRow(option.type, option.name, option.description, option.required);
+		}
+	}
+
+	void showCreate() {
+		setTitle("Create Command");
+		setVisible(true);
+	}
+
+	void showEdit(final ApplicationCommand command) {
+		fillInputs(command);
+		setTitle("Edit Command");
+		setVisible(true);
+	}
+
+	private void onSendPressed(final ActionEvent e) {
+		final var newCommand = new ApplicationCommand.Payload();
+		newCommand.name = nameInput.getText();
+
+		if (newCommand.name == null || newCommand.name.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Name is empty!");
+			return;
+		}
+
+		final var selectedType = (ApplicationCommand.Type) typeInput.getSelectedItem();
+		switch (selectedType) {
+			case CHAT_INPUT -> {
+				newCommand.description = descInput.getText();
+
+				if (newCommand.description == null || newCommand.description.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Description is empty!");
+					return;
+				}
+
+				for (final var row : optionsTable.rows()) {
+					if (row == null) continue;
+					final var type = (ApplicationCommandOption.Type) row.get(0);
+					final var name = (String) row.get(1);
+					final var description = (String) row.get(2);
+					final var required = (Boolean) row.get(3);
+					newCommand.addOption(type, name, description, (required == null) ? false : true);
+				}
+			}
+			default -> {
+				newCommand.type = selectedType;
+			}
+		}
+
+		createRequested.emit(newCommand);
+		dispose();
 	}
 
 	private void typeDropdownInit() {
@@ -120,8 +182,8 @@ final class CommandDialog extends MyDialog {
 	}
 
 	private JPanel createExitButtonsPanel() {
-		final var createButton = new JButton("Create");
-		createButton.addActionListener(this::onCreatePressed);
+		final var createButton = new JButton("Send to Discord");
+		createButton.addActionListener(this::onSendPressed);
 
 		final var cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener((final var e) -> dispose());
@@ -131,58 +193,5 @@ final class CommandDialog extends MyDialog {
 		buttonPanel.add(cancelButton);
 
 		return buttonPanel;
-	}
-
-	void clearInputs() {
-		typeInput.setSelectedItem(null);
-		nameInput.setText(null);
-		descInput.setText(null);
-		optionsTable.clear();
-	}
-
-	void fillInputs(final ApplicationCommand command) {
-		typeInput.setSelectedItem(command.type());
-		nameInput.setText(command.name());
-		descInput.setText(command.description());
-		for (final var option : command.options()) {
-			optionsTable.addRow(option.type, option.name, option.description, option.required);
-		}
-	}
-
-	private void onCreatePressed(final ActionEvent e) {
-		final var newCommand = new ApplicationCommand.Payload();
-		newCommand.name = nameInput.getText();
-
-		if (newCommand.name == null || newCommand.name.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Name is empty!");
-			return;
-		}
-
-		final var selectedType = (ApplicationCommand.Type) typeInput.getSelectedItem();
-		switch (selectedType) {
-			case CHAT_INPUT -> {
-				newCommand.description = descInput.getText();
-
-				if (newCommand.description == null || newCommand.description.isEmpty()) {
-					JOptionPane.showMessageDialog(this, "Description is empty!");
-					return;
-				}
-
-				for (final var row : optionsTable.rows()) {
-					if (row == null) continue;
-					final var type = (ApplicationCommandOption.Type) row.get(0);
-					final var name = (String) row.get(1);
-					final var description = (String) row.get(2);
-					final var required = (Boolean) row.get(3);
-					newCommand.addOption(type, name, description, (required == null) ? false : true);
-				}
-			}
-			default -> {
-				newCommand.type = selectedType;
-			}
-		}
-
-		commandCreated.emit(newCommand);
-		dispose();
 	}
 }
