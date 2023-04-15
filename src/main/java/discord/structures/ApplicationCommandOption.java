@@ -59,23 +59,6 @@ public final class ApplicationCommandOption {
 		private Type(int value) {
 			this.value = value;
 		}
-
-		@Override
-		public String toString() {
-			return switch (this) {
-				case SUB_COMMAND -> "Subcommand";
-				case SUB_COMMAND_GROUP -> "Subcommand Group";
-				case STRING -> "String";
-				case INTEGER -> "Integer";
-				case BOOLEAN -> "Boolean";
-				case USER -> "User";
-				case CHANNEL -> "Channel";
-				case ROLE -> "Role";
-				case MENTIONABLE -> "Mentionable";
-				case NUMBER -> "Number";
-				case ATTACHMENT -> "Attachment";
-			};
-		}
 	}
 
 	public static class Choice implements JSONAware {

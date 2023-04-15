@@ -4,20 +4,22 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
+import java_signals.Signal1;
 
-final class CommandDialog extends JDialog {
+final class CommandDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
 
 	private static GridBagConstraints formConstraints(int gridx, int gridy) {
@@ -30,26 +32,49 @@ final class CommandDialog extends JDialog {
 		return c;
 	}
 
-	private final CommandTypeDropdown typeInput = new CommandTypeDropdown();
+	private final JComboBox<ApplicationCommand.Type> typeInput = new JComboBox<>();
 	private final JTextField nameInput = new JTextField();
 	private final JTextField descInput = new JTextField();
 	private final CommandOptionsTable optionsTable = new CommandOptionsTable();
-	private boolean okPressed;
+	private final JButton addOptionButton = new JButton("Add Option");
 
-	CommandDialog() {
-		// Don't submit any data when the window is closed
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(final WindowEvent e) {
-				okPressed = false;
-			}
-		});
+	public final Signal1<ApplicationCommand.Payload> commandCreated = new Signal1<>();
 
-		setModalityType(ModalityType.APPLICATION_MODAL);
+	CommandDialog(final Window owner) {
+		super(owner, "Create/Edit Command");
+
+		typeDropdownInit();
+		addOptionButton.addActionListener((final var e) -> optionsTable.addRow());
+		
+		// Block calling thread when visible
+		//setModalityType(ModalityType.APPLICATION_MODAL);
 
 		add(panelInit());
 		validate();
 		pack();
+	}
+
+	private void typeDropdownInit() {
+		for (final var type : ApplicationCommand.Type.values()) {
+			typeInput.addItem(type);
+		}
+
+		typeInput.setSelectedItem(0);
+
+		typeInput.addActionListener((final var e) -> {
+			switch ((ApplicationCommand.Type) typeInput.getSelectedItem()) {
+				case CHAT_INPUT -> {
+					descInput.setEnabled(true);
+					addOptionButton.setEnabled(true);
+				}
+				default -> {
+					descInput.setText(null);
+					descInput.setEnabled(false);
+					addOptionButton.setEnabled(false);
+					optionsTable.clear();
+				}
+			}
+		});
 	}
 
 	private JPanel panelInit() {
@@ -75,7 +100,7 @@ final class CommandDialog extends JDialog {
 		c.gridx = 1;
 		c.gridy = 3;
 		c.anchor = GridBagConstraints.EAST;
-		panel.add(createAddOptionButton(), c);
+		panel.add(addOptionButton, c);
 
 		c = new GridBagConstraints();
 		c.gridy = 4;
@@ -94,24 +119,12 @@ final class CommandDialog extends JDialog {
 		return panel;
 	}
 
-	private JButton createAddOptionButton() {
-		final var addOptionButton = new JButton("Add Option");
-		addOptionButton.addActionListener((final var e) -> optionsTable.addRow());
-		return addOptionButton;
-	}
-
 	private JPanel createExitButtonsPanel() {
 		final var createButton = new JButton("Create");
-		createButton.addActionListener((final var e) -> {
-			okPressed = true;
-			setVisible(false);
-		});
+		createButton.addActionListener(this::onCreatePressed);
 
 		final var cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener((final var e) -> {
-			okPressed = false;
-			setVisible(false);
-		});
+		cancelButton.addActionListener((final var e) -> dispose());
 
 		final var buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		buttonPanel.add(createButton);
@@ -120,14 +133,14 @@ final class CommandDialog extends JDialog {
 		return buttonPanel;
 	}
 
-	private void clearInputs() {
+	void clearInputs() {
 		typeInput.setSelectedItem(null);
 		nameInput.setText(null);
 		descInput.setText(null);
 		optionsTable.clear();
 	}
 
-	void fillInputs(ApplicationCommand command) {
+	void fillInputs(final ApplicationCommand command) {
 		typeInput.setSelectedItem(command.type());
 		nameInput.setText(command.name());
 		descInput.setText(command.description());
@@ -136,24 +149,40 @@ final class CommandDialog extends JDialog {
 		}
 	}
 
-	ApplicationCommand.Payload showAndWait() {
-		clearInputs();
-		setVisible(true);
+	private void onCreatePressed(final ActionEvent e) {
+		final var newCommand = new ApplicationCommand.Payload();
+		newCommand.name = nameInput.getText();
 
-		if (!okPressed) {
-			return null;
+		if (newCommand.name == null || newCommand.name.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Name is empty!");
+			return;
 		}
 
-		final var newCommand = new ApplicationCommand.Payload((ApplicationCommand.Type) typeInput.getSelectedItem(),
-				nameInput.getText(), descInput.getText());
+		final var selectedType = (ApplicationCommand.Type) typeInput.getSelectedItem();
+		switch (selectedType) {
+			case CHAT_INPUT -> {
+				newCommand.description = descInput.getText();
 
-		for (final var row : optionsTable.rows()) {
-			if (row == null)
-				continue;
-			newCommand.addOption((ApplicationCommandOption.Type) row.get(0), (String) row.get(1), (String) row.get(2),
-					(boolean) row.get(3));
+				if (newCommand.description == null || newCommand.description.isEmpty()) {
+					JOptionPane.showMessageDialog(this, "Description is empty!");
+					return;
+				}
+
+				for (final var row : optionsTable.rows()) {
+					if (row == null) continue;
+					final var type = (ApplicationCommandOption.Type) row.get(0);
+					final var name = (String) row.get(1);
+					final var description = (String) row.get(2);
+					final var required = (Boolean) row.get(3);
+					newCommand.addOption(type, name, description, (required == null) ? false : true);
+				}
+			}
+			default -> {
+				newCommand.type = selectedType;
+			}
 		}
 
-		return newCommand;
+		commandCreated.emit(newCommand);
+		dispose();
 	}
 }

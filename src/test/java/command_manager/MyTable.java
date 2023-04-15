@@ -9,7 +9,6 @@ import javax.swing.table.TableRowSorter;
 public class MyTable extends JTable {
 	private final DefaultTableModel model = new DefaultTableModel();
 	private boolean editable = false;
-	private boolean selectable = false;
 
 	MyTable(final String... columnNames) {
 		super();
@@ -42,10 +41,6 @@ public class MyTable extends JTable {
 		editable = b;
 	}
 
-	void setSelectable(boolean b) {
-		selectable = b;
-	}
-
 	void setSortable(boolean b) {
 		setRowSorter(b ? new TableRowSorter<>(model) : null);
 	}
@@ -58,10 +53,5 @@ public class MyTable extends JTable {
 	@Override
 	public boolean isCellEditable(int row, int col) {
 		return editable;
-	}
-
-	@Override
-	public boolean isCellSelected(int row, int col) {
-		return selectable;
 	}
 }

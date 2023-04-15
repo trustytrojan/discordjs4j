@@ -84,15 +84,6 @@ public class ApplicationCommand implements DiscordResource {
 		private Type(int value) {
 			this.value = value;
 		}
-
-		@Override
-		public String toString() {
-			return switch (this) {
-				case CHAT_INPUT -> "Chat Input";
-				case MESSAGE -> "Message";
-				case USER -> "User";
-			};
-		}
 	}
 
 	public static class Payload implements JSONAware {
@@ -100,16 +91,6 @@ public class ApplicationCommand implements DiscordResource {
 		public String name;
 		public String description;
 		private final List<ApplicationCommandOption.Payload> options = new LinkedList<>();
-
-		public Payload(Type type, String name, String description) {
-			this.type = type;
-			this.name = name;
-			this.description = description;
-		}
-
-		public Payload(String name, String description) {
-			this(null, name, description);
-		}
 
 		public void addOption(ApplicationCommandOption.Type type, String name, String description, boolean required) {
 			options.add(new ApplicationCommandOption.Payload(type, name, description, required));
@@ -132,7 +113,10 @@ public class ApplicationCommand implements DiscordResource {
 			}
 
 			obj.put("name", name);
-			obj.put("description", description);
+
+			if (description != null) {
+				obj.put("description", description);
+			}
 
 			if (options.size() > 0) {
 				obj.put("options", options);
