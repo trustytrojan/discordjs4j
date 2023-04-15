@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 public final class Util {
+	public static final Runnable DO_NOTHING = () -> {};
+
 	public static String readFile(String filePath) {
 		try {
 			final var stream = new FileInputStream(filePath);

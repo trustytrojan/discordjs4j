@@ -18,8 +18,8 @@ public class AuditLogEntry implements Identifiable {
 
 	public AuditLogEntry(DiscordClient client, JSONObject data) {
 		id = data.getString("id");
-		guild = client.guilds.fetch(data.getString("guild_id"));
-		executor = client.users.fetch(data.getString("user_id"));
+		guild = client.guilds.fetch(data.getString("guild_id")).join();
+		executor = client.users.fetch(data.getString("user_id")).join();
 		targetId = data.getString("target_id");
 		reason = data.getString("reason");
 		actionType = AuditLogEvent.resolve(data.getLong("action_type"));

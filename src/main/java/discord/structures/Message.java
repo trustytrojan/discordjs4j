@@ -22,7 +22,7 @@ public class Message implements DiscordResource {
 		this.client = client;
 		this.data = data;
 
-		author = client.users.fetch(data.getObject("author").getString("id"));
+		author = client.users.fetch(data.getObject("author").getString("id")).join();
 		channel = (TextBasedChannel) client.channels.fetch(data.getString("channel_id"));
 	}
 

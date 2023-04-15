@@ -23,7 +23,7 @@ public class GroupDMChannel implements DMBasedChannel {
 
 		final var recipients = new LinkedList<User>();
 		for (final var recipientData : data.getObjectArray("recipients")) {
-			recipients.add(client.users.fetch(recipientData.getString("id")));
+			recipients.add(client.users.fetch(recipientData.getString("id")).join());
 		}
 		this.recipients = (User[]) recipients.toArray();
 	}

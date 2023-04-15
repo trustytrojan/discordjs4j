@@ -11,6 +11,7 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import simple_json.JSON;
 import simple_json.JSONObject;
@@ -130,29 +131,31 @@ public final class APIClient {
 		}
 	}
 
-	private JSONHttpResponse _sendRequest(HttpMethod method, String path, String body) {
+	private CompletableFuture<JSONHttpResponse> _sendRequest(HttpMethod method, String path, String body) {
 		final var request = buildRequest(method, path, body);
-		final var response = sendRequest(request);
-		return new JSONHttpResponse(response.body());
+		return CompletableFuture.supplyAsync(() -> {
+			final var response = sendRequest(request);
+			return new JSONHttpResponse(response.body());
+		});
 	}
 
-	public JSONHttpResponse get(String path) {
+	public CompletableFuture<JSONHttpResponse> get(String path) {
 		return _sendRequest(HttpMethod.GET, path, null);
 	}
 
-	public JSONHttpResponse post(String path, String body) {
+	public CompletableFuture<JSONHttpResponse> post(String path, String body) {
 		return _sendRequest(HttpMethod.POST, path, body);
 	}
 
-	public JSONHttpResponse put(String path, String body) {
+	public CompletableFuture<JSONHttpResponse> put(String path, String body) {
 		return _sendRequest(HttpMethod.PUT, path, body);
 	}
 
-	public JSONHttpResponse patch(String path, String body) {
+	public CompletableFuture<JSONHttpResponse> patch(String path, String body) {
 		return _sendRequest(HttpMethod.PATCH, path, body);
 	}
 
-	public JSONHttpResponse delete(String path) {
+	public CompletableFuture<JSONHttpResponse> delete(String path) {
 		return _sendRequest(HttpMethod.DELETE, path, null);
 	}
 }

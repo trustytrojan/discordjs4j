@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import discord.structures.Identifiable;
 
 public class IdMap<V extends Identifiable> extends TreeMap<String, V> implements Iterable<V> {
-
 	private static final Random rand = new Random();
 
 	@Override
@@ -38,8 +37,16 @@ public class IdMap<V extends Identifiable> extends TreeMap<String, V> implements
 		}
 	}
 
-	public V put(V v) {
-		return put(v.id(), v);
+	public V put(V value) {
+		return put(value.id(), value);
 	}
 
+	@Override
+	public V put(String key, V value) {
+		final var oldValue = super.put(key, value);
+		if (size() > 50) {
+			remove(firstKey());
+		}
+		return oldValue;
+	}
 }

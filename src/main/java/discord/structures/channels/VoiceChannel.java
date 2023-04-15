@@ -14,7 +14,7 @@ public class VoiceChannel implements GuildChannel {
 	public VoiceChannel(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
-		guild = client.guilds.fetch(guildId());
+		guild = client.guilds.fetch(guildId()).join();
 	}
 
 	@Override

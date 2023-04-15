@@ -1,6 +1,7 @@
 package discord.structures;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -27,13 +28,8 @@ public class ApplicationCommand implements DiscordResource {
 				options.add(new ApplicationCommandOption(rawOption));
 	}
 
-	public Iterable<ApplicationCommandOption> options() {
-		return options;
-	}
-
-	@Override
-	public String toString() {
-		return getData().toString();
+	public List<ApplicationCommandOption> options() {
+		return Collections.unmodifiableList(options);
 	}
 
 	public Type type() {
@@ -143,6 +139,11 @@ public class ApplicationCommand implements DiscordResource {
 			}
 
 			return obj.toString();
+		}
+
+		@Override
+		public String toString() {
+			return toJSONString();
 		}
 	}
 

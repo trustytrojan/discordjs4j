@@ -6,6 +6,7 @@ import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.util.IdMap;
+import discord.util.Util;
 import simple_json.JSONObject;
 
 public class MessageManager extends DataManager<Message> {
@@ -32,35 +33,38 @@ public class MessageManager extends DataManager<Message> {
 
 	public CompletableFuture<Message> create(Message.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var createdMessageData = client.api.post(messagesPath(), payload.toJSONString()).toJSONObject();
+			final var createdMessageData = client.api.post(messagesPath(), payload.toJSONString()).join()
+					.toJSONObject();
 			return new Message(client, createdMessageData);
 		});
 	}
 
 	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
 		return CompletableFuture.supplyAsync(() -> {
-			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toJSONString()).toJSONObject();
+			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toJSONString()).join().toJSONObject();
 			return new Message(client, updatedMessageData);
 		});
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return CompletableFuture.runAsync(() -> client.api.delete(messagesPath(id)));
+		return client.api.delete(messagesPath(id)).thenRunAsync(Util.DO_NOTHING);
 	}
 
 	@Override
-	public Message fetch(String id, boolean force) {
+	public CompletableFuture<Message> fetch(String id, boolean force) {
 		return super.fetch(id, messagesPath(id), force);
 	}
 
-	public IdMap<Message> fetch() {
+	public CompletableFuture<IdMap<Message>> fetch() {
 		final var messages = new IdMap<Message>();
 
-		for (final var messageData : client.api.get(messagesPath()).toJSONObjectArray()) {
-			messages.put(new Message(client, messageData));
-		}
-
-		return messages;
+		return CompletableFuture.supplyAsync(() -> {
+			for (final var messageData : client.api.get(messagesPath()).join().toJSONObjectArray()) {
+				cache(messageData);
+			}
+	
+			return messages;
+		});
 	}
 
 }

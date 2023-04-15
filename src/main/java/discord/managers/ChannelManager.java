@@ -10,11 +10,16 @@ import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextChannel;
 import discord.util.IdMap;
+import discord.util.Util;
 import simple_json.JSONObject;
 
 public class ChannelManager extends DataManager<Channel> {
+	public ChannelManager(DiscordClient client) {
+		super(client);
+	}
 
-	public Channel createCorrectChannel(JSONObject data) {
+	@Override
+	public Channel construct(JSONObject data) {
 		return switch (Channel.Type.resolve(data.getLong("type"))) {
 			case GUILD_TEXT -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
@@ -25,35 +30,27 @@ public class ChannelManager extends DataManager<Channel> {
 		};
 	}
 
-	public ChannelManager(DiscordClient client) {
-		super(client);
-	}
-
-	@Override
-	public Channel construct(JSONObject data) {
-		return createCorrectChannel(data);
-	}
-
 	// edit group dm channels
 
 	public CompletableFuture<Void> delete(String id) {
-		return CompletableFuture.runAsync(() -> client.api.delete("/channels/" + id));
+		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
 	@Override
-	public Channel fetch(String id, boolean force) {
+	public CompletableFuture<Channel> fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	public IdMap<DMBasedChannel> fetchDMs() {
-		final var channels = new IdMap<DMBasedChannel>();
+	public CompletableFuture<IdMap<DMBasedChannel>> fetchDMs() {
+		final var dms = new IdMap<DMBasedChannel>();
 
-		for (final var rawChannel : client.api.get("/users/@me/channels").toJSONObjectArray()) {
-			final var channel = (DMBasedChannel) cache((JSONObject) rawChannel);
-			channels.put(channel);
-		}
+		return CompletableFuture.supplyAsync(() -> {
+			for (final var rawDM : client.api.get("/users/@me/channels").join().toJSONObjectArray()) {
+				final var channel = (DMBasedChannel) cache((JSONObject) rawDM);
+				dms.put(channel);
+			}
 
-		return channels;
+			return dms;
+		});
 	}
-
 }

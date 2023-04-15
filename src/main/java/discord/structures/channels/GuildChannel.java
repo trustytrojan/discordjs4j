@@ -23,7 +23,7 @@ public interface GuildChannel extends GuildObject, Channel {
 	}
 
 	default CategoryChannel parent() {
-		return (CategoryChannel) client().channels.fetch(parentId());
+		return (CategoryChannel) client().channels.fetch(parentId()).join();
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel

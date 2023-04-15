@@ -6,6 +6,7 @@ import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
 import discord.util.IdMap;
+import discord.util.Util;
 import simple_json.JSONObject;
 
 public class GuildChannelManager extends GuildDataManager<GuildChannel> {
@@ -15,29 +16,34 @@ public class GuildChannelManager extends GuildDataManager<GuildChannel> {
 
 	@Override
 	public GuildChannel construct(JSONObject data) {
-		return (GuildChannel) client.channels.createCorrectChannel(data);
+		return (GuildChannel) client.channels.construct(data);
 	}
 
 	@Override
-	public GuildChannel fetch(String id, boolean force) {
+	public CompletableFuture<GuildChannel> fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
+	// Sends the payload to discord, receives the updated channel, and caches it
 	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
-		return CompletableFuture.supplyAsync(() -> {
-			final var updatedChannelData = client.api.patch("/channels/" + id, payload.toJSONString()).toJSONObject();
-			return (GuildChannel) client.channels.createCorrectChannel(updatedChannelData);
-		});
+		return client.api.patch("/channels/" + id, payload.toJSONString())
+			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
-	public IdMap<GuildChannel> fetch() {
+	public CompletableFuture<Void> delete(String id) {
+		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
+	}
+
+	public CompletableFuture<IdMap<GuildChannel>> fetch() {
 		final var path = "/guilds/" + guild.id() + "/channels";
 		final var channels = new IdMap<GuildChannel>();
 
-		for (final var channelData : client.api.get(path).toJSONObjectArray()) {
-			channels.put((GuildChannel) cache(channelData));
-		}
+		return client.api.get(path).thenApplyAsync((final var r) -> {
+			for (final var channelData : client.api.get(path).join().toJSONObjectArray()) {
+				channels.put((GuildChannel) cache(channelData));
+			}
 
-		return channels;
+			return channels;
+		});
 	}
 }

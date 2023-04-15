@@ -1,6 +1,7 @@
 package discord.structures;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,8 +30,8 @@ public final class ApplicationCommandOption {
 				choices.add(new Choice(rawChoice));
 	}
 
-	public Iterable<Choice> choices() {
-		return choices;
+	public List<Choice> choices() {
+		return Collections.unmodifiableList(choices);
 	}
 
 	public enum Type {
@@ -102,6 +103,11 @@ public final class ApplicationCommandOption {
 					}
 					""".formatted(name, value);
 		}
+
+		@Override
+		public String toString() {
+			return toJSONString();
+		}
 	}
 
 	public static class Payload implements JSONAware {
@@ -148,6 +154,11 @@ public final class ApplicationCommandOption {
 			}
 
 			return obj.toString();
+		}
+
+		@Override
+		public String toString() {
+			return toJSONString();
 		}
 	}
 }

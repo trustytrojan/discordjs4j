@@ -20,7 +20,7 @@ public class GuildMember implements GuildObject {
 		this.client = client;
 		this.guild = guild;
 		this.data = data;
-		user = client.users.fetch(data.getObject("user").getString("id"));
+		user = client.users.fetch(data.getObject("user").getString("id")).join();
 	}
 
 	public String nickname() {

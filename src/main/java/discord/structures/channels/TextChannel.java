@@ -18,7 +18,7 @@ public class TextChannel implements GuildTextBasedChannel {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
-		guild = client.guilds.fetch(guildId());
+		guild = client.guilds.fetch(guildId()).join();
 	}
 
 	public String topic() {

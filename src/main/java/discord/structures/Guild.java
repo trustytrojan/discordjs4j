@@ -29,7 +29,7 @@ public class Guild implements DiscordResource {
 	}
 
 	public TextChannel systemChannel() {
-		return (TextChannel) client.channels.fetch(systemChannelId());
+		return (TextChannel) client.channels.fetch(systemChannelId()).join();
 	}
 
 	public final URLFactory icon = new URLFactory() {

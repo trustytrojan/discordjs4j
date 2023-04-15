@@ -2,7 +2,6 @@ package discord.client;
 
 import java.util.concurrent.CompletableFuture;
 
-import discord.enums.GatewayIntent;
 import discord.managers.ApplicationCommandManager;
 import discord.structures.Application;
 import discord.structures.interactions.ChatInputInteraction;
@@ -21,7 +20,7 @@ public final class BotDiscordClient extends DiscordClient {
 
 	public CompletableFuture<Void> fetchApplication() {
 		return CompletableFuture.runAsync(
-				() -> application = new Application(this, api.get("/oauth2/applications/@me").toJSONObject()));
+				() -> application = new Application(this, api.get("/oauth2/applications/@me").join().toJSONObject()));
 	}
 
 }

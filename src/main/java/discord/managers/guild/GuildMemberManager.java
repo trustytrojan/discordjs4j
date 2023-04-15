@@ -1,7 +1,8 @@
 package discord.managers.guild;
 
+import java.util.concurrent.CompletableFuture;
+
 import discord.client.DiscordClient;
-import discord.managers.DataManager;
 import discord.structures.Guild;
 import discord.structures.GuildMember;
 import simple_json.JSONObject;
@@ -17,9 +18,7 @@ public class GuildMemberManager extends GuildDataManager<GuildMember> {
 	}
 
 	@Override
-	public GuildMember fetch(String id, boolean force) {
+	public CompletableFuture<GuildMember> fetch(String id, boolean force) {
 		return super.fetch(id, "/guilds/" + guild.id() + "/members/" + id, force);
 	}
-
-	
 }

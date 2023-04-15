@@ -41,11 +41,11 @@ public abstract class Interaction {
 
 		final var guildId = data.getString("guild_id");
 		if (guildId == null) {
-			user = client.users.fetch(data.getObject("user").getString("id"));
+			user = client.users.fetch(data.getObject("user").getString("id")).join();
 			guild = null;
 			member = null;
 		} else {
-			guild = client.guilds.fetch(data.getString("guild_id"));
+			guild = client.guilds.fetch(data.getString("guild_id")).join();
 			member = new GuildMember(client, guild, data.getObject("member"));
 			user = member.user;
 		}
