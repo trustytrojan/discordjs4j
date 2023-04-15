@@ -9,7 +9,7 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
-public class GuildMember implements GuildObject {
+public class GuildMember implements GuildResource {
 	private final DiscordClient client;
 	private JSONObject data;
 

@@ -1,5 +1,7 @@
 package discord.managers;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import discord.util.IdMap;
@@ -17,6 +19,7 @@ public abstract class ResourceManager<T extends DiscordResource> {
 
 	public abstract T construct(JSONObject data);
 
+	// if this is called we know the cache WILL be modified
 	public T cache(JSONObject data) {
 		final var cached = cache.get(data.getString("id"));
 		

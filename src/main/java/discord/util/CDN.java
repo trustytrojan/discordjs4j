@@ -60,6 +60,10 @@ public final class CDN {
 		return dynamicMakeURL("/guilds/"+guildId+"/users/"+userId+'/'+hash, hash, size, extension);
 	}
 
+	public static String roleIcon(String roleId, String hash, int size, String extension) {
+		return makeURL("/role-icons/"+roleId+'/'+hash+".png", size, extension);
+	}
+
 	public static interface URLFactory {
 		public String hash();
 		public String url(int size, String extension);

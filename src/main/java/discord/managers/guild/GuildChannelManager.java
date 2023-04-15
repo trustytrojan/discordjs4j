@@ -9,7 +9,7 @@ import discord.util.IdMap;
 import discord.util.Util;
 import simple_json.JSONObject;
 
-public class GuildChannelManager extends GuildDataManager<GuildChannel> {
+public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(DiscordClient client, Guild guild) {
 		super(client, guild);
 	}

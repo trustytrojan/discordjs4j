@@ -7,7 +7,7 @@ import discord.structures.Guild;
 import discord.structures.GuildMember;
 import simple_json.JSONObject;
 
-public class GuildMemberManager extends GuildDataManager<GuildMember> {
+public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	public GuildMemberManager(DiscordClient client, Guild guild) {
 		super(client, guild);
 	}

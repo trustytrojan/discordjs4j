@@ -2,10 +2,10 @@ package discord.structures.channels;
 
 import org.json.simple.JSONAware;
 
-import discord.structures.GuildObject;
+import discord.structures.GuildResource;
 import simple_json.JSONObject;
 
-public interface GuildChannel extends GuildObject, Channel {
+public interface GuildChannel extends GuildResource, Channel {
 
 	// public PermissionOverwrites permission_overwrites;
 

@@ -1,6 +1,6 @@
 package discord.structures;
 
-public interface GuildObject extends DiscordResource {
+public interface GuildResource extends DiscordResource {
 
     Guild guild();
     

@@ -3,12 +3,12 @@ package discord.managers.guild;
 import discord.client.DiscordClient;
 import discord.managers.ResourceManager;
 import discord.structures.Guild;
-import discord.structures.GuildObject;
+import discord.structures.GuildResource;
 
-public abstract class GuildDataManager<T extends GuildObject> extends ResourceManager<T> {
+public abstract class GuildResourceManager<T extends GuildResource> extends ResourceManager<T> {
 	public final Guild guild;
 
-	protected GuildDataManager(DiscordClient client, Guild guild) {
+	protected GuildResourceManager(DiscordClient client, Guild guild) {
 		super(client);
 		this.guild = guild;
 	}
