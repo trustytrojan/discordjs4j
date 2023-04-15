@@ -7,11 +7,11 @@ import simple_json.JSONObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
 
-public abstract class DataManager<T extends DiscordResource> {
+public abstract class ResourceManager<T extends DiscordResource> {
 	public final IdMap<T> cache = new IdMap<>();
 	protected final DiscordClient client;
 
-	protected DataManager(DiscordClient client) {
+	protected ResourceManager(DiscordClient client) {
 		this.client = client;
 	}
 

@@ -9,7 +9,7 @@ import discord.util.IdMap;
 import discord.util.Util;
 import simple_json.JSONObject;
 
-public class MessageManager extends DataManager<Message> {
+public class MessageManager extends ResourceManager<Message> {
 
 	public final TextBasedChannel channel;
 

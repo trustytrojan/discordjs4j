@@ -10,7 +10,7 @@ import discord.structures.ApplicationCommand;
 import discord.util.IdMap;
 import simple_json.JSONObject;
 
-public class ApplicationCommandManager extends DataManager<ApplicationCommand> {
+public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
 	private final BotDiscordClient client;
 
 	public ApplicationCommandManager(BotDiscordClient client) {

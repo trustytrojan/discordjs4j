@@ -3,11 +3,11 @@ package discord.managers.guild;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.managers.DataManager;
+import discord.managers.ResourceManager;
 import discord.structures.Guild;
 import simple_json.JSONObject;
 
-public class GuildManager extends DataManager<Guild> {
+public class GuildManager extends ResourceManager<Guild> {
 	public GuildManager(DiscordClient client) {
 		super(client);
 	}

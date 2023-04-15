@@ -13,7 +13,7 @@ import discord.util.IdMap;
 import discord.util.Util;
 import simple_json.JSONObject;
 
-public class ChannelManager extends DataManager<Channel> {
+public class ChannelManager extends ResourceManager<Channel> {
 	public ChannelManager(DiscordClient client) {
 		super(client);
 	}

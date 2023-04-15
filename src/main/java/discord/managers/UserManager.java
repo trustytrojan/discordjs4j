@@ -7,7 +7,7 @@ import discord.structures.ClientUser;
 import discord.structures.User;
 import simple_json.JSONObject;
 
-public class UserManager extends DataManager<User> {
+public class UserManager extends ResourceManager<User> {
 	public UserManager(DiscordClient client) {
 		super(client);
 	}
