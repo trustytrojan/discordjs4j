@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
 import java_signals.Signal1;
+import java_signals.Signal2;
 
 final class CommandDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
@@ -39,7 +40,10 @@ final class CommandDialog extends MyDialog {
 	private final JButton addOptionButton = new JButton("Add Option");
 
 	public final Signal1<ApplicationCommand.Payload> createRequested = new Signal1<>();
-	public final Signal1<ApplicationCommand.Payload> editRequested = new Signal1<>();
+	public final Signal2<String, ApplicationCommand.Payload> editRequested = new Signal2<>();
+
+	private String editingCommandId;
+	private boolean editingCommand;
 
 	CommandDialog(final Window owner) {
 		super(owner, "Create/Edit Command");
@@ -69,21 +73,24 @@ final class CommandDialog extends MyDialog {
 	}
 
 	void showCreate() {
+		editingCommand = false;
 		setTitle("Create Command");
 		setVisible(true);
 	}
 
 	void showEdit(final ApplicationCommand command) {
+		editingCommand = true;
+		editingCommandId = command.id();
 		fillInputs(command);
 		setTitle("Edit Command");
 		setVisible(true);
 	}
 
 	private void onSendPressed(final ActionEvent e) {
-		final var newCommand = new ApplicationCommand.Payload();
-		newCommand.name = nameInput.getText();
+		final var payload = new ApplicationCommand.Payload();
+		payload.name = nameInput.getText();
 
-		if (newCommand.name == null || newCommand.name.isEmpty()) {
+		if (payload.name == null || payload.name.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Name is empty!");
 			return;
 		}
@@ -91,9 +98,9 @@ final class CommandDialog extends MyDialog {
 		final var selectedType = (ApplicationCommand.Type) typeInput.getSelectedItem();
 		switch (selectedType) {
 			case CHAT_INPUT -> {
-				newCommand.description = descInput.getText();
+				payload.description = descInput.getText();
 
-				if (newCommand.description == null || newCommand.description.isEmpty()) {
+				if (payload.description == null || payload.description.isEmpty()) {
 					JOptionPane.showMessageDialog(this, "Description is empty!");
 					return;
 				}
@@ -104,15 +111,20 @@ final class CommandDialog extends MyDialog {
 					final var name = (String) row.get(1);
 					final var description = (String) row.get(2);
 					final var required = (Boolean) row.get(3);
-					newCommand.addOption(type, name, description, (required == null) ? false : true);
+					payload.addOption(type, name, description, (required == null) ? false : true);
 				}
 			}
 			default -> {
-				newCommand.type = selectedType;
+				payload.type = selectedType;
 			}
 		}
 
-		createRequested.emit(newCommand);
+		if (editingCommand) {
+			editRequested.emit(editingCommandId, payload);
+		} else {
+			createRequested.emit(payload);
+		}
+
 		dispose();
 	}
 

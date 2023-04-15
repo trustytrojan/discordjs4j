@@ -46,8 +46,8 @@ public class MyTable extends JTable {
 	}
 
 	@SuppressWarnings("rawtypes")
-	Iterable<Vector> rows() {
-		return Util.iterableFrom(model.getDataVector().iterator());
+	Vector<Vector> rows() {
+		return model.getDataVector();
 	}
 
 	@Override

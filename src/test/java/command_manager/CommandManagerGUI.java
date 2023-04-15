@@ -23,8 +23,8 @@ public class CommandManagerGUI extends JFrame {
 			commandManager.create(payload).thenAcceptAsync(table::addRow);
 		});
 
-		commandDialog.editRequested.connect((final var payload) -> {
-			//commandManager.edit()
+		commandDialog.editRequested.connect((final var id, final var payload) -> {
+			commandManager.edit(id, payload).thenRunAsync(this::refreshCacheAndTable);
 		});
 
 		table.editRequested.connect((final var commandId) -> {
