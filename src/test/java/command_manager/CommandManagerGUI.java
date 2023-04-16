@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 
 import discord.client.BotDiscordClient;
 import discord.managers.ApplicationCommandManager;
+import discord.util.Util;
 
 public class CommandManagerGUI extends JFrame {
 	private final CommandsTable table = new CommandsTable();
@@ -79,7 +80,7 @@ public class CommandManagerGUI extends JFrame {
 
 	public static void main(final String[] args) {
 		final var client = new BotDiscordClient();
-		client.api.setToken(discord.util.Util.readFile("tokens/java-bot"));
+		client.api.setToken(Util.readFile("tokens/java-bot"));
 		client.fetchApplication().join();
 		new CommandManagerGUI(client.commands);
 	}
