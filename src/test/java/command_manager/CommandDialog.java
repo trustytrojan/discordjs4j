@@ -18,7 +18,6 @@ import javax.swing.JTextField;
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
 import java_signals.Signal1;
-import java_signals.Signal2;
 
 final class CommandDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
@@ -40,10 +39,9 @@ final class CommandDialog extends MyDialog {
 	private final JButton addOptionButton = new JButton("Add Option");
 
 	public final Signal1<ApplicationCommand.Payload> createRequested = new Signal1<>();
-	public final Signal2<String, ApplicationCommand.Payload> editRequested = new Signal2<>();
+	public final Signal1<CommandEditRequest> editRequested = new Signal1<>();
 
-	private String editingCommandId;
-	private boolean editingCommand;
+	private CommandEditRequest editRequest;
 
 	CommandDialog(final Window owner) {
 		super(owner, "Create/Edit Command");
@@ -57,13 +55,13 @@ final class CommandDialog extends MyDialog {
 	}
 
 	void clearInputs() {
-		typeInput.setSelectedItem(null);
+		typeInput.setSelectedItem(0);
 		nameInput.setText(null);
 		descInput.setText(null);
 		optionsTable.clear();
 	}
 
-	void fillInputs(final ApplicationCommand command) {
+	private void fillInputs(final ApplicationCommand command) {
 		typeInput.setSelectedItem(command.type());
 		nameInput.setText(command.name());
 		descInput.setText(command.description());
@@ -73,21 +71,22 @@ final class CommandDialog extends MyDialog {
 	}
 
 	void showCreate() {
-		editingCommand = false;
+		editRequest = null;
 		setTitle("Create Command");
 		setVisible(true);
 	}
 
-	void showEdit(final ApplicationCommand command) {
-		editingCommand = true;
-		editingCommandId = command.id();
-		fillInputs(command);
+	void showEdit(final CommandEditRequest editRequest) {
+		this.editRequest = editRequest;
+		fillInputs(editRequest.currentCommand);
 		setTitle("Edit Command");
 		setVisible(true);
 	}
 
 	private void onSendPressed(final ActionEvent e) {
 		final var payload = new ApplicationCommand.Payload();
+
+		// REQUIRED field
 		payload.name = nameInput.getText();
 
 		if (payload.name == null || payload.name.isEmpty()) {
@@ -98,6 +97,7 @@ final class CommandDialog extends MyDialog {
 		final var selectedType = (ApplicationCommand.Type) typeInput.getSelectedItem();
 		switch (selectedType) {
 			case CHAT_INPUT -> {
+				// REQUIRED field for CHAT_INPUT only!
 				payload.description = descInput.getText();
 
 				if (payload.description == null || payload.description.isEmpty()) {
@@ -105,6 +105,7 @@ final class CommandDialog extends MyDialog {
 					return;
 				}
 
+				// fill payload with options from table
 				for (final var row : optionsTable.rows()) {
 					if (row == null) continue;
 					final var type = (ApplicationCommandOption.Type) row.get(0);
@@ -114,13 +115,17 @@ final class CommandDialog extends MyDialog {
 					payload.addOption(type, name, description, (required == null) ? false : true);
 				}
 			}
+
 			default -> {
+				// other types *should not have* a description
 				payload.type = selectedType;
 			}
 		}
 
-		if (editingCommand) {
-			editRequested.emit(editingCommandId, payload);
+		if (editRequest != null) {
+			// pack the payload into the request and send it back to the manager
+			editRequest.payload = payload;
+			editRequested.emit(editRequest);
 		} else {
 			createRequested.emit(payload);
 		}
@@ -136,7 +141,9 @@ final class CommandDialog extends MyDialog {
 		typeInput.setSelectedItem(0);
 
 		typeInput.addActionListener((final var e) -> {
-			switch ((ApplicationCommand.Type) typeInput.getSelectedItem()) {
+			final var selectedItem = typeInput.getSelectedItem();
+			if (selectedItem == null) return;
+			switch ((ApplicationCommand.Type) selectedItem) {
 				case CHAT_INPUT -> {
 					descInput.setEnabled(true);
 					addOptionButton.setEnabled(true);

@@ -20,6 +20,12 @@ public class MyTable extends JTable {
 		model.addRow(data);
 	}
 
+	void setRow(final int row, final Object... data) {
+		for (int i = 0; i < data.length; ++i) {
+			model.setValueAt(data[i], row, i);
+		}
+	}
+
 	void removeRow(final int index) {
 		model.removeRow(index);
 	}

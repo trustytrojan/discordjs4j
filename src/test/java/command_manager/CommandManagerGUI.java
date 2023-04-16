@@ -3,6 +3,7 @@ package command_manager;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import discord.client.BotDiscordClient;
@@ -15,7 +16,7 @@ public class CommandManagerGUI extends JFrame {
 	private final ApplicationCommandManager commandManager;
 
 	CommandManagerGUI(final ApplicationCommandManager commandManager) {
-		super("DCM Test");
+		super("Discord Command Manager");
 
 		this.commandManager = commandManager;
 
@@ -23,18 +24,25 @@ public class CommandManagerGUI extends JFrame {
 			commandManager.create(payload).thenAcceptAsync(table::addRow);
 		});
 
-		commandDialog.editRequested.connect((final var id, final var payload) -> {
-			commandManager.edit(id, payload).thenRunAsync(this::refreshCacheAndTable);
+		// editRequest comes from the dialog SECOND
+		commandDialog.editRequested.connect((final var editRequest) -> {
+			// send the edit
+			commandManager.edit(editRequest.commandId, editRequest.payload)
+				// then edit the row in the table
+				.thenAcceptAsync((final var command) -> table.setRow(editRequest.rowInTable, command));
 		});
 
-		table.editRequested.connect((final var commandId) -> {
-			final var command = commandManager.fetch(commandId).join();
-			commandDialog.fillInputs(command);
-			commandDialog.setVisible(true);
+		// editRequest comes from the table FIRST
+		table.editClicked.connect((final var editRequest) -> {
+			// pack current command into request for use by CommandDialog
+			editRequest.currentCommand = commandManager.fetch(editRequest.commandId).join();
+			commandDialog.showEdit(editRequest);
 		});
 
-		table.deleteRequested.connect((final var commandId) -> {
-			commandManager.delete(commandId).thenRunAsync(this::refreshCacheAndTable);
+		table.deleteClicked.connect((final var row, final var commandId) -> {
+			final var option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this command?");
+			if (option != JOptionPane.OK_OPTION) return;
+			commandManager.delete(commandId).thenRunAsync(() -> table.removeRow(row));
 		});
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -7,10 +7,11 @@ import javax.swing.JPopupMenu;
 
 import discord.structures.ApplicationCommand;
 import java_signals.Signal1;
+import java_signals.Signal2;
 
 public class CommandsTable extends MyTable {
-	public final Signal1<String> editRequested = new Signal1<>();
-	public final Signal1<String> deleteRequested = new Signal1<>();
+	public final Signal1<CommandEditRequest> editClicked = new Signal1<>();
+	public final Signal2<Integer, String> deleteClicked = new Signal2<>();
 
 	public CommandsTable() {
 		super("ID", "Type", "Name", "Description", "Options");
@@ -18,13 +19,16 @@ public class CommandsTable extends MyTable {
 		final var dropdown = new JPopupMenu();
 
 		dropdown.add("Edit").addActionListener((final var e) -> {
+			final var row = getSelectedRow();
 			final var commandId = (String) getValueAt(getSelectedRow(), 0);
-			editRequested.emit(commandId);
+			// begin an edit request: pack id and row then send to manager
+			editClicked.emit(new CommandEditRequest(commandId, row));
 		});
 
 		dropdown.add("Delete").addActionListener((final var e) -> {
-			final var commandId = (String) getValueAt(getSelectedRow(), 0);
-			deleteRequested.emit(commandId);
+			final var row = getSelectedRow();
+			final var commandId = (String) getValueAt(row, 0);
+			deleteClicked.emit(row, commandId);
 		});
 
 		// show dropdown on mouse release
@@ -38,7 +42,11 @@ public class CommandsTable extends MyTable {
 		});
 	}
 
-	public void addRow(ApplicationCommand command) {
+	public void addRow(final ApplicationCommand command) {
 		addRow(command.id(), command.type(), command.name(), command.description(), command.options().size() + " options...");
+	}
+
+	public void setRow(final int row, final ApplicationCommand command) {
+		setRow(row, command.id(), command.type(), command.name(), command.description(), command.options().size() + " options...");
 	}
 }
