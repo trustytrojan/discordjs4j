@@ -24,7 +24,7 @@ public class CommandManagerGUI extends JFrame {
 			commandManager.create(payload).thenAcceptAsync(table::addRow);
 		});
 
-		// editRequest comes from the dialog SECOND
+		// editRequest final stage: send payload and edit table
 		commandDialog.editRequested.connect((final var editRequest) -> {
 			// send the edit
 			commandManager.edit(editRequest.commandId, editRequest.payload)
@@ -32,9 +32,8 @@ public class CommandManagerGUI extends JFrame {
 				.thenAcceptAsync((final var command) -> table.setRow(editRequest.rowInTable, command));
 		});
 
-		// editRequest comes from the table FIRST
+		// editRequest 2nd stage: pack command and send to CommandDialog
 		table.editClicked.connect((final var editRequest) -> {
-			// pack current command into request for use by CommandDialog
 			editRequest.currentCommand = commandManager.fetch(editRequest.commandId).join();
 			commandDialog.showEdit(editRequest);
 		});
@@ -66,10 +65,7 @@ public class CommandManagerGUI extends JFrame {
 
 	private JMenuBar createMenuBar() {
 		final var commandMenu = new JMenu("Command");
-		commandMenu.add("Create...").addActionListener((final var e) -> {
-			commandDialog.clearInputs();
-			commandDialog.setVisible(true);
-		});
+		commandMenu.add("Create...").addActionListener((final var e) -> commandDialog.showCreate());
 
 		final var cacheMenu = new JMenu("Cache");
 		cacheMenu.add("Refresh").addActionListener((final var e) -> refreshCacheAndTable());

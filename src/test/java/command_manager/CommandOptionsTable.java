@@ -1,11 +1,15 @@
 package command_manager;
 
 import java.awt.Component;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+
+import discord.structures.ApplicationCommandOption;
 
 public class CommandOptionsTable extends MyTable {
 	CommandOptionsTable() {
@@ -13,6 +17,19 @@ public class CommandOptionsTable extends MyTable {
 		setEditable(true);
 		typeColumnSetup();
 		requiredColumnSetup();
+		dropdownMenuSetup();
+	}
+
+	void clearAndFill(final List<ApplicationCommandOption> options) {
+		clear();
+		for (final var option : options) {
+			addRow(option.type, option.name, option.description, option.required);
+		}
+	}
+
+	private void dropdownMenuSetup() {
+		final var dropdown = new JPopupMenu();
+		dropdown.add("Delete").addActionListener((final var e) -> removeRow(getSelectedRow()));
 	}
 
 	private void typeColumnSetup() {

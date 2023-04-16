@@ -54,7 +54,7 @@ final class CommandDialog extends MyDialog {
 		pack();
 	}
 
-	void clearInputs() {
+	private void clearInputs() {
 		typeInput.setSelectedItem(0);
 		nameInput.setText(null);
 		descInput.setText(null);
@@ -65,13 +65,12 @@ final class CommandDialog extends MyDialog {
 		typeInput.setSelectedItem(command.type());
 		nameInput.setText(command.name());
 		descInput.setText(command.description());
-		for (final var option : command.options()) {
-			optionsTable.addRow(option.type, option.name, option.description, option.required);
-		}
+		optionsTable.clearAndFill(command.options());
 	}
 
 	void showCreate() {
 		editRequest = null;
+		clearInputs();
 		setTitle("Create Command");
 		setVisible(true);
 	}
@@ -83,6 +82,7 @@ final class CommandDialog extends MyDialog {
 		setVisible(true);
 	}
 
+	// When user presses "Send to Discord"
 	private void onSendPressed(final ActionEvent e) {
 		final var payload = new ApplicationCommand.Payload();
 
@@ -122,6 +122,7 @@ final class CommandDialog extends MyDialog {
 			}
 		}
 
+		// Very important: check if this is an edit or a create!!!
 		if (editRequest != null) {
 			// pack the payload into the request and send it back to the manager
 			editRequest.payload = payload;

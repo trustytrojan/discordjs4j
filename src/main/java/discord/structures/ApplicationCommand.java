@@ -18,14 +18,9 @@ public class ApplicationCommand implements DiscordResource {
 	private JSONObject data;
 	private final List<ApplicationCommandOption> options = new ArrayList<>();
 
-	public ApplicationCommand(BotDiscordClient client, JSONObject data) {
+	public ApplicationCommand(final BotDiscordClient client, final JSONObject data) {
 		this.client = client;
-		this.data = data;
-
-		final var rawOptions = data.getObjectArray("options");
-		if (rawOptions != null)
-			for (final var rawOption : rawOptions)
-				options.add(new ApplicationCommandOption(rawOption));
+		setData(data);
 	}
 
 	public List<ApplicationCommandOption> options() {
@@ -63,8 +58,15 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(final JSONObject data) {
 		this.data = data;
+		options.clear();
+		final var rawOptions = data.getObjectArray("options");
+		if (rawOptions != null) {
+			for (final var rawOption : rawOptions) {
+				options.add(new ApplicationCommandOption(rawOption));
+			}
+		}
 	}
 
 	public static enum Type {
