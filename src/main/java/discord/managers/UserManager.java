@@ -8,17 +8,17 @@ import discord.structures.User;
 import simple_json.JSONObject;
 
 public class UserManager extends ResourceManager<User> {
-	public UserManager(DiscordClient client) {
+	public UserManager(final DiscordClient client) {
 		super(client);
 	}
 
 	@Override
-	public User construct(JSONObject data) {
+	public User construct(final JSONObject data) {
 		return new User(client, data);
 	}
 
 	@Override
-	public CompletableFuture<User> fetch(String id, boolean force) {
+	public CompletableFuture<User> fetch(final String id, final boolean force) {
 		return super.fetch(id, "/users/" + id, force);
 	}
 

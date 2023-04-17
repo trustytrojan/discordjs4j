@@ -13,9 +13,9 @@ import discord.client.DiscordClient;
 import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
-
 	private final BotDiscordClient client;
 	private JSONObject data;
+
 	private final List<ApplicationCommandOption> options = new ArrayList<>();
 
 	public ApplicationCommand(final BotDiscordClient client, final JSONObject data) {
@@ -67,6 +67,11 @@ public class ApplicationCommand implements DiscordResource {
 				options.add(new ApplicationCommandOption(rawOption));
 			}
 		}
+	}
+
+	@Override
+	public String apiPath() {
+		return "/applications/" + client.application.id() + '/' + id();
 	}
 
 	public static enum Type {
@@ -132,5 +137,4 @@ public class ApplicationCommand implements DiscordResource {
 			return toJSONString();
 		}
 	}
-
 }

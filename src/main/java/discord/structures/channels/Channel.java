@@ -5,8 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.structures.DiscordResource;
 
 public interface Channel extends DiscordResource {
-
-	public String url();
+	String url();
 
 	default String mention() {
 		return "<#" + id() + '>';
@@ -24,6 +23,11 @@ public interface Channel extends DiscordResource {
 		return client().channels.delete(id());
 	}
 
+	@Override
+	default String apiPath() {
+		return "/channels/" + id();
+	}
+
 	public static enum Type {
 		GUILD_TEXT(0),
 		DM(1),
@@ -37,13 +41,13 @@ public interface Channel extends DiscordResource {
 		GUILD_STAGE_VOICE(13),
 		GUILD_DIRECTORY(14),
 		GUILD_FORUM(15);
-	
+
 		public final int value;
-	
+
 		private Type(int value) {
 			this.value = value;
 		}
-	
+
 		public static Type resolve(long value) {
 			for (final var x : Type.values())
 				if (x.value == value)
@@ -51,5 +55,4 @@ public interface Channel extends DiscordResource {
 			return null;
 		}
 	}
-
 }

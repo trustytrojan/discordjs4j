@@ -5,27 +5,30 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
-import discord.util.IdMap;
 import discord.util.Util;
 import simple_json.JSONObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
-	public GuildChannelManager(DiscordClient client, Guild guild) {
+	public GuildChannelManager(final DiscordClient client, final Guild guild) {
 		super(client, guild);
 	}
 
 	@Override
-	public GuildChannel construct(JSONObject data) {
+	public GuildChannel construct(final JSONObject data) {
 		return (GuildChannel) client.channels.construct(data);
 	}
 
 	@Override
-	public CompletableFuture<GuildChannel> fetch(String id, boolean force) {
+	public CompletableFuture<GuildChannel> fetch(final String id, final boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	// Sends the payload to discord, receives the updated channel, and caches it
-	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
+	public CompletableFuture<GuildChannel> create(final GuildChannel.Payload payload) {
+		return client.api.post('/' + guild.id() + "/channels", payload.toJSONString())
+			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+	}
+
+	public CompletableFuture<GuildChannel> edit(final String id, final GuildChannel.Payload payload) {
 		return client.api.patch("/channels/" + id, payload.toJSONString())
 			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
@@ -34,16 +37,8 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
-	public CompletableFuture<IdMap<GuildChannel>> fetch() {
+	public CompletableFuture<Void> refreshCache() {
 		final var path = "/guilds/" + guild.id() + "/channels";
-		final var channels = new IdMap<GuildChannel>();
-
-		return client.api.get(path).thenApplyAsync((final var r) -> {
-			for (final var channelData : client.api.get(path).join().toJSONObjectArray()) {
-				channels.put((GuildChannel) cache(channelData));
-			}
-
-			return channels;
-		});
+		return client.api.get(path).thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
 	}
 }

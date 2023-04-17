@@ -2,6 +2,7 @@ package discord.structures;
 
 import discord.client.DiscordClient;
 import discord.managers.guild.GuildChannelManager;
+import discord.managers.guild.RoleManager;
 import discord.structures.channels.TextChannel;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
@@ -13,11 +14,13 @@ public class Guild implements DiscordResource {
 	private JSONObject data;
 
 	public final GuildChannelManager channels;
+	public final RoleManager roles;
 
 	public Guild(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
 		channels = new GuildChannelManager(client, this);
+		roles = new RoleManager(client, this);
 	}
 
 	public String name() {
@@ -59,4 +62,8 @@ public class Guild implements DiscordResource {
 		this.data = data;
 	}
 
+	@Override
+	public String apiPath() {
+		return "/guilds/" + id();
+	}
 }

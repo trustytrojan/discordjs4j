@@ -5,7 +5,6 @@ import discord.structures.Guild;
 import simple_json.JSONObject;
 
 public class CategoryChannel implements GuildChannel {
-
 	private final DiscordClient client;
 	private JSONObject data;
 
@@ -36,5 +35,4 @@ public class CategoryChannel implements GuildChannel {
 	public DiscordClient client() {
 		return client;
 	}
-
 }

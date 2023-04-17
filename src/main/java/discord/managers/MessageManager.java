@@ -10,61 +10,45 @@ import discord.util.Util;
 import simple_json.JSONObject;
 
 public class MessageManager extends ResourceManager<Message> {
-
+	public final String basePath;
 	public final TextBasedChannel channel;
 
-	public MessageManager(DiscordClient client, TextBasedChannel channel) {
+	public MessageManager(final DiscordClient client, final TextBasedChannel channel) {
 		super(client);
+		cache.setSizeLimit(50);
 		this.channel = channel;
+		basePath = "/channels/" + channel.id() + "/messages/";
 	}
 
 	@Override
-	public Message construct(JSONObject data) {
+	public Message construct(final JSONObject data) {
 		return new Message(client, data);
 	}
 
-	private String messagesPath() {
-		return "/channels/" + channel.id() + "/messages";
+	public CompletableFuture<Message> create(final Message.Payload payload) {
+		return client.api.post(basePath, payload.toJSONString())
+			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
-	private String messagesPath(String id) {
-		return messagesPath() + '/' + id;
+	public CompletableFuture<Message> edit(final String id, final Message.Payload payload) {
+		return client.api.patch(basePath + id, payload.toJSONString())
+			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
-	public CompletableFuture<Message> create(Message.Payload payload) {
-		return CompletableFuture.supplyAsync(() -> {
-			final var createdMessageData = client.api.post(messagesPath(), payload.toJSONString()).join()
-					.toJSONObject();
-			return new Message(client, createdMessageData);
-		});
-	}
-
-	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
-		return CompletableFuture.supplyAsync(() -> {
-			final var updatedMessageData = client.api.patch(messagesPath(id), payload.toJSONString()).join().toJSONObject();
-			return new Message(client, updatedMessageData);
-		});
-	}
-
-	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(messagesPath(id)).thenRunAsync(Util.DO_NOTHING);
+	public CompletableFuture<Void> delete(final String id) {
+		return client.api.delete(basePath + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
 	@Override
-	public CompletableFuture<Message> fetch(String id, boolean force) {
-		return super.fetch(id, messagesPath(id), force);
+	public CompletableFuture<Message> fetch(final String id, final boolean force) {
+		return super.fetch(id, basePath + id, force);
 	}
 
 	public CompletableFuture<IdMap<Message>> fetch() {
 		final var messages = new IdMap<Message>();
-
-		return CompletableFuture.supplyAsync(() -> {
-			for (final var messageData : client.api.get(messagesPath()).join().toJSONObjectArray()) {
-				cache(messageData);
-			}
-	
+		return client.api.get(basePath).thenApplyAsync((final var r) -> {
+			r.toJSONObjectArray().forEach((final var o) -> messages.put(cache(o)));
 			return messages;
 		});
 	}
-
 }

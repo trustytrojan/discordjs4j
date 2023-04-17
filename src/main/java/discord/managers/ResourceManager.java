@@ -6,8 +6,9 @@ import discord.util.IdMap;
 import simple_json.JSONObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
+import discord.structures.Identifiable;
 
-public abstract class ResourceManager<T extends DiscordResource> {
+public abstract class ResourceManager<T extends DiscordResource & Identifiable> {
 	public final IdMap<T> cache = new IdMap<>();
 	protected final DiscordClient client;
 

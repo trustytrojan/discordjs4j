@@ -9,9 +9,8 @@ import discord.structures.channels.TextBasedChannel;
 import simple_json.JSONObject;
 
 public abstract class Interaction {
-
 	public static Interaction createCorrectInteraction(BotDiscordClient client, JSONObject data) {
-		return switch (Type.resolve(data.getLong("type").intValue())) {
+		return switch (Type.resolve(data.getLong("type"))) {
 			case APPLICATION_COMMAND -> new ChatInputInteraction(client, data);
 			default -> null;
 		};
@@ -19,12 +18,14 @@ public abstract class Interaction {
 
 	protected final BotDiscordClient client;
 
-	public final String id;
+	protected final String id;
 	public final Type type;
 	public final Guild guild;
 	public final GuildMember member;
 	public final User user;
 	public final TextBasedChannel channel;
+
+	// channelPermissions???
 	
 	protected final JSONObject innerData;
 	protected final String token;
@@ -35,13 +36,13 @@ public abstract class Interaction {
 		id = data.getString("id");
 		type = Type.resolve(data.getLong("type"));
 		
-		channel = (TextBasedChannel) client.channels.fetch(data.getObject("channel").getString("id"));
+		channel = (TextBasedChannel) client.channels.fetch(data.getObject("channel").getString("id")).join();
 		innerData = data.getObject("data");
 		token = data.getString("token");
 
 		final var guildId = data.getString("guild_id");
 		if (guildId == null) {
-			user = client.users.fetch(data.getObject("user").getString("id")).join();
+			user = client.users.construct(data.getObject("user"));
 			guild = null;
 			member = null;
 		} else {
@@ -71,5 +72,4 @@ public abstract class Interaction {
 			this.value = value;
 		}
 	}
-
 }

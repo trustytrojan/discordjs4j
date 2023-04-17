@@ -5,8 +5,7 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
-public class User implements DiscordResource, Mentionable {
-
+public class User implements DiscordResource {
 	private final DiscordClient client;
 	private JSONObject data;
 
@@ -15,7 +14,6 @@ public class User implements DiscordResource, Mentionable {
 		this.data = data;
 	}
 
-	@Override
 	public String mention() {
 		return "<@" + id() + '>';
 	}
@@ -33,7 +31,8 @@ public class User implements DiscordResource, Mentionable {
 	}
 
 	public boolean isBot() {
-		return data.getBoolean("bot");
+		final var bot = data.getBoolean("bot");
+		return (bot == null) ? false : bot;
 	}
 
 	public final URLFactory avatar = new URLFactory() {
@@ -70,7 +69,7 @@ public class User implements DiscordResource, Mentionable {
 
 	@Override
 	public void setData(JSONObject data) {
-		
+		this.data = data;
 	}
 
 	@Override
@@ -78,4 +77,8 @@ public class User implements DiscordResource, Mentionable {
 		return client;
 	}
 
+	@Override
+	public String apiPath() {
+		return "/users/" + id();
+	}
 }

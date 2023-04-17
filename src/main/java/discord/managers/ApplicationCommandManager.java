@@ -12,55 +12,49 @@ import simple_json.JSONObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
 	private final BotDiscordClient client;
+	private final String basePath;
 
-	public ApplicationCommandManager(BotDiscordClient client) {
+	public ApplicationCommandManager(final BotDiscordClient client) {
 		super(client);
 		this.client = client;
+		basePath = "/applications/" + client.application.id() + "/commands/";
 	}
 
 	@Override
-	public ApplicationCommand construct(JSONObject data) {
+	public ApplicationCommand construct(final JSONObject data) {
 		return new ApplicationCommand(client, data);
 	}
 
-	private String commandsPath() {
-		return "/applications/" + client.application.id() + "/commands";
-	}
-
-	private String commandsPath(String id) {
-		return commandsPath() + '/' + id;
-	}
-
 	@Override
-	public CompletableFuture<ApplicationCommand> fetch(String id, boolean force) {
-		return super.fetch(id, commandsPath(id), force);
+	public CompletableFuture<ApplicationCommand> fetch(final String id, final boolean force) {
+		return super.fetch(id, basePath + id, force);
 	}
 
-	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {
-		return client.api.post(commandsPath(), payload.toJSONString()).thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+	public CompletableFuture<ApplicationCommand> create(final ApplicationCommand.Payload payload) {
+		return client.api.post(basePath, payload.toJSONString()).thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
-	public CompletableFuture<ApplicationCommand> edit(String id, ApplicationCommand.Payload payload) {
-		return client.api.patch(commandsPath(id), payload.toJSONString()).thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+	public CompletableFuture<ApplicationCommand> edit(final String id, final ApplicationCommand.Payload payload) {
+		return client.api.patch(basePath + id, payload.toJSONString()).thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
-	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(commandsPath(id)).thenRunAsync(() -> cache.remove(id));
+	public CompletableFuture<Void> delete(final String id) {
+		return client.api.delete(basePath + id).thenRunAsync(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<IdMap<ApplicationCommand>> set(List<ApplicationCommand.Payload> commands) {
+	public CompletableFuture<IdMap<ApplicationCommand>> set(final List<ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
-		final var dataToSend = JSONArray.toJSONString(commands);
-		return CompletableFuture.supplyAsync(() -> {
-			final var commandsSet = new IdMap<ApplicationCommand>();
-			for (final var commandData : client.api.put(commandsPath(), dataToSend).join().toJSONObjectArray())
-				commandsSet.put(cache(commandData));
-			return commandsSet;
+		final var dataToSend = JSONArray.toJSONString(commandPayloads);
+		final var commands = new IdMap<ApplicationCommand>();
+		return client.api.put(basePath, dataToSend).thenApplyAsync((final var r) -> {
+			r.toJSONObjectArray().forEach((final var o) -> commands.put(cache(o)));
+			return commands;
 		});
 	}
 
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
-		return client.api.get(commandsPath()).thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+		return client.api.get(basePath)
+			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
 	}
 }

@@ -14,12 +14,12 @@ import discord.util.Util;
 import simple_json.JSONObject;
 
 public class ChannelManager extends ResourceManager<Channel> {
-	public ChannelManager(DiscordClient client) {
+	public ChannelManager(final DiscordClient client) {
 		super(client);
 	}
 
 	@Override
-	public Channel construct(JSONObject data) {
+	public Channel construct(final JSONObject data) {
 		return switch (Channel.Type.resolve(data.getLong("type"))) {
 			case GUILD_TEXT -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
@@ -32,12 +32,12 @@ public class ChannelManager extends ResourceManager<Channel> {
 
 	// edit group dm channels
 
-	public CompletableFuture<Void> delete(String id) {
+	public CompletableFuture<Void> delete(final String id) {
 		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
 	@Override
-	public CompletableFuture<Channel> fetch(String id, boolean force) {
+	public CompletableFuture<Channel> fetch(final String id, final boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 

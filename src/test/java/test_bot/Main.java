@@ -20,19 +20,7 @@ public class Main {
 
 		client.chatInputInteractionCreate.connect((interaction) -> {
 			switch (interaction.commandName) {
-				case "test_2_integers" -> {
-					final var int1 = interaction.options.getInteger("int1");
-					final var int2 = interaction.options.getInteger("int2");
-					interaction.reply("""
-							%s
-							%s
-							(%d, %d)""".formatted(
-								interaction.user.tag(),
-								interaction.member.nickname(),
-								int1,
-								int2
-							));
-				}
+				case "ping" -> interaction.reply("`%sms`\nfrom member %s".formatted(client.latency(), interaction.member.nickname()));
 			}
 		});
 

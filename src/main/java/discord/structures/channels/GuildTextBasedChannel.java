@@ -2,10 +2,60 @@ package discord.structures.channels;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface GuildTextBasedChannel extends GuildChannel, TextBasedChannel {
+import discord.client.DiscordClient;
+import discord.managers.MessageManager;
+import discord.structures.Guild;
+import simple_json.JSONObject;
 
-    default CompletableFuture<GuildChannel> edit(Payload payload) {
-        return guild().channels.edit(id(), payload);
+public abstract class GuildTextBasedChannel implements GuildChannel, TextBasedChannel {
+    protected final DiscordClient client;
+    protected JSONObject data;
+
+    public final MessageManager messages;
+    public final Guild guild;
+
+    protected GuildTextBasedChannel(final DiscordClient client, final JSONObject data) {
+        this.client = client;
+        this.data = data;
+        guild = client.guilds.fetch(data.getString("guild_id")).join();
+        messages = new MessageManager(client, this);
+    }
+
+    public CompletableFuture<GuildChannel> edit(Payload payload) {
+        return guild.channels.edit(id(), payload);
+    }
+
+    public String topic() {
+		return data.getString("topic");
+	}
+
+    public Long slowmodeDuration() {
+		return data.getLong("rate_limit_per_user");
+	}
+
+    @Override
+	public JSONObject getData() {
+		return data;
+	}
+
+	@Override
+	public void setData(JSONObject data) {
+		this.data = data;
+	}
+
+	@Override
+	public DiscordClient client() {
+		return client;
+	}
+
+	@Override
+	public MessageManager messages() {
+		return messages;
+	}
+
+    @Override
+    public Guild guild() {
+        return guild;
     }
     
     public static class Payload extends GuildChannel.Payload {
@@ -28,7 +78,7 @@ public interface GuildTextBasedChannel extends GuildChannel, TextBasedChannel {
             }
 
             if (nsfw) {
-                obj.put("nsfw", true);
+                obj.put("nsfw", Boolean.TRUE);
             }
 
             if (rateLimitPerUser != null) {
@@ -42,5 +92,4 @@ public interface GuildTextBasedChannel extends GuildChannel, TextBasedChannel {
             return obj.toString();
         }
     }
-
 }

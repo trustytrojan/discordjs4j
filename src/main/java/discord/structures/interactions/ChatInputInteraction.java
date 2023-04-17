@@ -9,7 +9,6 @@ import discord.enums.InteractionCallbackType;
 import simple_json.JSONObject;
 
 public class ChatInputInteraction extends Interaction implements RepliableInteraction {
-
 	public final ChatInputInteractionOptionResolver options;
 	public final String commandId;
 	public final String commandName;
@@ -18,8 +17,8 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 	public ChatInputInteraction(BotDiscordClient client, JSONObject data) {
 		super(client, data);
 
-		final var raw_options = innerData.getObjectArray("options");
-		options = (raw_options != null) ? new ChatInputInteractionOptionResolver(raw_options) : null;
+		final var rawOptions = innerData.getObjectArray("options");
+		options = (rawOptions != null) ? new ChatInputInteractionOptionResolver(rawOptions) : null;
 
 		commandId = innerData.getString("id");
 		commandName = innerData.getString("name");
@@ -33,5 +32,4 @@ public class ChatInputInteraction extends Interaction implements RepliableIntera
 		data.put("data", payload);
 		return CompletableFuture.runAsync(() -> client.api.post(path, data.toJSONString()));
 	}
-
 }

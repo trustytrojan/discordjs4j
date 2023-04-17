@@ -1,9 +1,9 @@
 package discord.client;
 
 import discord.managers.UserManager;
-import discord.managers.guild.GuildManager;
 import discord.enums.GatewayIntent;
 import discord.managers.ChannelManager;
+import discord.managers.GuildManager;
 import discord.structures.AuditLogEntry;
 import discord.structures.ClientUser;
 import discord.structures.Guild;
@@ -37,5 +37,9 @@ public abstract class DiscordClient {
 	public void login(String token, GatewayIntent[] intents) {
 		api.setToken(token);
 		gateway.login(token, intents);
+	}
+
+	public long latency() {
+		return gateway.ping();
 	}
 }

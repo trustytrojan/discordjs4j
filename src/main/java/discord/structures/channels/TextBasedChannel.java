@@ -7,7 +7,6 @@ import discord.structures.Embed;
 import discord.structures.Message;
 
 public interface TextBasedChannel extends Channel {
-
 	MessageManager messages();
 
 	default CompletableFuture<Message> send(String content) {
@@ -25,5 +24,4 @@ public interface TextBasedChannel extends Channel {
 	default CompletableFuture<Message> send(Message.Payload payload) {
 		return messages().create(payload);
 	}
-
 }

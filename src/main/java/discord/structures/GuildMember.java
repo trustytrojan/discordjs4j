@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import discord.client.DiscordClient;
+import discord.managers.guild.GuildMemberRoleManager;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
@@ -13,14 +14,17 @@ public class GuildMember implements GuildResource {
 	private final DiscordClient client;
 	private JSONObject data;
 
+	public final GuildMemberRoleManager roles;
+
 	public final User user;
 	public final Guild guild;
 
-	public GuildMember(DiscordClient client, Guild guild, JSONObject data) {
+	public GuildMember(final DiscordClient client, final Guild guild, final JSONObject data) {
 		this.client = client;
 		this.guild = guild;
 		this.data = data;
 		user = client.users.fetch(data.getObject("user").getString("id")).join();
+		roles = new GuildMemberRoleManager(client, this);
 	}
 
 	public String nickname() {
@@ -35,11 +39,9 @@ public class GuildMember implements GuildResource {
 
 		@Override
 		public String url(int size, String extension) {
-			return CDN.guildMemberAvatar(guildId(), user.id(), hash(), size, extension);
+			return CDN.guildMemberAvatar(guild.id(), user.id(), hash(), size, extension);
 		}
 	};
-
-	// roles
 
 	public Instant joinedAt() {
 		return Instant.parse(data.getString("joined_at"));
@@ -92,8 +94,18 @@ public class GuildMember implements GuildResource {
 	}
 
 	@Override
+	public String id() {
+		return user.id();
+	}
+
+	@Override
 	public Guild guild() {
 		return guild;
+	}
+
+	@Override
+	public String apiPath() {
+		return "/guilds/" + guild.id() + "/" + user.id();
 	}
 
 	public static enum Flags {

@@ -7,17 +7,21 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
-public class Role implements GuildResource {
-
+public class Role implements GuildResource, Mentionable {
 	private final DiscordClient client;
 	private JSONObject data;
-	
+
 	public final Guild guild;
 
 	public Role(final DiscordClient client, final Guild guild, final JSONObject data) {
 		this.client = client;
-		this.data = data;
 		this.guild = guild;
+		this.data = data;
+	}
+
+	@Override
+	public String mention() {
+		return "<@&" + id() + '>';
 	}
 
 	public String name() {
@@ -28,7 +32,9 @@ public class Role implements GuildResource {
 		return data.getString("description");
 	}
 
-	// permissions
+	public Permissions permissions() {
+		return new Permissions(data.getLong("permissions"));
+	}
 
 	public Long color() {
 		return data.getLong("color");
@@ -67,6 +73,11 @@ public class Role implements GuildResource {
 	}
 
 	@Override
+	public Guild guild() {
+		return guild;
+	}
+
+	@Override
 	public DiscordClient client() {
 		return client;
 	}
@@ -77,13 +88,13 @@ public class Role implements GuildResource {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(final JSONObject data) {
 		this.data = data;
 	}
 
 	@Override
-	public Guild guild() {
-		return guild;
+	public String apiPath() {
+		return "/guilds/" + guild.id() + "/roles/" + id();
 	}
 
 	public static class Payload implements JSONAware {
@@ -112,5 +123,4 @@ public class Role implements GuildResource {
 			return obj.toJSONString();
 		}
 	}
-	
 }

@@ -1,11 +1,9 @@
 package discord.structures;
 
 public interface GuildResource extends DiscordResource {
+	Guild guild();
 
-    Guild guild();
-    
-    default String guildId() {
-        return getData().getString("guild_id");
-    }
-
+	default String guildId() {
+		return getData().getString("id");
+	}
 }

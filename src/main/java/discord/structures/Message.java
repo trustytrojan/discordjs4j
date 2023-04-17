@@ -11,17 +11,15 @@ import discord.structures.channels.TextBasedChannel;
 import simple_json.JSONObject;
 
 public class Message implements DiscordResource {
-
 	private final DiscordClient client;
 	private JSONObject data;
-	
+
 	public final User author;
 	public final TextBasedChannel channel;
 
-	public Message(DiscordClient client, JSONObject data) {
+	public Message(final DiscordClient client, final JSONObject data) {
 		this.client = client;
 		this.data = data;
-
 		author = client.users.fetch(data.getObject("author").getString("id")).join();
 		channel = (TextBasedChannel) client.channels.fetch(data.getString("channel_id"));
 	}
@@ -35,6 +33,11 @@ public class Message implements DiscordResource {
 	}
 
 	@Override
+	public String apiPath() {
+		return "/channels/" + channel.id() + "/messages/" + id();
+	}
+
+	@Override
 	public DiscordClient client() {
 		return client;
 	}
@@ -45,7 +48,7 @@ public class Message implements DiscordResource {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(final JSONObject data) {
 		this.data = data;
 	}
 

@@ -6,7 +6,6 @@ import discord.structures.GuildResource;
 import simple_json.JSONObject;
 
 public interface GuildChannel extends GuildResource, Channel {
-
 	// public PermissionOverwrites permission_overwrites;
 
 	@Override
@@ -27,7 +26,6 @@ public interface GuildChannel extends GuildResource, Channel {
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel
-	// subclasses MUST implement JSONAware
 	public abstract static class Payload implements JSONAware {
 		public String name;
 		public Integer position;
@@ -49,5 +47,4 @@ public interface GuildChannel extends GuildResource, Channel {
 			return obj;
 		}
 	}
-
 }

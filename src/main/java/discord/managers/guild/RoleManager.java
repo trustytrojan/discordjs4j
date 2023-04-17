@@ -27,7 +27,7 @@ public class RoleManager extends GuildResourceManager<Role> {
 
 	@Override
 	public CompletableFuture<Role> fetch(String id, boolean force) {
-		return super.fetch(id, rolesPath(id), force);
+		throw new UnsupportedOperationException("Roles cannot be fetched individually");
 	}
 
 	public CompletableFuture<Role> create(Role.Payload payload) {

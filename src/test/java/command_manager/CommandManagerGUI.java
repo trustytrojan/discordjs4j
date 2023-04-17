@@ -57,9 +57,7 @@ public class CommandManagerGUI extends JFrame {
 		table.clear();
 		loadingDialog.setVisible(true);
 		commandManager.refreshCache().thenRun(() -> {
-			for (final var command : commandManager.cache) {
-				table.addRow(command);
-			}
+			commandManager.cache.values().forEach(table::addRow);
 			loadingDialog.dispose();
 		});
 	}

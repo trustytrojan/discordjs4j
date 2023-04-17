@@ -8,7 +8,7 @@ import discord.structures.GuildResource;
 public abstract class GuildResourceManager<T extends GuildResource> extends ResourceManager<T> {
 	public final Guild guild;
 
-	protected GuildResourceManager(DiscordClient client, Guild guild) {
+	protected GuildResourceManager(final DiscordClient client, final Guild guild) {
 		super(client);
 		this.guild = guild;
 	}

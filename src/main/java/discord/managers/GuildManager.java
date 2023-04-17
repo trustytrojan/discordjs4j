@@ -1,24 +1,23 @@
-package discord.managers.guild;
+package discord.managers;
 
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.managers.ResourceManager;
 import discord.structures.Guild;
 import simple_json.JSONObject;
 
 public class GuildManager extends ResourceManager<Guild> {
-	public GuildManager(DiscordClient client) {
+	public GuildManager(final DiscordClient client) {
 		super(client);
 	}
 
 	@Override
-	public Guild construct(JSONObject data) {
+	public Guild construct(final JSONObject data) {
 		return new Guild(client, data);
 	}
 
 	@Override
-	public CompletableFuture<Guild> fetch(String id, boolean force) {
+	public CompletableFuture<Guild> fetch(final String id, final boolean force) {
 		return super.fetch(id, "/guilds/" + id, force);
 	}
 
