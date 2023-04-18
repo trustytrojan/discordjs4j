@@ -7,7 +7,6 @@ import discord.structures.Embed;
 import discord.structures.InteractionReplyMessagePayload;
 
 public interface RepliableInteraction {
-
 	CompletableFuture<Void> _reply(InteractionCallbackType type, InteractionReplyMessagePayload payload);
 
 	default CompletableFuture<Void> deferReply() {
@@ -16,14 +15,14 @@ public interface RepliableInteraction {
 
 	default CompletableFuture<Void> reply(String content) {
 		final var payload = new InteractionReplyMessagePayload();
-		payload.setContent(content);
+		payload.content = content;
 		return reply(payload);
 	}
 
 	default CompletableFuture<Void> replyEphemeral(String content) {
 		final var payload = new InteractionReplyMessagePayload();
-		payload.setContent(content);
-		payload.setEphemeral(true);
+		payload.content = content;
+		payload.ephemeral = Boolean.TRUE;
 		return reply(payload);
 	}
 
@@ -36,12 +35,11 @@ public interface RepliableInteraction {
 	default CompletableFuture<Void> replyEphemeral(Embed... embeds) {
 		final var payload = new InteractionReplyMessagePayload();
 		payload.addEmbeds(embeds);
-		payload.setEphemeral(true);
+		payload.ephemeral = Boolean.TRUE;
 		return reply(payload);
 	}
 
 	default CompletableFuture<Void> reply(InteractionReplyMessagePayload payload) {
 		return _reply(InteractionCallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload);
 	}
-
 }

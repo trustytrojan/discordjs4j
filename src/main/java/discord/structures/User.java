@@ -6,7 +6,6 @@ import java.util.List;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;
-import discord.util.Util;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
@@ -36,7 +35,7 @@ public sealed class User implements DiscordResource permits ClientUser {
 	}
 
 	public boolean bot() {
-		return Util.booleanSafe(data.getBoolean("bot"));
+		return data.getBooleanDefaultFalse("bot");
 	}
 
 	public final URLFactory avatar = new URLFactory() {

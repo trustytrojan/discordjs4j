@@ -114,27 +114,14 @@ public class ApplicationCommand implements DiscordResource {
 		@Override
 		public String toJSONString() {
 			final var obj = new JSONObject();
-
-			if (type != null) {
-				obj.put("type", type.value);
-			}
-
 			obj.put("name", name);
-
-			if (description != null) {
+			if (type != null)
+				obj.put("type", type.value);
+			if (description != null)
 				obj.put("description", description);
-			}
-
-			if (options.size() > 0) {
+			if (options.size() > 0)
 				obj.put("options", options);
-			}
-
-			return obj.toString();
-		}
-
-		@Override
-		public String toString() {
-			return toJSONString();
+			return obj.toJSONString();
 		}
 	}
 }

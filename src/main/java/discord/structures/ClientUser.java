@@ -3,7 +3,6 @@ package discord.structures;
 import java.util.List;
 
 import discord.client.DiscordClient;
-import discord.util.Util;
 import simple_json.JSONObject;
 
 public final class ClientUser extends User {
@@ -24,11 +23,11 @@ public final class ClientUser extends User {
 	}
 
 	public boolean nsfwAllowed() {
-		return Util.booleanSafe(data.getBoolean("nsfw_allowed"));
+		return data.getBooleanDefaultFalse("nsfw_allowed");
 	}
 
 	public boolean mfaEnabled() {
-		return Util.booleanSafe(data.getBoolean("mfa_enabled"));
+		return data.getBooleanDefaultFalse("mfa_enabled");
 	}
 
 	public PremiumType premiumType() {
@@ -40,7 +39,7 @@ public final class ClientUser extends User {
 	}
 
 	public boolean verified() {
-		return Util.booleanSafe(data.getBoolean("verified"));
+		return data.getBooleanDefaultFalse("verified");
 	}
 
 	public String phone() {

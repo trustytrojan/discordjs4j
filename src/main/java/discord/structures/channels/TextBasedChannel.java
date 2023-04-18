@@ -11,7 +11,7 @@ public interface TextBasedChannel extends Channel {
 
 	default CompletableFuture<Message> send(String content) {
 		final var payload = new Message.Payload();
-		payload.setContent(content);
+		payload.content = content;
 		return send(payload);
 	}
 

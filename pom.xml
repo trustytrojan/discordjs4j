@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>simple-json</artifactId>
-			<version>2d2dc5d585</version>
+			<version>62dbc2a954</version>
 		</dependency>
 	</dependencies>
 

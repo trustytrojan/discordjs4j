@@ -1,22 +1,16 @@
 package discord.structures;
 
 public class InteractionReplyMessagePayload extends Message.Payload {
-
-	public Boolean ephemeral;
-	
-	public void setEphemeral(boolean ephemeral) {
-		this.ephemeral = ephemeral;
-	}
+	public boolean ephemeral;
 
 	@Override
 	public String toJSONString() {
 		final var obj = toJSONObject();
 
-		if (ephemeral != null) {
-			obj.put("ephemeral", ephemeral);
+		if (ephemeral) {
+			obj.put("ephemeral", Boolean.TRUE);
 		}
 
 		return obj.toString();
 	}
-
 }
