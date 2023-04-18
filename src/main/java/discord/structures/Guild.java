@@ -1,7 +1,10 @@
 package discord.structures;
 
+import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
+import discord.managers.ApplicationCommandManager;
 import discord.managers.guild.GuildChannelManager;
+import discord.managers.guild.GuildMemberManager;
 import discord.managers.guild.RoleManager;
 import discord.structures.channels.TextChannel;
 import discord.util.CDN;
@@ -13,14 +16,22 @@ public class Guild implements DiscordResource {
 	private final DiscordClient client;
 	private JSONObject data;
 
+	public final GuildMemberManager members;
 	public final GuildChannelManager channels;
 	public final RoleManager roles;
+	public final ApplicationCommandManager commands;
 
 	public Guild(DiscordClient client, JSONObject data) {
 		this.client = client;
 		this.data = data;
+		
 		channels = new GuildChannelManager(client, this);
 		roles = new RoleManager(client, this);
+		members = new GuildMemberManager(client, this);
+
+		commands = (client instanceof BotDiscordClient)
+				? new ApplicationCommandManager((BotDiscordClient) client, this)
+				: null;
 	}
 
 	public String name() {

@@ -11,6 +11,7 @@ import simple_json.JSONObject;
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(final DiscordClient client, final Guild guild) {
 		super(client, guild);
+		refreshCache();
 	}
 
 	@Override
@@ -24,7 +25,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	}
 
 	public CompletableFuture<GuildChannel> create(final GuildChannel.Payload payload) {
-		return client.api.post('/' + guild.id() + "/channels", payload.toJSONString())
+		return client.api.post("/guilds/" + guild.id() + "/channels", payload.toJSONString())
 			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
@@ -38,7 +39,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	}
 
 	public CompletableFuture<Void> refreshCache() {
-		final var path = "/guilds/" + guild.id() + "/channels";
-		return client.api.get(path).thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+		return client.api.get("/guilds/" + guild.id() + "/channels")
+			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
 	}
 }

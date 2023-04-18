@@ -105,7 +105,7 @@ public class GuildMember implements GuildResource {
 
 	@Override
 	public String apiPath() {
-		return "/guilds/" + guild.id() + "/" + user.id();
+		return "/guilds/" + guild.id() + "/members/" + user.id();
 	}
 
 	public static enum Flags {

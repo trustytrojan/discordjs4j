@@ -1,13 +1,18 @@
 package discord.structures;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import discord.client.DiscordClient;
 import discord.util.CDN;
+import discord.util.Util;
 import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
-public class User implements DiscordResource {
-	private final DiscordClient client;
-	private JSONObject data;
+public sealed class User implements DiscordResource permits ClientUser {
+	protected final DiscordClient client;
+	protected JSONObject data;
 
 	public User(DiscordClient client, JSONObject data) {
 		this.client = client;
@@ -30,9 +35,8 @@ public class User implements DiscordResource {
 		return username() + '#' + discriminator();
 	}
 
-	public boolean isBot() {
-		final var bot = data.getBoolean("bot");
-		return (bot == null) ? false : bot;
+	public boolean bot() {
+		return Util.booleanSafe(data.getBoolean("bot"));
 	}
 
 	public final URLFactory avatar = new URLFactory() {
@@ -80,5 +84,43 @@ public class User implements DiscordResource {
 	@Override
 	public String apiPath() {
 		return "/users/" + id();
+	}
+
+	public List<Flag> publicFlags() {
+		return computeFlags(data.getLong("public_flags").intValue());
+	}
+
+	protected static List<Flag> computeFlags(int bitset) {
+		final var flags = new ArrayList<Flag>();
+		for (final var flag : Flag.values()) {
+			if ((bitset & flag.value) != 0) {
+				flags.add(flag);
+			}
+		}
+		return Collections.unmodifiableList(flags);
+	}
+
+	public static enum Flag {
+		STAFF(1 << 0),
+		PARTNER(1 << 1),
+		HYPESQUAD(1 << 2),
+		BUG_HUNTER_LEVEL_1(1 << 3),
+		HYPESQUAD_ONLINE_HOUSE_1(1 << 6),
+		HYPESQUAD_ONLINE_HOUSE_2(1 << 7),
+		HYPESQUAD_ONLINE_HOUSE_3(1 << 8),
+		PREMIUM_EARLY_SUPPORTER(1 << 9),
+		TEAM_PSEUDO_USER(1 << 10),
+		BUG_HUNTER_LEVEL_2(1 << 14),
+		VERIFIED_BOT(1 << 16),
+		VERIFIED_DEVELOPER(1 << 17),
+		CERTIFIED_MODERATOR(1 << 18),
+		BOT_HTTP_INTERACTIONS(1 << 19),
+		ACTIVE_DEVELOPER(1 << 22);
+
+		public final int value;
+
+		private Flag(final int value) {
+			this.value = value;
+		}
 	}
 }

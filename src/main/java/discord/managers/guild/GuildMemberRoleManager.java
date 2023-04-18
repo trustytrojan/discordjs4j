@@ -40,11 +40,12 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
-		return member.fetch().thenRunAsync(() -> {
+		return CompletableFuture.allOf(member.fetch(), guild.roles.refreshCache()).thenRunAsync(() -> {
 			for (final var roleId : member.getData().getStringArray("roles")) {
-				for (final var roleEntry : guild.roles.cache.entrySet()) {
-					if (roleId == roleEntry.getKey()) {
-						cache.put(roleEntry.getValue());
+				for (final var role : guild.roles.cache.values()) {
+					if (roleId.equals(role.id())) {
+						cache.put(role);
+						break;
 					}
 				}
 			}

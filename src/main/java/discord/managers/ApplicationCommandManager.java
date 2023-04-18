@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 
 import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
+import discord.structures.Guild;
 import discord.util.IdMap;
 import simple_json.JSONObject;
 
@@ -14,10 +15,13 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	private final BotDiscordClient client;
 	private final String basePath;
 
-	public ApplicationCommandManager(final BotDiscordClient client) {
+	public ApplicationCommandManager(final BotDiscordClient client, final Guild guild) {
 		super(client);
 		this.client = client;
-		basePath = "/applications/" + client.application.id() + "/commands";
+		final var start = "/applications/" + client.application.id();
+		basePath = start + ((guild != null)
+							? "/guilds/" + guild.id() + "/commands"
+							: "/commands");
 	}
 
 	@Override

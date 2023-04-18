@@ -12,7 +12,7 @@ import discord.structures.channels.Channel;
 import java_signals.Signal0;
 import java_signals.Signal1;
 
-public abstract class DiscordClient {
+public abstract sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
 	public final APIClient api = new APIClient();
 	private final GatewayClient gateway = new GatewayClient(this);
 

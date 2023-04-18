@@ -23,9 +23,9 @@ public class GuildManager extends ResourceManager<Guild> {
 
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/users/@me/guilds").thenAcceptAsync((final var r) -> {
-			for (final var rawGuild : r.toJSONObjectArray()) {
-				fetch(rawGuild.getString("id"), true);
-			}
+			r.toJSONObjectArray().parallelStream()
+				.map((final var partial) -> partial.getString("id"))
+				.forEach(this::fetch);
 		});
 	}
 }

@@ -40,4 +40,8 @@ public final class Util {
 			throw new IllegalArgumentException("Hex color string is not in correct format");
 		return Integer.parseInt(hexColor, 16);
 	}
+
+	public static boolean booleanSafe(Boolean b) {
+		return (b == null) ? false : b;
+	}
 }

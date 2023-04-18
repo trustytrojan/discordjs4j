@@ -77,14 +77,15 @@ public class CommandManagerGUI extends JFrame {
 	}
 
 	public static void main(final String[] args) {
-		final var client = new BotDiscordClient();
-		client.api.setToken(Util.readFile("tokens/java-bot"));
 		try {
+			final var client = new BotDiscordClient();
+			client.api.setToken(Util.readFile("tokens/java-bot"));
 			client.fetchApplication().join();
+			final var guild = client.guilds.fetch("1094436869531504733").join();
+			new CommandManagerGUI(guild.commands);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		new CommandManagerGUI(client.commands);
 	}
 }

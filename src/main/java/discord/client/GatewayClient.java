@@ -120,8 +120,7 @@ public class GatewayClient extends WebSocketClient {
 						switch (Interaction.Type.resolve(d.getLong("type"))) {
 							case APPLICATION_COMMAND ->
 								bot.chatInputInteractionCreate.emit(new ChatInputInteraction(bot, obj.getObject("d")));
-							default -> {
-							}
+							default -> {}
 						}
 					}
 

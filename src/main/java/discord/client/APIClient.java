@@ -20,17 +20,12 @@ import simple_json.JSONObject;
  * An HttpClient wrapper for making requests to the Discord REST API.
  */
 public final class APIClient {
-	private static record HttpRequestWithBody(HttpRequest request, String body) {}
-	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
-
-	private static class DiscordAPIException extends RuntimeException {
-		public DiscordAPIException(HttpRequestWithBody r, HttpResponse<String> response) {
-			super(r.request.method() + ' ' + r.request.uri().getPath().replace("/api/v10", "") + " -> "
-					+ response.statusCode() + '\n'
-					+ response.body() + '\n'
-					+ "Request body: " + r.body);
-		}
+	private static record HttpRequestWithBody(HttpRequest request, String body) {
 	}
+
+	private static enum HttpMethod {
+		GET, POST, PUT, PATCH, DELETE
+	};
 
 	private static final BodyHandler<String> BODY_HANDLER = BodyHandlers.ofString();
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
@@ -40,10 +35,17 @@ public final class APIClient {
 		System.out.println("[APIClient] " + message);
 	}
 
+	private boolean bot;
 	private String token;
 
+	public void setBot(boolean bot) {
+		this.bot = bot;
+	}
+
 	public void setToken(String token) {
-		this.token = token;
+		this.token = (bot)
+				? "Bot " + token
+				: token;
 	}
 
 	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String requestBody) {
@@ -92,9 +94,11 @@ public final class APIClient {
 		if (statusCode == 429)
 			return retryAfter(requestWrapper, responseBody);
 		else if (statusCode >= 400) {
-			final var e = new DiscordAPIException(requestWrapper, response);
-			e.printStackTrace();
-			throw e;
+			log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> "
+					+ response.statusCode()
+					+ "\nResponse body: " + response.body()
+					+ "\nRequest body: " + requestWrapper.body);
+			throw new RuntimeException();
 		}
 
 		log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);

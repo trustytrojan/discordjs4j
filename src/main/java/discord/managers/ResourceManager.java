@@ -12,15 +12,19 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 	public final IdMap<T> cache = new IdMap<>();
 	protected final DiscordClient client;
 
-	protected ResourceManager(DiscordClient client) {
+	protected ResourceManager(final DiscordClient client) {
 		this.client = client;
 	}
 
-	public abstract T construct(JSONObject data);
+	public abstract T construct(final JSONObject data);
+
+	protected String getIdFromData(final JSONObject data) {
+		return data.getString("id");
+	}
 
 	// if this is called we know the cache WILL be modified
-	public T cache(JSONObject data) {
-		final var cached = cache.get(data.getString("id"));
+	public T cache(final JSONObject data) {
+		final var cached = cache.get(getIdFromData(data));
 		
 		// if not already cached, construct new object
 		if (cached == null) {
@@ -34,21 +38,19 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 		return cached;
 	}
 
-	public CompletableFuture<T> fetch(String id) {
+	public CompletableFuture<T> fetch(final String id) {
 		return fetch(id, false);
 	}
 
-	public abstract CompletableFuture<T> fetch(String id, boolean force);
+	public abstract CompletableFuture<T> fetch(final String id, final boolean force);
 
-	protected CompletableFuture<T> fetch(String id, String path, boolean force) {
-		return CompletableFuture.supplyAsync(() -> {
-			if (!force) {
-				final var cached = cache.get(id);
-				if (cached != null) {
-					return cached;
-				}
+	protected CompletableFuture<T> fetch(final String id, final String path, final boolean force) {
+		if (!force) {
+			final var cached = cache.get(id);
+			if (cached != null) {
+				return CompletableFuture.completedFuture(cached);
 			}
-			return cache(client.api.get(path).join().toJSONObject());
-		});
+		}
+		return client.api.get(path).thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 }
