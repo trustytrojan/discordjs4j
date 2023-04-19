@@ -20,9 +20,10 @@ public class CustomIdButton extends Button {
 	}
 
 	// When sending
-	public CustomIdButton(final Style style, final String customId) {
+	public CustomIdButton(final Style style, final String customId, final String label) {
 		super(style);
 		this.customId = Objects.requireNonNull(customId);
+		this.label = Objects.requireNonNull(label);
 	}
 
 	@Override

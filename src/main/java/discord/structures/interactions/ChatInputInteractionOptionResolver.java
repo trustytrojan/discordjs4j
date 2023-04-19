@@ -6,7 +6,6 @@ import java.util.List;
 import simple_json.JSONObject;
 
 public class ChatInputInteractionOptionResolver {
-
 	private final HashMap<String, ChatInputInteractionOption> options = new HashMap<>();
 
 	public ChatInputInteractionOptionResolver(List<JSONObject> data) {
@@ -35,22 +34,21 @@ public class ChatInputInteractionOptionResolver {
 
 	public String getString(String name) {
 		final var option = get(name);
-		return (option != null) ? ((String) option.value) : null;
+		return (option == null) ? null : ((String) option.value);
 	}
 
 	public Long getInteger(String name) {
 		final var option = get(name);
-		return (option != null) ? ((Long) option.value) : null;
+		return (option == null) ? null : ((Long) option.value);
 	}
 
 	public Double getDouble(String name) {
 		final var option = get(name);
-		return (option != null) ? ((Double) option.value) : null;
+		return (option == null) ? null : ((Double) option.value);
 	}
 
 	public Boolean getBoolean(String name) {
 		final var option = get(name);
-		return (option != null) ? ((Boolean) option.value) : null;
+		return (option == null) ? null : ((Boolean) option.value);
 	}
-
 }

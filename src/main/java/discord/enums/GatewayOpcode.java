@@ -13,16 +13,16 @@ public enum GatewayOpcode {
 	HELLO(10),
 	HEARTBEAT_ACK(11);
 
-	public static GatewayOpcode resolve(long value) {
+	public static GatewayOpcode resolve(final short value) {
 		for (final var x : GatewayOpcode.values())
 			if (x.value == value)
 				return x;
 		return null;
 	}
 
-	public final int value;
+	public final short value;
 
-	private GatewayOpcode(int value) {
-		this.value = value;
+	private GatewayOpcode(final int value) {
+		this.value = (short) value;
 	}
 }

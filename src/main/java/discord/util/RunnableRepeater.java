@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class RunnableRepeater extends Timer {
-
 	/**
 	 * A wrapper for Timer.schedule that accepts a Runnable
 	 * and repeats it once every repeat_delay_ms.
@@ -22,5 +21,4 @@ public class RunnableRepeater extends Timer {
 			}
 		}, 0, ms);
 	}
-
 }

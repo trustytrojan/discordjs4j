@@ -29,8 +29,8 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 		throw new UnsupportedOperationException("Member roles cannot be fetched individually");
 	}
 
-	public CompletableFuture<Void> add(Role.Payload payload) {
-		return client.api.put(basePath, payload.toJSONString())
+	public CompletableFuture<Void> add(String id) {
+		return client.api.put(basePath + "/roles/" + id, null)
 			.thenAcceptAsync((final var r) -> cache(r.toJSONObject()));
 	}
 

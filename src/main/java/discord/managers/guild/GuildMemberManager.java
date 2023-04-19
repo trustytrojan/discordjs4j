@@ -12,7 +12,7 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 
 	public GuildMemberManager(DiscordClient client, Guild guild) {
 		super(client, guild);
-		basePath = "/guilds/" + guild.id() + "/members/";
+		basePath = "/guilds/" + guild.id() + "/members";
 		refreshCache();
 	}
 
@@ -28,7 +28,7 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 
 	@Override
 	public CompletableFuture<GuildMember> fetch(String id, boolean force) {
-		return super.fetch(id, basePath + id, force);
+		return super.fetch(id, basePath + '/' + id, force);
 	}
 
 	public CompletableFuture<Void> refreshCache() {

@@ -30,7 +30,7 @@ public class Guild implements DiscordResource {
 		members = new GuildMemberManager(client, this);
 
 		commands = (client instanceof BotDiscordClient)
-				? new ApplicationCommandManager((BotDiscordClient) client, this)
+				? new ApplicationCommandManager((BotDiscordClient) client, id())
 				: null;
 	}
 

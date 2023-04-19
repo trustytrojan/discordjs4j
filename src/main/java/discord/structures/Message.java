@@ -2,6 +2,7 @@ package discord.structures;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.json.simple.JSONAware;
@@ -24,13 +25,15 @@ public class Message implements DiscordResource {
 		this.client = client;
 		this.data = data;
 		author = client.users.fetch(data.getObject("author").getString("id")).join();
-		channel = (TextBasedChannel) client.channels.fetch(data.getString("channel_id"));
+		channel = (TextBasedChannel) client.channels.fetch(data.getString("channel_id")).join();
 
 		final var rawComponents = data.getObjectArray("components");
 		if (rawComponents != null) {
-			components = data.getObjectArray("components").stream()
-				.map((final var rawComponent) -> MessageComponent.construct(rawComponent))
-				.toList();
+			final var _components = new LinkedList<MessageComponent>();
+			for (final var rawComponent : data.getObjectArray("components")) {
+				_components.add(MessageComponent.construct(rawComponent));
+			}
+			components = Collections.unmodifiableList(_components);
 		} else {
 			components = Collections.emptyList();
 		}

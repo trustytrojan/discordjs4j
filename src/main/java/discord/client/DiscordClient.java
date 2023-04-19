@@ -12,9 +12,9 @@ import discord.structures.channels.Channel;
 import java_signals.Signal0;
 import java_signals.Signal1;
 
-public abstract sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
+public abstract class DiscordClient {
 	public final APIClient api = new APIClient();
-	private final GatewayClient gateway = new GatewayClient(this);
+	public final GatewayClient gateway = new GatewayClient(this);
 
 	public final UserManager users = new UserManager(this);
 	public final ChannelManager channels = new ChannelManager(this);
@@ -37,9 +37,5 @@ public abstract sealed class DiscordClient permits BotDiscordClient, UserDiscord
 	public void login(String token, GatewayIntent[] intents) {
 		api.setToken(token);
 		gateway.login(token, intents);
-	}
-
-	public long latency() {
-		return gateway.ping();
 	}
 }

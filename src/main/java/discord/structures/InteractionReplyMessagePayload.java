@@ -6,11 +6,8 @@ public class InteractionReplyMessagePayload extends Message.Payload {
 	@Override
 	public String toJSONString() {
 		final var obj = toJSONObject();
-
-		if (ephemeral) {
+		if (ephemeral)
 			obj.put("ephemeral", Boolean.TRUE);
-		}
-
 		return obj.toString();
 	}
 }

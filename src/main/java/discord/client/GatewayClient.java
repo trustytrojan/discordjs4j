@@ -15,17 +15,18 @@ import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
+import discord.structures.interactions.MessageComponentInteraction;
 import discord.util.RunnableRepeater;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
 public class GatewayClient extends WebSocketClient {
-	private static final URI GATEWAY_URI;
+	private static final URI DISCORD_GATEWAY_URI;
 
 	static {
 		try {
-			GATEWAY_URI = new URI("wss://gateway.discord.gg/");
-		} catch (URISyntaxException e) {
+			DISCORD_GATEWAY_URI = new URI("wss://gateway.discord.gg/");
+		} catch (final URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -36,8 +37,8 @@ public class GatewayClient extends WebSocketClient {
 	private long heartbeatSentAt;
 	private long ping;
 
-	public GatewayClient(DiscordClient client) {
-		super(GATEWAY_URI);
+	public GatewayClient(final DiscordClient client) {
+		super(DISCORD_GATEWAY_URI);
 		this.client = client;
 	}
 
@@ -45,12 +46,12 @@ public class GatewayClient extends WebSocketClient {
 		return ping;
 	}
 
-	public void login(String token, GatewayIntent[] intents) {
+	public void login(final String token, final GatewayIntent[] intents) {
 		try {
 			if (!connectBlocking()) {
 				System.exit(1);
 			}
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -78,7 +79,7 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onOpen(ServerHandshake handshake) {
+	public void onOpen(final ServerHandshake handshake) {
 		System.out.printf("""
 				[GatewayClient] Connection to Discord gateway opened
 					Status code: %d
@@ -91,9 +92,9 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onMessage(String __) {
-		final var obj = JSON.parseObject(__);
-		final var opcode = GatewayOpcode.resolve(obj.getLong("op"));
+	public void onMessage(final String rawJson) {
+		final var obj = JSON.parseObject(rawJson);
+		final var opcode = GatewayOpcode.resolve(obj.getShort("op"));
 
 		switch (opcode) {
 			case DISPATCH -> {
@@ -117,9 +118,11 @@ public class GatewayClient extends WebSocketClient {
 					case INTERACTION_CREATE -> {
 						final var bot = (BotDiscordClient) client;
 						final var d = obj.getObject("d");
-						switch (Interaction.Type.resolve(d.getLong("type"))) {
+						switch (Interaction.Type.resolve(d.getShort("type"))) {
 							case APPLICATION_COMMAND ->
-								bot.chatInputInteractionCreate.emit(new ChatInputInteraction(bot, obj.getObject("d")));
+								bot.chatInputInteractionCreate.emit(new ChatInputInteraction(bot, d));
+							case MESSAGE_COMPONENT ->
+								bot.messageComponentInteractionCreate.emit(new MessageComponentInteraction(bot, d));
 							default -> {}
 						}
 					}

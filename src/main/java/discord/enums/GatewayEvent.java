@@ -14,11 +14,4 @@ public enum GatewayEvent {
 	MESSAGE_UPDATE,
 	MESSAGE_DELETE,
 	USER_UPDATE;
-
-	public static final GatewayEvent get(String value) {
-		for (final var x : GatewayEvent.values())
-			if (x.name().equals(value))
-				return x;
-		return null;
-	}
 }

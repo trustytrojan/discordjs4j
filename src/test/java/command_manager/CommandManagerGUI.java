@@ -51,6 +51,7 @@ public class CommandManagerGUI extends JFrame {
 		validate();
 		pack();
 		setVisible(true);
+		refreshCacheAndTable();
 	}
 
 	private void refreshCacheAndTable() {
@@ -81,8 +82,7 @@ public class CommandManagerGUI extends JFrame {
 			final var client = new BotDiscordClient();
 			client.api.setToken(Util.readFile("tokens/java-bot"));
 			client.fetchApplication().join();
-			final var guild = client.guilds.fetch("1094436869531504733").join();
-			new CommandManagerGUI(guild.commands);
+			new CommandManagerGUI(new ApplicationCommandManager(client, "1094436869531504733"));
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(1);

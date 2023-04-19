@@ -1,12 +1,12 @@
 package discord.structures.components;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import simple_json.JSONObject;
 
 public class ActionRow extends MessageComponent {
-	public List<MessageComponent> components;
+	public final List<MessageComponent> components;
 
 	public ActionRow(final JSONObject data) {
 		super(data);
@@ -15,9 +15,9 @@ public class ActionRow extends MessageComponent {
 			.toList();
 	}
 
-	public ActionRow() {
+	public ActionRow(final MessageComponent... components) {
 		super(Type.ACTION_ROW);
-		components = new ArrayList<>();
+		this.components = Arrays.asList(components);
 	}
 
 	@Override
