@@ -2,6 +2,7 @@ package discord.client;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.CompletableFuture;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -92,7 +93,17 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onMessage(final String rawJson) {
+	public void onMessage(final String message) {
+		CompletableFuture.runAsync(() -> onMessageAsync(message))
+				.exceptionallyAsync((final var e) -> {
+					e.printStackTrace();
+					return null;
+				});
+	}
+
+	// Let's give the WebSocketClient's thread a break from this mess
+
+	public void onMessageAsync(final String rawJson) {
 		final var obj = JSON.parseObject(rawJson);
 		final var opcode = GatewayOpcode.resolve(obj.getShort("op"));
 
@@ -111,7 +122,7 @@ public class GatewayClient extends WebSocketClient {
 				switch (event) {
 					case READY -> {
 						client.user = new ClientUser(client, obj.getObject("d").getObject("user"));
-						client.users.cache.put(client.user);
+						client.users.cache(client.user);
 						client.ready.emit();
 					}
 
@@ -152,12 +163,12 @@ public class GatewayClient extends WebSocketClient {
 
 					case MESSAGE_CREATE -> {
 						final var message = new Message(client, obj.getObject("d"));
-						message.channel.messages().cache.put(message);
+						message.channel.messages().cache(message);
 						client.messageCreate.emit(message);
 					}
 					case MESSAGE_UPDATE -> {
 						final var message = new Message(client, obj.getObject("d"));
-						message.channel.messages().cache.put(message);
+						message.channel.messages().cache(message);
 						client.messageUpdate.emit(message);
 					}
 					case MESSAGE_DELETE -> {
@@ -199,15 +210,18 @@ public class GatewayClient extends WebSocketClient {
 				}, heartbeat_interval);
 			}
 
-			default -> {
-			}
+			default -> {}
 		}
 	}
 
 	@Override
 	public void onClose(int code, String reason, boolean remote) {
-		System.out.printf("[GatewayClient] Connection closed!\n  Code: %d\n  Reason: %s\n  Remote: %b\n", code, reason,
-				remote);
+		System.out.printf("""
+				[GatewayClient] Connection closed!
+					Code: %d
+					Reason: %s
+					Remote: %b
+				""", code, reason, remote);
 		System.exit(1);
 	}
 

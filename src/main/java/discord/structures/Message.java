@@ -1,6 +1,5 @@
 package discord.structures;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +8,7 @@ import org.json.simple.JSONAware;
 
 import discord.client.DiscordClient;
 import discord.structures.channels.TextBasedChannel;
+import discord.structures.components.ActionRow;
 import discord.structures.components.MessageComponent;
 import simple_json.JSONObject;
 
@@ -70,17 +70,9 @@ public class Message implements DiscordResource {
 	public static class Payload implements JSONAware {
 		public String content;
 		public String replyToMessageId;
-		public List<Embed> embeds = new ArrayList<>();
-		public List<MessageComponent> components = new ArrayList<>();
+		public List<Embed> embeds;
+		public List<ActionRow> components;
 		//public List<Attachment> attachments;
-
-		public void addEmbeds(final Embed... embeds) {
-			Collections.addAll(this.embeds, embeds);
-		}
-
-		public void addComponents(final MessageComponent... components) {
-			Collections.addAll(this.components, components);
-		}
 
 		public JSONObject toJSONObject() {
 			final var obj = new JSONObject();
@@ -95,13 +87,17 @@ public class Message implements DiscordResource {
 				obj.put("message_reference", messageReference);
 			}
 
-			if (embeds.size() > 0) {
+			if (embeds != null && embeds.size() > 0) {
 				obj.put("embeds", embeds);
 			}
 
-			if (components.size() > 0) {
+			if (components != null && components.size() > 0) {
 				obj.put("components", components);
 			}
+
+			// if (attachments != null && attachments.size() > 0) {
+			// 	obj.put("attachments", attachments);
+			// }
 
 			return obj;
 		}

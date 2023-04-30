@@ -45,6 +45,7 @@ public class RoleManager extends GuildResourceManager<Role> {
 		return client.api.delete(basePath + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
+	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get(basePath)
 			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));

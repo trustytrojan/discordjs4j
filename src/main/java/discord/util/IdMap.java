@@ -32,10 +32,6 @@ public class IdMap<V extends Identifiable> extends TreeMap<String, V> {
 		}
 	}
 
-	public V put(V value) {
-		return put(value.id(), value);
-	}
-
 	public void setSizeLimit(long sizeLimit) {
 		if (sizeLimit < 50) {
 			throw new IllegalArgumentException("Size limit too low! Must be >= 50");
@@ -43,7 +39,7 @@ public class IdMap<V extends Identifiable> extends TreeMap<String, V> {
 
 		this.sizeLimit = sizeLimit;
 	}
-
+	
 	@Override
 	public V put(String key, V value) {
 		final var oldValue = super.put(key, value);

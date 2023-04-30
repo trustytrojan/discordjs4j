@@ -25,8 +25,12 @@ public class UserManager extends ResourceManager<User> {
 	public CompletableFuture<ClientUser> fetchMe() {
 		return client.api.get("/users/@me").thenApplyAsync((final var r) -> {
 			final var me = new ClientUser(client, r.toJSONObject());
-			cache.put(me);
-			return me;
+			return (ClientUser) cache(me);
 		});
+	}
+
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		throw new UnsupportedOperationException("Global users cache cannot be refreshed");
 	}
 }

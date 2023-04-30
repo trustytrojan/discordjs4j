@@ -67,8 +67,8 @@ public class Embed implements JSONAware {
 	public String title;
 	public String url;
 	public String description;
-	public String imageURL;
-	public String thumbnailURL;
+	public String image;
+	public String thumbnail;
 	public Integer color;
 	
 	public void setColor(String hexColor) throws IllegalArgumentException {
@@ -76,15 +76,15 @@ public class Embed implements JSONAware {
 	}
 
 	public void setAuthor(String name, String iconURL, String url) {
-		author = new Author(name, url, iconURL);
+		author = new Author(name, iconURL, url);
 	}
 
 	public void setAuthor(String name, String iconURL) {
-		setAuthor(name, iconURL, null);
+		author = new Author(name, iconURL, null);
 	}
 
 	public void setAuthor(String name) {
-		setAuthor(name, null);
+		author = new Author(name, null, null);
 	}
 	
 	public void setFooter(String text, String iconURL) {
@@ -92,7 +92,7 @@ public class Embed implements JSONAware {
 	}
 
 	public void setFooter(String text) {
-		setFooter(text, null);
+		footer = new Footer(text, null);
 	}
 
 	public void addField(String name, String value, boolean inline) {
@@ -100,7 +100,7 @@ public class Embed implements JSONAware {
 	}
 
 	public void addField(String name, String value) {
-		addField(name, value, false);
+		fields.add(new Field(name, value, false));
 	}
 
 	@Override
@@ -119,15 +119,15 @@ public class Embed implements JSONAware {
 			obj.put("description", description);
 		}
 
-		if (imageURL != null) {
+		if (image != null) {
 			final var image = new JSONObject();
-			image.put("url", imageURL);
+			image.put("url", this.image);
 			obj.put("image", image);
 		}
 
-		if (thumbnailURL != null) {
+		if (thumbnail != null) {
 			final var thumbnail = new JSONObject();
-			thumbnail.put("url", thumbnailURL);
+			thumbnail.put("url", this.thumbnail);
 			obj.put("thumbnail", thumbnail);
 		}
 

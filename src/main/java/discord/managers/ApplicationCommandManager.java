@@ -7,7 +7,6 @@ import org.json.simple.JSONArray;
 
 import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
-import discord.util.IdMap;
 import simple_json.JSONObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
@@ -47,14 +46,10 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 		return client.api.delete(basePath + '/' + id).thenRunAsync(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<IdMap<ApplicationCommand>> set(final List<ApplicationCommand.Payload> commandPayloads) {
+	public CompletableFuture<Void> set(final List<ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
-		final var dataToSend = JSONArray.toJSONString(commandPayloads);
-		final var commands = new IdMap<ApplicationCommand>();
-		return client.api.put(basePath, dataToSend).thenApplyAsync((final var r) -> {
-			r.toJSONObjectArray().forEach((final var o) -> commands.put(cache(o)));
-			return commands;
-		});
+		return client.api.put(basePath, JSONArray.toJSONString(commandPayloads))
+			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
 	}
 
 	public CompletableFuture<Void> refreshCache() {

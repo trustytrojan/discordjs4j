@@ -122,7 +122,7 @@ public final class APIClient {
 	public class JSONHttpResponse {
 		public final String body;
 
-		public JSONHttpResponse(String body) {
+		public JSONHttpResponse(final String body) {
 			this.body = body;
 		}
 

@@ -21,7 +21,8 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	@Override
 	public CompletableFuture<GuildChannel> fetch(final String id, final boolean force) {
-		return super.fetch(id, "/channels/" + id, force);
+		return super.fetch(id, "/channels/" + id, force)
+			.thenApplyAsync((final var channel) -> (GuildChannel) client.channels.cache(channel));
 	}
 
 	public CompletableFuture<GuildChannel> create(final GuildChannel.Payload payload) {
@@ -34,12 +35,17 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
 	}
 
-	public CompletableFuture<Void> delete(String id) {
+	public CompletableFuture<Void> delete(final String id) {
 		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
+	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+			.thenAcceptAsync((final var r) -> {
+				for (final var rawChannel : r.toJSONObjectArray()) {
+					client.channels.cache(cache(rawChannel));
+				}
+			});
 	}
 }

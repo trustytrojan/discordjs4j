@@ -5,11 +5,9 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.channels.CategoryChannel;
 import discord.structures.channels.Channel;
-import discord.structures.channels.DMBasedChannel;
 import discord.structures.channels.DMChannel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.TextChannel;
-import discord.util.IdMap;
 import discord.util.Util;
 import simple_json.JSONObject;
 
@@ -41,16 +39,13 @@ public class ChannelManager extends ResourceManager<Channel> {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
-	public CompletableFuture<IdMap<DMBasedChannel>> fetchDMs() {
-		final var dms = new IdMap<DMBasedChannel>();
+	public CompletableFuture<Void> fetchDMs() {
+		return client.api.get("/users/@me/channels")
+				.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+	}
 
-		return CompletableFuture.supplyAsync(() -> {
-			for (final var rawDM : client.api.get("/users/@me/channels").join().toJSONObjectArray()) {
-				final var channel = (DMBasedChannel) cache((JSONObject) rawDM);
-				dms.put(channel);
-			}
-
-			return dms;
-		});
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		throw new UnsupportedOperationException("Global channels cache cannot be refreshed");
 	}
 }

@@ -8,21 +8,7 @@ public class JavaBot extends BotDiscordClient {
 	public JavaBot() {
 		ready.connect(() -> System.out.println("Logged in as " + user.tag() + '!'));
 
-		chatInputInteractionCreate.connect((final var interaction) -> {
-			switch (interaction.commandName) {
-				case "ping" -> interaction.reply("`%sms`\nfrom member %s".formatted(gateway.ping(), interaction.member.nickname()));
-				case "view_roles" -> {
-					final var sb = new StringBuilder();
-					for (final var role : interaction.member.roles.cache.values()) {
-						sb.append('\n' + role.mention());
-					}
-					interaction.reply(sb.toString());
-				}
-				case "test_guild_command" -> {
-					
-				}
-			}
-		});
+		chatInputInteractionCreate.connect(ChatInput::listener);
 		
 		messageComponentInteractionCreate.connect((final var interaction) -> {
 			if (!interaction.isButton()) return;
@@ -45,7 +31,7 @@ public class JavaBot extends BotDiscordClient {
 			}
 			
 			switch (customId) {
-				case "test" -> interaction.reply("nigger nigger nigger nigger nigger nigger nigger");
+				case "test" -> interaction.reply("test button pressed");
 			}
 		});
 

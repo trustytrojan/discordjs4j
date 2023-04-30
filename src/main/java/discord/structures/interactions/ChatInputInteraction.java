@@ -14,7 +14,7 @@ public class ChatInputInteraction extends Interaction {
 		super(client, data);
 
 		final var rawOptions = innerData.getObjectArray("options");
-		options = (rawOptions != null) ? new ChatInputInteractionOptionResolver(rawOptions) : null;
+		options = (rawOptions == null) ? null : new ChatInputInteractionOptionResolver(this, rawOptions);
 
 		commandId = innerData.getString("id");
 		commandName = innerData.getString("name");
