@@ -35,11 +35,25 @@
 			<version>7c383b79a2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.github.trustytrojan</groupId>
+			<artifactId>java-signals</artifactId>
+			<version>7c383b79a2</version>
+			<classifier>sources</classifier>
+		</dependency>
+
 		<!-- https://jitpack.io/#trustytrojan/simple-json -->
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>simple-json</artifactId>
 			<version>62dbc2a954</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.trustytrojan</groupId>
+			<artifactId>simple-json</artifactId>
+			<version>62dbc2a954</version>
+			<classifier>sources</classifier>
 		</dependency>
 	</dependencies>
 
