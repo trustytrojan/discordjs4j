@@ -1,12 +1,9 @@
 package java_bot;
 
 import discord.structures.Embed;
-import discord.structures.components.ActionRow;
-import discord.structures.components.Button;
-import discord.structures.components.CustomIdButton;
 import discord.structures.interactions.ChatInputInteraction;
 
-public final class ChatInput {
+public class ChatInputInteractionListener {
 	public static void listener(final ChatInputInteraction interaction) {
 		switch (interaction.commandName) {
 			case "ping" -> interaction.reply("`%sms`");
@@ -35,14 +32,7 @@ public final class ChatInput {
 			}
 
 			case "create_button_roles" -> {
-				interaction.reply("test",
-					new ActionRow(
-						new CustomIdButton(Button.Style.PRIMARY, "test", "test"),
-						new CustomIdButton(Button.Style.SECONDARY, "test2", "test"),
-						new CustomIdButton(Button.Style.DANGER, "test3", "test"),
-						new CustomIdButton(Button.Style.SUCCESS, "test4", "test")
-					)
-				);
+				
 			}
 		}
 	}
