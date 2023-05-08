@@ -5,43 +5,11 @@ import discord.structures.Guild;
 import simple_json.JSONObject;
 
 public class VoiceChannel implements GuildChannel {
-
-	private final DiscordClient client;
-	private JSONObject data;
-
-	public final Guild guild;
-
-	public VoiceChannel(DiscordClient client, JSONObject data) {
-		this.client = client;
-		this.data = data;
-		guild = client.guilds.fetch(guildId()).join();
-	}
-
-	@Override
-	public Guild guild() {
-		return guild;
-	}
-
-	@Override
-	public JSONObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(JSONObject data) {
-		this.data = data;
-	}
-
-	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
 	public static enum VideoQualityMode {
 		AUTO(1),
 		FULL(2);
 
-		public static VideoQualityMode resolve(int value) {
+		public static VideoQualityMode resolve(final int value) {
 			for (final var x : VideoQualityMode.values())
 				if (x.value == value)
 					return x;
@@ -53,6 +21,37 @@ public class VoiceChannel implements GuildChannel {
 		private VideoQualityMode(int value) {
 			this.value = value;
 		}
+	}
+	
+	private final DiscordClient client;
+	private JSONObject data;
+
+	private final Guild guild;
+
+	public VoiceChannel(final DiscordClient client, final JSONObject data) {
+		this.client = client;
+		this.data = data;
+		guild = client.guilds.fetch(guildId()).join();
+	}
+
+	@Override
+	public JSONObject getData() {
+		return data;
+	}
+
+	@Override
+	public void setData(final JSONObject data) {
+		this.data = data;
+	}
+
+	@Override
+	public DiscordClient client() {
+		return client;
+	}
+	
+	@Override
+	public Guild guild() {
+		return guild;
 	}
 
 	public static class Payload extends GuildChannel.Payload {

@@ -2,7 +2,6 @@ package discord.structures;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -13,6 +12,25 @@ import discord.client.DiscordClient;
 import simple_json.JSONObject;
 
 public class ApplicationCommand implements DiscordResource {
+	public static enum Type {
+		CHAT_INPUT(1),
+		MESSAGE(2),
+		USER(3);
+
+		public static Type resolve(long value) {
+			for (final var x : Type.values())
+				if (x.value == value)
+					return x;
+			return null;
+		}
+
+		public final int value;
+
+		private Type(int value) {
+			this.value = value;
+		}
+	}
+
 	private final BotDiscordClient client;
 	private JSONObject data;
 
@@ -74,42 +92,11 @@ public class ApplicationCommand implements DiscordResource {
 		return "/applications/" + client.application.id() + '/' + id();
 	}
 
-	public static enum Type {
-		CHAT_INPUT(1),
-		MESSAGE(2),
-		USER(3);
-
-		public static Type resolve(long value) {
-			for (final var x : Type.values())
-				if (x.value == value)
-					return x;
-			return null;
-		}
-
-		public final int value;
-
-		private Type(int value) {
-			this.value = value;
-		}
-	}
-
 	public static class Payload implements JSONAware {
 		public Type type;
 		public String name;
 		public String description;
-		private final List<ApplicationCommandOption.Payload> options = new LinkedList<>();
-
-		public void addOption(ApplicationCommandOption.Type type, String name, String description, boolean required) {
-			options.add(new ApplicationCommandOption.Payload(type, name, description, required));
-		}
-
-		public void addOption(ApplicationCommandOption.Type type, String name, String description) {
-			options.add(new ApplicationCommandOption.Payload(type, name, description));
-		}
-
-		public void addOption(ApplicationCommandOption.Payload option) {
-			options.add(option);
-		}
+		public List<ApplicationCommandOption.Payload> options;
 
 		@Override
 		public String toJSONString() {
@@ -119,7 +106,7 @@ public class ApplicationCommand implements DiscordResource {
 				obj.put("type", type.value);
 			if (description != null)
 				obj.put("description", description);
-			if (options.size() > 0)
+			if (options != null && options.size() > 0)
 				obj.put("options", options);
 			return obj.toJSONString();
 		}

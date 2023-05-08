@@ -6,14 +6,13 @@ import discord.structures.User;
 import simple_json.JSONObject;
 
 public class DMChannel implements DMBasedChannel {
-
 	private final DiscordClient client;
 	private JSONObject data;
 
 	private final MessageManager messages;
 	public final User recipient;
 
-	public DMChannel(DiscordClient client, JSONObject data) {
+	public DMChannel(final DiscordClient client, final JSONObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
@@ -45,7 +44,7 @@ public class DMChannel implements DMBasedChannel {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(final JSONObject data) {
 		this.data = data;
 	}
 
@@ -53,5 +52,4 @@ public class DMChannel implements DMBasedChannel {
 	public DiscordClient client() {
 		return client;
 	}
-
 }

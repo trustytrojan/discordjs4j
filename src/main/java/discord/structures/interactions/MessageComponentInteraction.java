@@ -1,6 +1,5 @@
 package discord.structures.interactions;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,10 +25,7 @@ public class MessageComponentInteraction extends Interaction {
 			case ROLE_SELECT:
 			case MENTIONABLE_SELECT:
 			case CHANNEL_SELECT:
-				final var _values = new ArrayList<String>();
-				for (final var value : innerData.getStringArray("values"))
-					_values.add(value);
-				values = Collections.unmodifiableList(_values);
+				values = Collections.unmodifiableList(innerData.getStringArray("values"));
 				break;
 			default:
 				values = Collections.emptyList();

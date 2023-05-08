@@ -1,7 +1,10 @@
 package discord.structures.interactions;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
@@ -11,22 +14,35 @@ import discord.structures.User;
 import discord.structures.channels.GuildChannel;
 import simple_json.JSONObject;
 
-public class ChatInputInteractionOptionResolver {
+public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	private final ChatInputInteraction interaction;
-	private final HashMap<String, ChatInputInteractionOption> options = new HashMap<>();
+	private final Map<String, ChatInputInteraction.Option> options;
 
-	ChatInputInteractionOptionResolver(final ChatInputInteraction interaction, final List<JSONObject> rawOptions) {
-		Objects.requireNonNull(interaction);
-		Objects.requireNonNull(rawOptions);
+	OptionResolver(final ChatInputInteraction interaction, final List<JSONObject> rawOptions) {
+		this.interaction = Objects.requireNonNull(interaction);
 
-		this.interaction = interaction;
-		for (final var optionData : rawOptions) {
-			final var option = new ChatInputInteractionOption(interaction, optionData);
-			options.put(option.name, option);
+		if (rawOptions == null)
+			options = null;
+		else {
+			final var options = new HashMap<String, ChatInputInteraction.Option>();
+
+			for (final var optionData : rawOptions) {
+				final var option = new ChatInputInteraction.Option(interaction, optionData);
+				options.put(option.name, option);
+			}
+
+			this.options = Collections.unmodifiableMap(options);
 		}
 	}
 
-	public ChatInputInteractionOption get(final String optionName) {
+	@Override
+	public Iterator<ChatInputInteraction.Option> iterator() {
+		return (options == null)
+				? Collections.emptyIterator()
+				: options.values().iterator();
+	}
+
+	public ChatInputInteraction.Option get(final String optionName) {
 		return options.get(optionName);
 	}
 
@@ -63,7 +79,7 @@ public class ChatInputInteractionOptionResolver {
 	 * 
 	 * @return the name of the subcommand
 	 */
-	public ChatInputInteractionOption getSubcommand() {
+	public ChatInputInteraction.Option getSubcommand() {
 		return options.values().iterator().next();
 	}
 

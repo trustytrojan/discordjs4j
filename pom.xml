@@ -32,13 +32,13 @@
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>java-signals</artifactId>
-			<version>7c383b79a2</version>
+			<version>cd35118f91</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>java-signals</artifactId>
-			<version>7c383b79a2</version>
+			<version>cd35118f91</version>
 			<classifier>sources</classifier>
 		</dependency>
 

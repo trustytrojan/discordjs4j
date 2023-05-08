@@ -11,6 +11,19 @@ import discord.util.CDN.URLFactory;
 import simple_json.JSONObject;
 
 public class GuildMember implements GuildResource {
+	public static enum Flags {
+		DID_REJOIN(1 << 0),
+		COMPLETED_ONBOARDING(1 << 1),
+		BYPASSES_VERIFICATION(1 << 2),
+		STARTED_ONBOARDING(1 << 3);
+
+		public final int value;
+
+		private Flags(int value) {
+			this.value = value;
+		}
+	}
+
 	private final DiscordClient client;
 	private JSONObject data;
 
@@ -38,7 +51,7 @@ public class GuildMember implements GuildResource {
 		}
 
 		@Override
-		public String url(int size, String extension) {
+		public String url(final int size, final String extension) {
 			return CDN.guildMemberAvatar(guild.id(), user.id(), hash(), size, extension);
 		}
 	};
@@ -89,7 +102,7 @@ public class GuildMember implements GuildResource {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(final JSONObject data) {
 		this.data = data;
 	}
 
@@ -99,25 +112,12 @@ public class GuildMember implements GuildResource {
 	}
 
 	@Override
-	public Guild guild() {
-		return guild;
-	}
-
-	@Override
 	public String apiPath() {
 		return "/guilds/" + guild.id() + "/members/" + user.id();
 	}
 
-	public static enum Flags {
-		DID_REJOIN(1 << 0),
-		COMPLETED_ONBOARDING(1 << 1),
-		BYPASSES_VERIFICATION(1 << 2),
-		STARTED_ONBOARDING(1 << 3);
-
-		public final int value;
-
-		private Flags(int value) {
-			this.value = value;
-		}
+	@Override
+	public Guild guild() {
+		return guild;
 	}
 }

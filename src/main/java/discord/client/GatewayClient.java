@@ -14,10 +14,9 @@ import discord.structures.AuditLogEntry;
 import discord.structures.ClientUser;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
-import discord.structures.interactions.ChatInputInteraction;
 import discord.structures.interactions.Interaction;
-import discord.structures.interactions.MessageComponentInteraction;
 import discord.util.RunnableRepeater;
+import discord.util.Util;
 import simple_json.JSON;
 import simple_json.JSONObject;
 
@@ -95,10 +94,7 @@ public class GatewayClient extends WebSocketClient {
 	@Override
 	public void onMessage(final String message) {
 		CompletableFuture.runAsync(() -> onMessageAsync(message))
-				.exceptionallyAsync((final var e) -> {
-					e.printStackTrace();
-					return null;
-				});
+			.exceptionallyAsync(Util.PRINT_STACK_TRACE);
 	}
 
 	// Let's give the WebSocketClient's thread a break from this mess
@@ -128,14 +124,7 @@ public class GatewayClient extends WebSocketClient {
 
 					case INTERACTION_CREATE -> {
 						final var bot = (BotDiscordClient) client;
-						final var d = obj.getObject("d");
-						switch (Interaction.Type.resolve(d.getShort("type"))) {
-							case APPLICATION_COMMAND ->
-								bot.chatInputInteractionCreate.emit(new ChatInputInteraction(bot, d));
-							case MESSAGE_COMPONENT ->
-								bot.messageComponentInteractionCreate.emit(new MessageComponentInteraction(bot, d));
-							default -> {}
-						}
+						bot.interactionCreate.emit(Interaction.fromJSON(bot, obj.getObject("d")));
 					}
 
 					case GUILD_AUDIT_LOG_ENTRY_CREATE ->
@@ -199,6 +188,7 @@ public class GatewayClient extends WebSocketClient {
 				// Interval in milliseconds that Discord wants us to wait before
 				// sending another heartbeat.
 				final var heartbeat_interval = d.getLong("heartbeat_interval");
+				System.out.printf("[GatewayClient] Hello event received; Heartbeat interval: %dms\n", heartbeat_interval);
 
 				repeater.repeat(() -> {
 					System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
@@ -210,7 +200,8 @@ public class GatewayClient extends WebSocketClient {
 				}, heartbeat_interval);
 			}
 
-			default -> {}
+			default -> {
+			}
 		}
 	}
 

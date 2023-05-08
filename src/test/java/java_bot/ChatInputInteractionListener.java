@@ -6,13 +6,13 @@ import discord.structures.interactions.ChatInputInteraction;
 public class ChatInputInteractionListener {
 	public static void listener(final ChatInputInteraction interaction) {
 		switch (interaction.commandName) {
-			case "ping" -> interaction.reply("`%sms`");
+			case "ping" -> interaction.respond("`%sms`");
 
 			case "view_roles" -> {
 				final var sb = new StringBuilder();
 				for (final var role : interaction.member.roles)
 					sb.append('\n' + role.mention());
-				interaction.reply(sb.toString());
+				interaction.respond(sb.toString());
 			}
 
 			case "user_test" -> {
@@ -28,7 +28,7 @@ public class ChatInputInteractionListener {
 					embed.addField("Banner", "Shown below");
 					embed.image = user.banner.url(4096);
 				}
-				interaction.reply(embed);
+				interaction.respond(embed);
 			}
 
 			case "create_button_roles" -> {

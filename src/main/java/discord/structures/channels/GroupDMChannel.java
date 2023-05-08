@@ -1,6 +1,6 @@
 package discord.structures.channels;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import simple_json.JSONObject;
 import discord.client.DiscordClient;
@@ -8,24 +8,20 @@ import discord.managers.MessageManager;
 import discord.structures.User;
 
 public class GroupDMChannel implements DMBasedChannel {
-
 	private final DiscordClient client;
 	private JSONObject data;
 
 	private final MessageManager messages;
+	public final List<User> recipients;
 
-	public final User[] recipients;
-
-	public GroupDMChannel(DiscordClient client, JSONObject data) {
+	public GroupDMChannel(final DiscordClient client, final JSONObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
 
-		final var recipients = new LinkedList<User>();
-		for (final var recipientData : data.getObjectArray("recipients")) {
-			recipients.add(client.users.fetch(recipientData.getString("id")).join());
-		}
-		this.recipients = (User[]) recipients.toArray();
+		recipients = data.getObjectArray("recipients").parallelStream()
+				.map((final var o) -> client.users.fetch(o.getString("id")).join())
+				.toList();
 	}
 
 	public String icon() {
@@ -42,7 +38,7 @@ public class GroupDMChannel implements DMBasedChannel {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(final JSONObject data) {
 		this.data = data;
 	}
 
@@ -55,5 +51,4 @@ public class GroupDMChannel implements DMBasedChannel {
 	public MessageManager messages() {
 		return messages;
 	}
-
 }

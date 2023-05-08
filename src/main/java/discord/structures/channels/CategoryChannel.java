@@ -8,17 +8,12 @@ public class CategoryChannel implements GuildChannel {
 	private final DiscordClient client;
 	private JSONObject data;
 
-	public final Guild guild;
+	private final Guild guild;
 
-	public CategoryChannel(DiscordClient client, JSONObject data) {
+	public CategoryChannel(final DiscordClient client, final JSONObject data) {
 		this.client = client;
 		this.data = data;
 		guild = client.guilds.fetch(guildId()).join();
-	}
-
-	@Override
-	public Guild guild() {
-		return guild;
 	}
 
 	@Override
@@ -34,5 +29,10 @@ public class CategoryChannel implements GuildChannel {
 	@Override
 	public DiscordClient client() {
 		return client;
+	}
+
+	@Override
+	public Guild guild() {
+		return guild;
 	}
 }

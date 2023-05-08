@@ -4,28 +4,30 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.time.Instant;
 import java.util.Date;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public final class Util {
 	public static final Runnable DO_NOTHING = () -> {};
 
+	public static final Function<Throwable, ? extends Void> PRINT_STACK_TRACE =
+			(final var e) -> {
+				e.printStackTrace();
+				return null;
+			};
+
 	public static String readFile(String filePath) {
-		try {
-			final var stream = new FileInputStream(filePath);
-			final var data = new String(stream.readAllBytes());
-			stream.close();
-			return data;
-		} catch (Exception e) {
+		try (final var stream = new FileInputStream(filePath)) {
+			return new String(stream.readAllBytes());
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static void writeFile(String filePath, String data) {
-		try {
-			final var writer = new FileWriter(filePath);
+		try (final var writer = new FileWriter(filePath)) {
 			writer.write(data);
-			writer.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

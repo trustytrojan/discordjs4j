@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.BotDiscordClient;
+import discord.client.APIClient.JSONHttpResponse;
 import discord.structures.Embed;
 import discord.structures.Guild;
 import discord.structures.GuildMember;
@@ -13,7 +14,6 @@ import discord.structures.Permissions;
 import discord.structures.User;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.components.ActionRow;
-import discord.util.Util;
 import simple_json.JSONObject;
 
 public abstract class Interaction {
@@ -54,10 +54,10 @@ public abstract class Interaction {
 		}
 	}
 
-	public static class Reply extends Message.Payload {
+	public static class Response extends Message.Payload {
 		private final boolean ephemeral;
 
-		public Reply(final boolean ephemeral) {
+		public Response(final boolean ephemeral) {
 			this.ephemeral = ephemeral;
 		}
 
@@ -68,6 +68,14 @@ public abstract class Interaction {
 				obj.put("ephemeral", Boolean.TRUE);
 			return obj.toString();
 		}
+	}
+
+	public static Interaction fromJSON(final BotDiscordClient client, final JSONObject data) {
+		return switch (Type.resolve(data.getShort("type"))) {
+			case APPLICATION_COMMAND -> new ChatInputInteraction(client, data);
+			case MESSAGE_COMPONENT -> new MessageComponentInteraction(client, data);
+			default -> null;
+		};
 	}
 
 	protected final BotDiscordClient client;
@@ -82,7 +90,10 @@ public abstract class Interaction {
 	public final Permissions memberPermissions;
 
 	protected final JSONObject innerData;
-	protected final String token;
+	private final String token;
+
+	private Message originalResponse;
+	private boolean deferred;
 
 	protected Interaction(final BotDiscordClient client, final JSONObject data) {
 		this.client = Objects.requireNonNull(client);
@@ -114,86 +125,122 @@ public abstract class Interaction {
 		return (guild != null);
 	}
 
-	private CompletableFuture<Void> sendResponse(final CallbackType type, final Reply payload) {
+	public Message getOriginalResponse() {
+		return originalResponse;
+	}
+
+	public boolean hasBeenDeferred() {
+		return deferred;
+	}
+
+	private CompletableFuture<JSONHttpResponse> createResponse(final CallbackType type, final Response payload) {
 		final var path = "/interactions/" + id + '/' + token + "/callback";
 		final var data = new JSONObject();
 		data.put("type", type.value);
 		if (payload != null)
 			data.put("data", payload);
-		return client.api.post(path, data.toJSONString()).thenRunAsync(Util.DO_NOTHING);
+		return client.api.post(path, data.toJSONString());
 	}
 
-	public CompletableFuture<Void> deferReply() {
-		return sendResponse(CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE, null);
+	public CompletableFuture<Void> deferResponse() {
+		return createResponse(CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE, null)
+			.thenRunAsync(() -> deferred = true);
 	}
 
-	public CompletableFuture<Void> reply(final Reply payload) {
-		return sendResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload);
+	public CompletableFuture<Void> respond(final Response payload) {
+		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
+			.thenAcceptAsync(r -> System.out.println(r.body));
+	}
+
+	public CompletableFuture<Message> respondThenGetResponse(final Response payload) {
+		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
+			.thenApplyAsync(
+				(final var r) -> (originalResponse = new Message(client, r.toJSONObject()))
+			);
+	}
+
+	public CompletableFuture<Message> createFollowupMessage(final Message.Payload payload) {
+		final var path = "/webhooks/" + client.application.id() + '/' + token;
+		return client.api.post(path, payload.toJSONString())
+			.thenApplyAsync((final var r) -> {
+				return new Message(client, r.toJSONObject());
+			});
 	}
 
 	// Content only
 
-	private Reply onlyContent(final boolean ephemeral, final String content) {
-		final var payload = new Reply(ephemeral);
+	private Response onlyContent(final boolean ephemeral, final String content) {
+		final var payload = new Response(ephemeral);
 		payload.content = content;
 		return payload;
 	}
 
-	public CompletableFuture<Void> reply(final String content) {
-		return reply(onlyContent(false, content));
+	public CompletableFuture<Void> respond(final String content) {
+		return respond(onlyContent(false, content));
 	}
 
-	public CompletableFuture<Void> replyEphemeral(final String content) {
-		return reply(onlyContent(true, content));
+	public CompletableFuture<Void> respondEphemeral(final String content) {
+		return respond(onlyContent(true, content));
+	}
+
+	public CompletableFuture<Message> followUp(final String content) {
+		return createFollowupMessage(onlyContent(false, content));
+	}
+
+	/**
+	 * NOTE: Your first follow up message cannot be ephemeral.
+	 */
+	public CompletableFuture<Message> followUpEphemeral(final String content) {
+		return createFollowupMessage(onlyContent(true, content));
 	}
 
 	// Embeds only
 
-	private Reply onlyEmbeds(final boolean ephemeral, final Embed... embeds) {
-		final var payload = new Reply(ephemeral);
+	private Response onlyEmbeds(final boolean ephemeral, final Embed... embeds) {
+		final var payload = new Response(ephemeral);
 		payload.embeds = List.of(embeds);
 		return payload;
 	}
 
-	public CompletableFuture<Void> reply(final Embed... embeds) {
-		return reply(onlyEmbeds(false, embeds));
+	public CompletableFuture<Void> respond(final Embed... embeds) {
+		return respond(onlyEmbeds(false, embeds));
 	}
 
-	public CompletableFuture<Void> replyEphemeral(final Embed... embeds) {
-		return reply(onlyEmbeds(true, embeds));
+	public CompletableFuture<Void> respondEphemeral(final Embed... embeds) {
+		return respond(onlyEmbeds(true, embeds));
 	}
 
 	// Content and embeds
 
-	private Reply contentAndEmbeds(final boolean ephemeral, final String content, final Embed... embeds) {
-		final var payload = new Reply(ephemeral);
+	private Response contentAndEmbeds(final boolean ephemeral, final String content, final Embed... embeds) {
+		final var payload = new Response(ephemeral);
 		payload.content = content;
 		payload.embeds = List.of(embeds);
 		return payload;
 	}
 
-	public CompletableFuture<Void> reply(final String content, final Embed... embeds) {
-		return reply(contentAndEmbeds(false, content, embeds));
+	public CompletableFuture<Void> respond(final String content, final Embed... embeds) {
+		return respond(contentAndEmbeds(false, content, embeds));
 	}
 
-	public CompletableFuture<Void> replyEphemeral(final String content, final Embed... embeds) {
-		return reply(contentAndEmbeds(true, content, embeds));
+	public CompletableFuture<Void> respondEphemeral(final String content, final Embed... embeds) {
+		return respond(contentAndEmbeds(true, content, embeds));
 	}
 
 	// Content and action rows
 
-	private Reply contentAndActionRows(final boolean ephemeral, final String content, final ActionRow... rows) {
-		final var payload = new Reply(ephemeral);
+	private Response contentAndActionRows(final boolean ephemeral, final String content, final ActionRow... rows) {
+		final var payload = new Response(ephemeral);
 		payload.content = content;
 		payload.components = List.of(rows);
 		return payload;
 	}
 
-	public CompletableFuture<Void> reply(final String content, final ActionRow... rows) {
-		return reply(contentAndActionRows(false, content, rows));
+	public CompletableFuture<Void> respond(final String content, final ActionRow... rows) {
+		return respond(contentAndActionRows(false, content, rows));
 	}
 
-	public CompletableFuture<Void> replyEphemeral(final String content, final ActionRow... rows) {
-		return reply(contentAndActionRows(true, content, rows));
+	public CompletableFuture<Void> respondEphemeral(final String content, final ActionRow... rows) {
+		return respond(contentAndActionRows(true, content, rows));
 	}
 }

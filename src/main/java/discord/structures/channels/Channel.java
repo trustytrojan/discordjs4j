@@ -1,33 +1,13 @@
 package discord.structures.channels;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
+import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
+import simple_json.JSONObject;
 
 public interface Channel extends DiscordResource {
-	String url();
-
-	default String mention() {
-		return "<#" + id() + '>';
-	}
-
-	default String name() {
-		return getData().getString("name");
-	}
-
-	default Type type() {
-		return Type.resolve(getData().getLong("type"));
-	}
-
-	default CompletableFuture<Void> delete() {
-		return client().channels.delete(id());
-	}
-
-	@Override
-	default String apiPath() {
-		return "/channels/" + id();
-	}
-
 	public static enum Type {
 		GUILD_TEXT(0),
 		DM(1),
@@ -42,17 +22,51 @@ public interface Channel extends DiscordResource {
 		GUILD_DIRECTORY(14),
 		GUILD_FORUM(15);
 
-		public final int value;
-
-		private Type(int value) {
-			this.value = value;
+		public static Type resolve(final short value) {
+			return Stream.of(Type.values())
+					.filter((final var t) -> t.value == value)
+					.findFirst()
+					.orElse(null);
 		}
 
-		public static Type resolve(long value) {
-			for (final var x : Type.values())
-				if (x.value == value)
-					return x;
-			return null;
+		public final short value;
+
+		private Type(final int value) {
+			this.value = (short) value;
 		}
+	}
+
+	public static Channel fromJSON(final DiscordClient client, final JSONObject data) {
+		return switch (Type.resolve(data.getShort("type"))) {
+			case GUILD_TEXT -> new TextChannel(client, data);
+			case DM -> new DMChannel(client, data);
+			case GROUP_DM -> new GroupDMChannel(client, data);
+			case GUILD_CATEGORY -> new CategoryChannel(client, data);
+			// ...
+			default -> null;
+		};
+	}
+
+	String url();
+
+	default String mention() {
+		return "<#" + id() + '>';
+	}
+
+	default String name() {
+		return getData().getString("name");
+	}
+
+	default Type type() {
+		return Type.resolve(getData().getShort("type"));
+	}
+
+	default CompletableFuture<Void> delete() {
+		return client().channels.delete(id());
+	}
+
+	@Override
+	default String apiPath() {
+		return "/channels/" + id();
 	}
 }

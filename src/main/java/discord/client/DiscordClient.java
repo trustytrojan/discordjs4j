@@ -9,8 +9,8 @@ import discord.structures.ClientUser;
 import discord.structures.Guild;
 import discord.structures.Message;
 import discord.structures.channels.Channel;
-import java_signals.Signal0;
-import java_signals.Signal1;
+import signals.Signal0;
+import signals.Signal1;
 
 public abstract class DiscordClient {
 	public final APIClient api = new APIClient();

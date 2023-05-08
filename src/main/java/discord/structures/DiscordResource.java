@@ -11,7 +11,7 @@ public interface DiscordResource extends Identifiable {
 	JSONObject getData();
 
 	void setData(final JSONObject data);
-	
+
 	String apiPath();
 
 	default CompletableFuture<Void> fetch() {

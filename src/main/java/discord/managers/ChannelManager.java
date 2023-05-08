@@ -3,11 +3,7 @@ package discord.managers;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.channels.CategoryChannel;
 import discord.structures.channels.Channel;
-import discord.structures.channels.DMChannel;
-import discord.structures.channels.GroupDMChannel;
-import discord.structures.channels.TextChannel;
 import discord.util.Util;
 import simple_json.JSONObject;
 
@@ -18,14 +14,7 @@ public class ChannelManager extends ResourceManager<Channel> {
 
 	@Override
 	public Channel construct(final JSONObject data) {
-		return switch (Channel.Type.resolve(data.getLong("type"))) {
-			case GUILD_TEXT -> new TextChannel(client, data);
-			case DM -> new DMChannel(client, data);
-			case GROUP_DM -> new GroupDMChannel(client, data);
-			case GUILD_CATEGORY -> new CategoryChannel(client, data);
-			// ...
-			default -> null;
-		};
+		return Channel.fromJSON(client, data);
 	}
 
 	// edit group dm channels

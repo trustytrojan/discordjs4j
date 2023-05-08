@@ -15,16 +15,16 @@ public class MessageComponentInteractionListener {
 		if (guild.roles.cache.containsKey(customId)) {
 			if (member.roles.cache.containsKey(customId)) {
 				member.roles.remove(customId)
-					.thenRunAsync(() -> interaction.replyEphemeral("removed <@&"+customId+">!"));
+					.thenRunAsync(() -> interaction.respondEphemeral("removed <@&"+customId+">!"));
 			} else {
 				member.roles.add(customId)
-					.thenRunAsync(() -> interaction.replyEphemeral("added <@&"+customId+">!"));
+					.thenRunAsync(() -> interaction.respondEphemeral("added <@&"+customId+">!"));
 			}
 			return;
 		}
 		
 		switch (customId) {
-			case "test" -> interaction.reply("test button pressed");
+			case "test" -> interaction.respond("test button pressed");
 		}
 	}
 }

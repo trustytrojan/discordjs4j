@@ -63,7 +63,7 @@ public class Role implements GuildResource, Mentionable {
 		}
 
 		@Override
-		public String url(int size, String extension) {
+		public String url(final int size, final String extension) {
 			return CDN.roleIcon(id(), hash(), size, extension);
 		}
 	};
@@ -73,13 +73,13 @@ public class Role implements GuildResource, Mentionable {
 	}
 
 	@Override
-	public Guild guild() {
-		return guild;
+	public DiscordClient client() {
+		return client;
 	}
 
 	@Override
-	public DiscordClient client() {
-		return client;
+	public Guild guild() {
+		return guild;
 	}
 
 	@Override

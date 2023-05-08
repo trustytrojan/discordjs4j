@@ -22,10 +22,10 @@ public class GuildManager extends ResourceManager<Guild> {
 	}
 
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get("/users/@me/guilds").thenAcceptAsync((final var r) -> {
+		return client.api.get("/users/@me/guilds").thenAcceptAsync((final var r) ->
 			r.toJSONObjectArray().parallelStream()
 				.map((final var partial) -> partial.getString("id"))
-				.forEach(this::fetch);
-		});
+				.forEach(this::fetch)
+		);
 	}
 }
