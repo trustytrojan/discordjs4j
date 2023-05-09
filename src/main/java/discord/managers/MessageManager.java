@@ -7,7 +7,7 @@ import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.util.Util;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class MessageManager extends ResourceManager<Message> {
 	public final String basePath;
@@ -21,7 +21,7 @@ public class MessageManager extends ResourceManager<Message> {
 	}
 
 	@Override
-	public Message construct(final JSONObject data) {
+	public Message construct(final SjObject data) {
 		return new Message(client, data);
 	}
 

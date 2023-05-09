@@ -1,11 +1,11 @@
 package discord.structures.components;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class LinkButton extends Button {
 	public final String url;
 
-	public LinkButton(final JSONObject data) {
+	public LinkButton(final SjObject data) {
 		super(data);
 		url = data.getString("url");
 	}

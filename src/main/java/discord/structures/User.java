@@ -7,13 +7,13 @@ import java.util.List;
 import discord.client.DiscordClient;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public sealed class User implements DiscordResource permits ClientUser {
 	protected final DiscordClient client;
-	protected JSONObject data;
+	protected SjObject data;
 
-	public User(DiscordClient client, JSONObject data) {
+	public User(DiscordClient client, SjObject data) {
 		this.client = client;
 		this.data = data;
 	}
@@ -66,12 +66,12 @@ public sealed class User implements DiscordResource permits ClientUser {
 	};
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(SjObject data) {
 		this.data = data;
 	}
 

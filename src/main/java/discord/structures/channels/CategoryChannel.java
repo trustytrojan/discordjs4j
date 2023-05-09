@@ -2,27 +2,27 @@ package discord.structures.channels;
 
 import discord.client.DiscordClient;
 import discord.structures.Guild;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class CategoryChannel implements GuildChannel {
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	private final Guild guild;
 
-	public CategoryChannel(final DiscordClient client, final JSONObject data) {
+	public CategoryChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
 		this.data = data;
 		guild = client.guilds.fetch(guildId()).join();
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(SjObject data) {
 		this.data = data;
 	}
 

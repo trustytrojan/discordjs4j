@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.json.simple.JSONAware;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public final class ApplicationCommandOption {
 	public static enum Type {
@@ -46,7 +46,7 @@ public final class ApplicationCommandOption {
 			this.value = value;
 		}
 
-		private Choice(JSONObject data) {
+		private Choice(SjObject data) {
 			this(data.getString("name"), data.get("value"));
 		}
 
@@ -71,8 +71,8 @@ public final class ApplicationCommandOption {
 		public String name;
 		public String description;
 
-		public JSONObject toJSONObject() {
-			final var obj = new JSONObject();
+		public SjObject toJSONObject() {
+			final var obj = new SjObject();
 			obj.put("type", type.value);
 			obj.put("name", name);
 			obj.put("description", description);
@@ -114,7 +114,7 @@ public final class ApplicationCommandOption {
 	public final List<Choice> choices;
 	public final List<ApplicationCommandOption> options;
 
-	public ApplicationCommandOption(JSONObject data) {
+	public ApplicationCommandOption(SjObject data) {
 		type = Type.resolve(data.getLong("type"));
 		name = data.getString("name");
 		description = data.getString("description");

@@ -9,19 +9,19 @@ import discord.managers.guild.RoleManager;
 import discord.structures.channels.TextChannel;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class Guild implements DiscordResource {
 
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	public final GuildMemberManager members;
 	public final GuildChannelManager channels;
 	public final RoleManager roles;
 	public final ApplicationCommandManager commands;
 
-	public Guild(DiscordClient client, JSONObject data) {
+	public Guild(DiscordClient client, SjObject data) {
 		this.client = client;
 		this.data = data;
 		
@@ -59,7 +59,7 @@ public class Guild implements DiscordResource {
 	};
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
@@ -69,7 +69,7 @@ public class Guild implements DiscordResource {
 	}
 
 	@Override
-	public void setData(JSONObject data) {
+	public void setData(SjObject data) {
 		this.data = data;
 	}
 

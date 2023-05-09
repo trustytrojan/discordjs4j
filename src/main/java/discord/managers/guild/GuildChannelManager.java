@@ -6,7 +6,7 @@ import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
 import discord.util.Util;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(final DiscordClient client, final Guild guild) {
@@ -15,7 +15,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	}
 
 	@Override
-	public GuildChannel construct(final JSONObject data) {
+	public GuildChannel construct(final SjObject data) {
 		return (GuildChannel) client.channels.construct(data);
 	}
 

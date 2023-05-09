@@ -3,12 +3,12 @@ package discord.structures.components;
 import java.util.Arrays;
 import java.util.List;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class ActionRow extends MessageComponent {
 	public final List<MessageComponent> components;
 
-	public ActionRow(final JSONObject data) {
+	public ActionRow(final SjObject data) {
 		super(data);
 		components = data.getObjectArray("components").stream()
 			.map((final var rawComponent) -> MessageComponent.construct(rawComponent))

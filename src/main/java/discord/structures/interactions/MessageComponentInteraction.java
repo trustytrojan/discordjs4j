@@ -6,7 +6,7 @@ import java.util.List;
 import discord.client.BotDiscordClient;
 import discord.structures.Message;
 import discord.structures.components.MessageComponent;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class MessageComponentInteraction extends Interaction {
 	public final Message message;
@@ -14,7 +14,7 @@ public class MessageComponentInteraction extends Interaction {
 	public final MessageComponent.Type componentType;
 	public final List<String> values;
 
-	public MessageComponentInteraction(final BotDiscordClient client, final JSONObject data) {
+	public MessageComponentInteraction(final BotDiscordClient client, final SjObject data) {
 		super(client, data);
 		message = channel.messages().fetch(data.getObject("message").getString("id")).join();
 		customId = innerData.getString("custom_id");

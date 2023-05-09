@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.channels.Channel;
 import discord.util.Util;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class ChannelManager extends ResourceManager<Channel> {
 	public ChannelManager(final DiscordClient client) {
@@ -13,7 +13,7 @@ public class ChannelManager extends ResourceManager<Channel> {
 	}
 
 	@Override
-	public Channel construct(final JSONObject data) {
+	public Channel construct(final SjObject data) {
 		return Channel.fromJSON(client, data);
 	}
 

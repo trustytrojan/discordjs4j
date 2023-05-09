@@ -14,7 +14,7 @@ import discord.structures.Permissions;
 import discord.structures.User;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.components.ActionRow;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public abstract class Interaction {
 	public static enum Type {
@@ -70,7 +70,7 @@ public abstract class Interaction {
 		}
 	}
 
-	public static Interaction fromJSON(final BotDiscordClient client, final JSONObject data) {
+	public static Interaction fromJSON(final BotDiscordClient client, final SjObject data) {
 		return switch (Type.resolve(data.getShort("type"))) {
 			case APPLICATION_COMMAND -> new ChatInputInteraction(client, data);
 			case MESSAGE_COMPONENT -> new MessageComponentInteraction(client, data);
@@ -89,13 +89,13 @@ public abstract class Interaction {
 	public final Permissions appPermissions;
 	public final Permissions memberPermissions;
 
-	protected final JSONObject innerData;
+	protected final SjObject innerData;
 	private final String token;
 
 	private Message originalResponse;
 	private boolean deferred;
 
-	protected Interaction(final BotDiscordClient client, final JSONObject data) {
+	protected Interaction(final BotDiscordClient client, final SjObject data) {
 		this.client = Objects.requireNonNull(client);
 
 		id = data.getString("id");
@@ -135,7 +135,7 @@ public abstract class Interaction {
 
 	private CompletableFuture<JSONHttpResponse> createResponse(final CallbackType type, final Response payload) {
 		final var path = "/interactions/" + id + '/' + token + "/callback";
-		final var data = new JSONObject();
+		final var data = new SjObject();
 		data.put("type", type.value);
 		if (payload != null)
 			data.put("data", payload);

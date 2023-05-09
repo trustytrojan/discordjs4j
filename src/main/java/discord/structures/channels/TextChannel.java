@@ -5,16 +5,16 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.Guild;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class TextChannel implements GuildChannel, TextBasedChannel {
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	private final MessageManager messages;
 	private final Guild guild;
 
-	public TextChannel(final DiscordClient client, final JSONObject data) {
+	public TextChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
 		this.data = data;
 		guild = client.guilds.fetch(data.getString("guild_id")).join();
@@ -34,12 +34,12 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 

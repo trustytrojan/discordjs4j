@@ -3,14 +3,14 @@ package discord.structures;
 import java.util.List;
 
 import discord.client.DiscordClient;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public final class ClientUser extends User {
 	public static enum PremiumType {
 		NONE, NITRO_CLASSIC, NITRO, NITRO_BASIC
 	}
 
-	public ClientUser(final DiscordClient client, final JSONObject data) {
+	public ClientUser(final DiscordClient client, final SjObject data) {
 		super(client, data);
 	}
 

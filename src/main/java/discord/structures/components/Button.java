@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public abstract class Button extends MessageComponent {
 	public static enum Style {
@@ -17,7 +17,7 @@ public abstract class Button extends MessageComponent {
 		}
 	}
 
-	public static Button construct(final JSONObject data) {
+	public static Button construct(final SjObject data) {
 		switch (Style.resolve(data.getLong("style").shortValue())) {
 			case PRIMARY:
 			case SECONDARY:
@@ -34,7 +34,7 @@ public abstract class Button extends MessageComponent {
 	public String label;
 	public boolean disabled;
 
-	public Button(final JSONObject data) {
+	public Button(final SjObject data) {
 		super(data);
 		style = Style.resolve(Objects.requireNonNull(data.getShort("style")));
 		label = data.getString("label");
@@ -47,7 +47,7 @@ public abstract class Button extends MessageComponent {
 	}
 
 	@Override
-	public JSONObject toJSONObject() {
+	public SjObject toJSONObject() {
 		final var obj = super.toJSONObject();
 		obj.put("style", style.value());
 		if (label != null)

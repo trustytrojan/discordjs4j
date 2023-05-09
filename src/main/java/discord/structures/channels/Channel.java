@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public interface Channel extends DiscordResource {
 	public static enum Type {
@@ -36,7 +36,7 @@ public interface Channel extends DiscordResource {
 		}
 	}
 
-	public static Channel fromJSON(final DiscordClient client, final JSONObject data) {
+	public static Channel fromJSON(final DiscordClient client, final SjObject data) {
 		return switch (Type.resolve(data.getShort("type"))) {
 			case GUILD_TEXT -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);

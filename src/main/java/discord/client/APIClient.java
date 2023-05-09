@@ -13,8 +13,8 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import simple_json.JSON;
-import simple_json.JSONObject;
+import simple_json.SimpleJson;
+import simple_json.SjObject;;
 
 /**
  * An HttpClient wrapper for making requests to the Discord REST API.
@@ -107,7 +107,7 @@ public final class APIClient {
 	}
 
 	private static HttpResponse<String> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
-		final var retryAfter = (int) (1000 * JSON.parseObject(responseBody).getDouble("retry_after"));
+		final var retryAfter = (int) (1000 * SimpleJson.parseObject(responseBody).getDouble("retry_after"));
 		log("Being rate limited for " + retryAfter + "ms");
 
 		try {
@@ -126,12 +126,12 @@ public final class APIClient {
 			this.body = body;
 		}
 
-		public JSONObject toJSONObject() {
-			return JSON.parseObject(body);
+		public SjObject toJSONObject() {
+			return SimpleJson.parseObject(body);
 		}
 
-		public List<JSONObject> toJSONObjectArray() {
-			return JSON.parseObjectArray(body);
+		public List<SjObject> toJSONObjectArray() {
+			return SimpleJson.parseObjectArray(body);
 		}
 	}
 

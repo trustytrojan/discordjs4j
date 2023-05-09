@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class SelectMenu extends MessageComponent {
 	public final String customId;
@@ -11,7 +11,7 @@ public class SelectMenu extends MessageComponent {
 	public Short maxValues;
 	public boolean disabled;
 
-	public SelectMenu(final JSONObject data) {
+	public SelectMenu(final SjObject data) {
 		super(data);
 		customId = Objects.requireNonNull(data.getString("custom_id"));
 		placeholder = data.getString("placeholder");

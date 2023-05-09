@@ -8,7 +8,7 @@ import discord.client.DiscordClient;
 import discord.managers.guild.GuildMemberRoleManager;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class GuildMember implements GuildResource {
 	public static enum Flags {
@@ -25,14 +25,14 @@ public class GuildMember implements GuildResource {
 	}
 
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	public final GuildMemberRoleManager roles;
 
 	public final User user;
 	public final Guild guild;
 
-	public GuildMember(final DiscordClient client, final Guild guild, final JSONObject data) {
+	public GuildMember(final DiscordClient client, final Guild guild, final SjObject data) {
 		this.client = client;
 		this.guild = guild;
 		this.data = data;
@@ -97,12 +97,12 @@ public class GuildMember implements GuildResource {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 

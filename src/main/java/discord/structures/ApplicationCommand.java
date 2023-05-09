@@ -9,7 +9,7 @@ import org.json.simple.JSONAware;
 
 import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class ApplicationCommand implements DiscordResource {
 	public static enum Type {
@@ -32,11 +32,11 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	private final BotDiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	private final List<ApplicationCommandOption> options = new ArrayList<>();
 
-	public ApplicationCommand(final BotDiscordClient client, final JSONObject data) {
+	public ApplicationCommand(final BotDiscordClient client, final SjObject data) {
 		this.client = client;
 		setData(data);
 	}
@@ -71,12 +71,12 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 		options.clear();
 		final var rawOptions = data.getObjectArray("options");
@@ -100,7 +100,7 @@ public class ApplicationCommand implements DiscordResource {
 
 		@Override
 		public String toJSONString() {
-			final var obj = new JSONObject();
+			final var obj = new SjObject();
 			obj.put("name", name);
 			if (type != null)
 				obj.put("type", type.value);

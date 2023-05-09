@@ -2,19 +2,19 @@ package discord.structures.channels;
 
 import java.util.List;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.User;
 
 public class GroupDMChannel implements DMBasedChannel {
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	private final MessageManager messages;
 	public final List<User> recipients;
 
-	public GroupDMChannel(final DiscordClient client, final JSONObject data) {
+	public GroupDMChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
@@ -33,12 +33,12 @@ public class GroupDMChannel implements DMBasedChannel {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 

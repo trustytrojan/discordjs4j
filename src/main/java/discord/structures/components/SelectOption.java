@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.json.simple.JSONAware;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class SelectOption implements JSONAware {
 	public final String label;
@@ -14,7 +14,7 @@ public class SelectOption implements JSONAware {
 	//public Emoji emoji;
 	public boolean isDefault;
 
-	public SelectOption(final JSONObject data) {
+	public SelectOption(final SjObject data) {
 		label = Objects.requireNonNull(data.getString("label"));
 		value = Objects.requireNonNull(data.getString("value"));
 		description = data.getString("description");
@@ -32,7 +32,7 @@ public class SelectOption implements JSONAware {
 
 	@Override
 	public String toJSONString() {
-		final var obj = new JSONObject();
+		final var obj = new SjObject();
 		obj.put("label", label);
 		obj.put("value", value);
 		if (description != null)

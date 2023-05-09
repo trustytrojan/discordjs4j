@@ -7,7 +7,7 @@ import org.json.simple.JSONArray;
 
 import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
 	private final BotDiscordClient client;
@@ -23,7 +23,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	}
 
 	@Override
-	public ApplicationCommand construct(final JSONObject data) {
+	public ApplicationCommand construct(final SjObject data) {
 		return new ApplicationCommand(client, data);
 	}
 

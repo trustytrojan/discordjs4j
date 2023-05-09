@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class CustomIdButton extends Button {
 	public final String customId;
@@ -10,7 +10,7 @@ public class CustomIdButton extends Button {
 	//public Emoji emoji;
 
 	// When receiving
-	public CustomIdButton(final JSONObject data) {
+	public CustomIdButton(final SjObject data) {
 		super(data);
 		customId = Objects.requireNonNull(data.getString("custom_id"));
 		try {

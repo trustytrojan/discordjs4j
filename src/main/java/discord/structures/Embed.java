@@ -6,14 +6,14 @@ import java.util.List;
 import org.json.simple.JSONAware;
 
 import discord.util.Util;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class Embed implements JSONAware {
 
 	private static record Author(String name, String iconURL, String url) implements JSONAware {
 		@Override
 		public String toJSONString() {
-			final var obj = new JSONObject();
+			final var obj = new SjObject();
 	
 			obj.put("name", name);
 	
@@ -32,7 +32,7 @@ public class Embed implements JSONAware {
 	private static record Field(String name, String value, boolean inline) implements JSONAware {
 		@Override
 		public String toJSONString() {
-			final var obj = new JSONObject();
+			final var obj = new SjObject();
 			
 			obj.put("name", name);
 			obj.put("value", value);
@@ -48,7 +48,7 @@ public class Embed implements JSONAware {
 	private static record Footer(String text, String iconURL) implements JSONAware {
 		@Override
 		public String toJSONString() {
-			final var obj = new JSONObject();
+			final var obj = new SjObject();
 	
 			obj.put("text", text);
 	
@@ -105,7 +105,7 @@ public class Embed implements JSONAware {
 
 	@Override
 	public String toJSONString() {
-		final var obj = new JSONObject();
+		final var obj = new SjObject();
 
 		if (title != null) {
 			obj.put("title", title);
@@ -120,13 +120,13 @@ public class Embed implements JSONAware {
 		}
 
 		if (image != null) {
-			final var image = new JSONObject();
+			final var image = new SjObject();
 			image.put("url", this.image);
 			obj.put("image", image);
 		}
 
 		if (thumbnail != null) {
-			final var thumbnail = new JSONObject();
+			final var thumbnail = new SjObject();
 			thumbnail.put("url", this.thumbnail);
 			obj.put("thumbnail", thumbnail);
 		}

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import discord.client.DiscordClient;
 import discord.enums.AuditLogEvent;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class AuditLogEntry implements Identifiable {
 	public final String id;
@@ -16,7 +16,7 @@ public class AuditLogEntry implements Identifiable {
 	public final String reason;
 	public final Map<String, AuditLogChange> changes = new HashMap<>();
 
-	public AuditLogEntry(DiscordClient client, JSONObject data) {
+	public AuditLogEntry(DiscordClient client, SjObject data) {
 		id = data.getString("id");
 		guild = client.guilds.fetch(data.getString("guild_id")).join();
 		executor = client.users.fetch(data.getString("user_id")).join();
@@ -40,7 +40,7 @@ public class AuditLogEntry implements Identifiable {
 		public final Object oldValue;
 		public final Object newValue;
 
-		private AuditLogChange(JSONObject data) {
+		private AuditLogChange(SjObject data) {
 			key = data.getString("key");
 			oldValue = data.get("old_value");
 			newValue = data.get("new_value");

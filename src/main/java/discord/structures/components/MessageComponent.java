@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.json.simple.JSONAware;
 
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public abstract class MessageComponent implements JSONAware {
 	public static enum Type {
@@ -26,7 +26,7 @@ public abstract class MessageComponent implements JSONAware {
 		}
 	}
 
-	public static MessageComponent construct(final JSONObject data) {
+	public static MessageComponent construct(final SjObject data) {
 		switch (Type.resolve(data.getShort("type"))) {
 			case ACTION_ROW:
 				return new ActionRow(data);
@@ -46,8 +46,8 @@ public abstract class MessageComponent implements JSONAware {
 
 	public final Type type;
 
-	// When parsing JSON from Discord
-	protected MessageComponent(final JSONObject data) {
+	// When parsing SimpleJson from Discord
+	protected MessageComponent(final SjObject data) {
 		type = Type.resolve(Objects.requireNonNull(data.getShort("type")));
 	}
 
@@ -56,8 +56,8 @@ public abstract class MessageComponent implements JSONAware {
 		this.type = Objects.requireNonNull(type);
 	}
 
-	protected JSONObject toJSONObject() {
-		final var obj = new JSONObject();
+	protected SjObject toJSONObject() {
+		final var obj = new SjObject();
 		obj.put("type", type.value());
 		return obj;
 	}

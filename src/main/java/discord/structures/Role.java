@@ -5,15 +5,15 @@ import org.json.simple.JSONAware;
 import discord.client.DiscordClient;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class Role implements GuildResource, Mentionable {
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	public final Guild guild;
 
-	public Role(final DiscordClient client, final Guild guild, final JSONObject data) {
+	public Role(final DiscordClient client, final Guild guild, final SjObject data) {
 		this.client = client;
 		this.guild = guild;
 		this.data = data;
@@ -83,12 +83,12 @@ public class Role implements GuildResource, Mentionable {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 
@@ -107,7 +107,7 @@ public class Role implements GuildResource, Mentionable {
 
 		@Override
 		public String toJSONString() {
-			final var obj = new JSONObject();
+			final var obj = new SjObject();
 			if (name != null)
 				obj.put("name", name);
 			if (permissions != null)

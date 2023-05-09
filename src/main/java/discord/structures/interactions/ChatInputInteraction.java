@@ -5,7 +5,7 @@ import java.util.Objects;
 import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class ChatInputInteraction extends Interaction {
 
@@ -15,7 +15,7 @@ public class ChatInputInteraction extends Interaction {
 		public final Object value;
 		public final OptionResolver options;
 
-		public Option(final ChatInputInteraction interaction, final JSONObject data) {
+		public Option(final ChatInputInteraction interaction, final SjObject data) {
 			Objects.requireNonNull(interaction);
 			Objects.requireNonNull(data);
 
@@ -32,7 +32,7 @@ public class ChatInputInteraction extends Interaction {
 	public final String commandName;
 	public final ApplicationCommand.Type commandType;
 
-	public ChatInputInteraction(final BotDiscordClient client, final JSONObject data) {
+	public ChatInputInteraction(final BotDiscordClient client, final SjObject data) {
 		super(client, data);
 
 		commandId = innerData.getString("id");

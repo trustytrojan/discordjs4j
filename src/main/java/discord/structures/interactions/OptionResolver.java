@@ -12,13 +12,13 @@ import discord.structures.GuildMember;
 import discord.structures.Role;
 import discord.structures.User;
 import discord.structures.channels.GuildChannel;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	private final ChatInputInteraction interaction;
 	private final Map<String, ChatInputInteraction.Option> options;
 
-	OptionResolver(final ChatInputInteraction interaction, final List<JSONObject> rawOptions) {
+	OptionResolver(final ChatInputInteraction interaction, final List<SjObject> rawOptions) {
 		this.interaction = Objects.requireNonNull(interaction);
 
 		if (rawOptions == null)

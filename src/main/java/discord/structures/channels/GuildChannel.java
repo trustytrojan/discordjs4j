@@ -3,7 +3,7 @@ package discord.structures.channels;
 import org.json.simple.JSONAware;
 
 import discord.structures.GuildResource;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public interface GuildChannel extends GuildResource, Channel {
 	// public PermissionOverwrites permission_overwrites;
@@ -31,8 +31,8 @@ public interface GuildChannel extends GuildResource, Channel {
 		public Integer position;
 		// permission overwrites
 
-		public JSONObject toJSONObject() {
-			final var obj = new JSONObject();
+		public SjObject toJSONObject() {
+			final var obj = new SjObject();
 
 			if (name != null) {
 				obj.put("name", name);

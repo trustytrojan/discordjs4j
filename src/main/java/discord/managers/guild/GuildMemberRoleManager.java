@@ -6,7 +6,7 @@ import discord.client.DiscordClient;
 import discord.structures.GuildMember;
 import discord.structures.Role;
 import discord.util.Util;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	public final GuildMember member;
@@ -20,7 +20,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	}
 
 	@Override
-	public Role construct(final JSONObject data) {
+	public Role construct(final SjObject data) {
 		return new Role(client, member.guild, data);
 	}
 

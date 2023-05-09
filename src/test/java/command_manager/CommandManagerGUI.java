@@ -16,34 +16,31 @@ final class CommandManagerGUI extends JFrame {
 	private final LoadingDialog loadingDialog = new LoadingDialog(this);
 	private final ApplicationCommandManager commandManager;
 
-	CommandManagerGUI(final ApplicationCommandManager commandManager) {
+	CommandManagerGUI(ApplicationCommandManager commandManager) {
 		super("Discord Command Manager");
 
 		this.commandManager = commandManager;
 
-		commandDialog.createRequested.connect((final var payload) -> {
-			commandManager.create(payload).thenAcceptAsync(table::addRow);
-		});
+		commandDialog.createRequested = (payload) -> commandManager.create(payload).thenAcceptAsync(table::addRow);
 
 		// editRequest final stage: send payload and edit table
-		commandDialog.editRequested.connect((final var editRequest) -> {
-			// send the edit
-			commandManager.edit(editRequest.commandId, editRequest.payload)
-				// then edit the row in the table
-				.thenAcceptAsync((final var command) -> table.setRow(editRequest.rowInTable, command));
-		});
+		commandDialog.editRequested =
+				// send the edit
+				(editRequest) -> commandManager.edit(editRequest.commandId, editRequest.payload)
+						// then edit the row in the table
+						.thenAcceptAsync(command -> table.setRow(editRequest.rowInTable, command));
 
 		// editRequest 2nd stage: pack command and send to CommandDialog
-		table.editClicked.connect((final var editRequest) -> {
+		table.editClicked = (editRequest) -> {
 			editRequest.currentCommand = commandManager.fetch(editRequest.commandId).join();
 			commandDialog.showEdit(editRequest);
-		});
+		};
 
-		table.deleteClicked.connect((final var row, final var commandId) -> {
+		table.deleteClicked = (row, commandId) -> {
 			final var option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this command?");
-			if (option != JOptionPane.OK_OPTION) return;
-			commandManager.delete(commandId).thenRunAsync(() -> table.removeRow(row));
-		});
+			if (option == JOptionPane.OK_OPTION)
+				commandManager.delete(commandId).thenRunAsync(() -> table.removeRow(row));
+		};
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());

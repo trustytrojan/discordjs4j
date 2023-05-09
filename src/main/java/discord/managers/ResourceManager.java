@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import discord.util.IdMap;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
 import discord.structures.Identifiable;
@@ -23,9 +23,9 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 		return cache.values().iterator();
 	}
 
-	public abstract T construct(final JSONObject data);
+	public abstract T construct(final SjObject data);
 
-	protected String getIdFromData(final JSONObject data) {
+	protected String getIdFromData(final SjObject data) {
 		return data.getString("id");
 	}
 
@@ -36,7 +36,7 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 	}
 
 	// if this is called we know the cache WILL be modified
-	public T cache(final JSONObject data) {
+	public T cache(final SjObject data) {
 		final var cached = cache.get(getIdFromData(data));
 		
 		// if not already cached, construct new object

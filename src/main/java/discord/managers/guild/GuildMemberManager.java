@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.GuildMember;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	private final String basePath;
@@ -17,12 +17,12 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	}
 
 	@Override
-	public GuildMember construct(final JSONObject data) {
+	public GuildMember construct(final SjObject data) {
 		return new GuildMember(client, guild, data);
 	}
 
 	@Override
-	public String getIdFromData(final JSONObject data) {
+	public String getIdFromData(final SjObject data) {
 		return data.getObject("user").getString("id");
 	}
 

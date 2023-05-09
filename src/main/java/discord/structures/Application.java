@@ -3,15 +3,15 @@ package discord.structures;
 import discord.client.DiscordClient;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class Application implements DiscordResource {
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	public final User owner;
 
-	public Application(final DiscordClient client, final JSONObject data) {
+	public Application(final DiscordClient client, final SjObject data) {
 		this.client = client;
 		this.data = data;
 		owner = client.users.fetch(data.getObject("owner").getString("id")).join();
@@ -45,12 +45,12 @@ public class Application implements DiscordResource {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 

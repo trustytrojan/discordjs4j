@@ -3,16 +3,16 @@ package discord.structures.channels;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.User;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class DMChannel implements DMBasedChannel {
 	private final DiscordClient client;
-	private JSONObject data;
+	private SjObject data;
 
 	private final MessageManager messages;
 	public final User recipient;
 
-	public DMChannel(final DiscordClient client, final JSONObject data) {
+	public DMChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
 		this.data = data;
 		messages = new MessageManager(client, this);
@@ -39,12 +39,12 @@ public class DMChannel implements DMBasedChannel {
 	}
 
 	@Override
-	public JSONObject getData() {
+	public SjObject getData() {
 		return data;
 	}
 
 	@Override
-	public void setData(final JSONObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 

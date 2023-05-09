@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,7 +19,6 @@ import javax.swing.JTextField;
 
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
-import signals.Signal1;
 
 final class CommandDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
@@ -39,8 +39,8 @@ final class CommandDialog extends MyDialog {
 	private final CommandOptionsTable optionsTable = new CommandOptionsTable();
 	private final JButton addOptionButton = new JButton("Add Option");
 
-	final Signal1<ApplicationCommand.Payload> createRequested = new Signal1<>();
-	final Signal1<CommandEditRequest> editRequested = new Signal1<>();
+	Consumer<ApplicationCommand.Payload> createRequested;
+	Consumer<CommandEditRequest> editRequested;
 
 	private CommandEditRequest editRequest;
 
@@ -101,7 +101,8 @@ final class CommandDialog extends MyDialog {
 				payload.description = descInput.getText();
 
 				if (payload.description == null || payload.description.isBlank()) {
-					JOptionPane.showMessageDialog(this, "Description is blank!", "Empty Input", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, "Description is blank!", "Empty Input",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 
@@ -109,7 +110,8 @@ final class CommandDialog extends MyDialog {
 
 				// fill payload with options from table
 				for (final var row : optionsTable.rows()) {
-					if (row == null) continue;
+					if (row == null)
+						continue;
 					final var option = new ApplicationCommandOption.NonSubcommandPayload();
 					option.type = (ApplicationCommandOption.Type) row.get(0);
 					option.name = (String) row.get(1);
@@ -129,9 +131,9 @@ final class CommandDialog extends MyDialog {
 		if (editRequest != null) {
 			// pack the payload into the request and send it back to the manager
 			editRequest.payload = payload;
-			editRequested.emit(editRequest);
+			editRequested.accept(editRequest);
 		} else {
-			createRequested.emit(payload);
+			createRequested.accept(payload);
 		}
 
 		dispose();
@@ -146,7 +148,8 @@ final class CommandDialog extends MyDialog {
 
 		typeInput.addActionListener((final var e) -> {
 			final var selectedItem = typeInput.getSelectedItem();
-			if (selectedItem == null) return;
+			if (selectedItem == null)
+				return;
 			switch ((ApplicationCommand.Type) selectedItem) {
 				case CHAT_INPUT -> {
 					descInput.setEnabled(true);

@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.ClientUser;
 import discord.structures.User;
-import simple_json.JSONObject;
+import simple_json.SjObject;
 
 public class UserManager extends ResourceManager<User> {
 	public UserManager(final DiscordClient client) {
@@ -13,7 +13,7 @@ public class UserManager extends ResourceManager<User> {
 	}
 
 	@Override
-	public User construct(final JSONObject data) {
+	public User construct(final SjObject data) {
 		return new User(client, data);
 	}
 
