@@ -119,7 +119,7 @@ public final class APIClient {
 		return sendRequest(requestWrapper);
 	}
 
-	public class JSONHttpResponse {
+	public static class JSONHttpResponse {
 		public final String body;
 
 		public JSONHttpResponse(final String body) {
