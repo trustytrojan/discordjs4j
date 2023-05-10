@@ -15,7 +15,7 @@ public interface DiscordResource extends Identifiable {
 	String apiPath();
 
 	default CompletableFuture<Void> fetch() {
-		return client().api.get(apiPath()).thenAcceptAsync((final var r) -> setData(r.toJsonObject()));
+		return client().api.get(apiPath()).thenAcceptAsync(r -> setData(r.toJsonObject()));
 	}
 
 	@Override

@@ -14,14 +14,14 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	private final MessageManager messages;
 	private final Guild guild;
 
-	public TextChannel(final DiscordClient client, final SjObject data) {
+	public TextChannel(DiscordClient client, SjObject data) {
 		this.client = client;
 		this.data = data;
 		guild = client.guilds.fetch(data.getString("guild_id")).join();
 		messages = new MessageManager(client, this);
 	}
 
-	public CompletableFuture<GuildChannel> edit(final Payload payload) {
+	public CompletableFuture<GuildChannel> edit(Payload payload) {
 		return guild.channels.edit(id(), payload);
 	}
 
@@ -39,7 +39,7 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 	}
 
 	@Override
-	public void setData(final SjObject data) {
+	public void setData(SjObject data) {
 		this.data = data;
 	}
 

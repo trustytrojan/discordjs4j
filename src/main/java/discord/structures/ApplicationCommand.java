@@ -1,6 +1,5 @@
 package discord.structures;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -34,7 +33,7 @@ public class ApplicationCommand implements DiscordResource {
 	private final BotDiscordClient client;
 	private SjObject data;
 
-	private final List<ApplicationCommandOption> options = new ArrayList<>();
+	private List<ApplicationCommandOption> options;
 
 	public ApplicationCommand(final BotDiscordClient client, final SjObject data) {
 		this.client = client;
@@ -42,7 +41,7 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	public List<ApplicationCommandOption> options() {
-		return Collections.unmodifiableList(options);
+		return options;
 	}
 
 	public Type type() {
@@ -78,13 +77,10 @@ public class ApplicationCommand implements DiscordResource {
 	@Override
 	public void setData(final SjObject data) {
 		this.data = data;
-		options.clear();
 		final var rawOptions = data.getObjectArray("options");
-		if (rawOptions != null) {
-			for (final var rawOption : rawOptions) {
-				options.add(new ApplicationCommandOption(rawOption));
-			}
-		}
+		options = (rawOptions == null)
+				? Collections.emptyList()
+				: rawOptions.stream().map(ApplicationCommandOption::new).toList();
 	}
 
 	@Override
