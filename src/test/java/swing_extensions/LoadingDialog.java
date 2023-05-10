@@ -5,8 +5,8 @@ import java.awt.Window;
 import javax.swing.JProgressBar;
 
 public class LoadingDialog extends MyDialog {	
-	public LoadingDialog(Window owner) {
-		super(owner, "Waiting for Discord...");
+	public LoadingDialog(Window owner, String title) {
+		super(owner, title);
 		final var progressBar = new JProgressBar();
 		progressBar.setIndeterminate(true);
 		add(progressBar);

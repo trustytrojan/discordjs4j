@@ -2,8 +2,6 @@ package command_manager;
 
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.LinkedList;
@@ -19,21 +17,11 @@ import javax.swing.JTextField;
 
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
+import swing_extensions.GridBagPanel;
 import swing_extensions.MyDialog;
+import swing_extensions.SwingUtils;
 
 final class CommandDialog extends MyDialog {
-	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
-
-	private static GridBagConstraints formConstraints(int gridx, int gridy) {
-		final var c = new GridBagConstraints();
-		c.insets = INSETS_5;
-		c.gridx = gridx;
-		c.gridy = gridy;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 1;
-		return c;
-	}
-
 	private final JComboBox<ApplicationCommand.Type> typeInput = new JComboBox<>();
 	private final JTextField nameInput = new JTextField();
 	private final JTextField descInput = new JTextField();
@@ -167,31 +155,25 @@ final class CommandDialog extends MyDialog {
 	}
 
 	private JPanel panelInit() {
-		final var panel = new JPanel(new GridBagLayout());
+		final var panel = new GridBagPanel();
 
-		panel.add(new JLabel("Type"), formConstraints(0, 0));
-		panel.add(typeInput, formConstraints(1, 0));
-		panel.add(new JLabel("Name"), formConstraints(0, 1));
-		panel.add(nameInput, formConstraints(1, 1));
-		panel.add(new JLabel("Description"), formConstraints(0, 2));
-		panel.add(descInput, formConstraints(1, 2));
+		panel.addFormRow(0, "Type", typeInput);
+		panel.addFormRow(1, "Name", nameInput);
+		panel.addFormRow(2, "Description", descInput);
 
 		var c = new GridBagConstraints();
-		c.insets = INSETS_5;
-		c.gridx = 0;
+		c.insets = GridBagPanel.INSETS_5;
 		c.gridy = 3;
 		c.gridwidth = 2;
 		c.anchor = GridBagConstraints.SOUTH;
 		panel.add(new JLabel("Options"), c);
 
 		c = new GridBagConstraints();
-		c.insets = INSETS_5;
+		c.insets = GridBagPanel.INSETS_5;
 		c.gridx = 1;
 		c.gridy = 3;
 		c.anchor = GridBagConstraints.EAST;
-		final var addOptionButton = new JButton("Add Option");
-		addOptionButton.addActionListener(e -> optionsTable.addRow());
-		panel.add(addOptionButton, c);
+		panel.add(SwingUtils.button("Add Option", optionsTable::addRow), c);
 
 		c = new GridBagConstraints();
 		c.gridy = 4;
@@ -200,7 +182,7 @@ final class CommandDialog extends MyDialog {
 		panel.add(new JScrollPane(optionsTable), c);
 
 		c = new GridBagConstraints();
-		c.insets = INSETS_5;
+		c.insets = GridBagPanel.INSETS_5;
 		c.gridy = 5;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;

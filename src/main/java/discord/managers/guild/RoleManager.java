@@ -14,7 +14,6 @@ public class RoleManager extends GuildResourceManager<Role> {
 	public RoleManager(final DiscordClient client, final Guild guild) {
 		super(client, guild);
 		basePath = "/guilds/" + guild.id() + "/roles";
-		refreshCache();
 	}
 
 	public String rolesPath(String id) {

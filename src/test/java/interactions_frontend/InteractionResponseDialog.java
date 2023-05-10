@@ -21,7 +21,7 @@ import swing_extensions.MyDialog;
 final class InteractionResponseDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
 
-	private static GridBagConstraints defaultConstraints() {
+	private static GridBagConstraints constraintsInsets5() {
 		final var c = new GridBagConstraints();
 		c.insets = INSETS_5;
 		return c;
@@ -52,7 +52,7 @@ final class InteractionResponseDialog extends MyDialog {
 	private JPanel panelInit() {
 		final var panel = new JPanel(new GridBagLayout());
 
-		var c = defaultConstraints();
+		var c = constraintsInsets5();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		panel.add(new JLabel("Message Content"), c);
@@ -61,11 +61,11 @@ final class InteractionResponseDialog extends MyDialog {
 		c.fill = GridBagConstraints.BOTH;
 		panel.add(contentTextArea, c);
 
-		c = defaultConstraints();
+		c = constraintsInsets5();
 		c.gridy = 1;
 		panel.add(ephemeralCheckBox, c);
 
-		c = defaultConstraints();
+		c = constraintsInsets5();
 		c.gridy = 2;
 		c.gridwidth = 2;
 		c.fill = GridBagConstraints.HORIZONTAL;

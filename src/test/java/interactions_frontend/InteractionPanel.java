@@ -28,7 +28,7 @@ final class InteractionPanel extends JPanel {
 
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
 
-	private static GridBagConstraints defaultConstraints() {
+	private static GridBagConstraints constraintsInsets5() {
 		final var c = new GridBagConstraints();
 		c.insets = INSETS_5;
 		return c;
@@ -56,7 +56,7 @@ final class InteractionPanel extends JPanel {
 		}
 
 		void add(final Interaction i, final InteractionResponseDialog d) {
-			final var c = defaultConstraints();
+			final var c = constraintsInsets5();
 			c.gridy = nexty++;
 			c.fill = GridBagConstraints.HORIZONTAL;
 			add(new InteractionPanel(i, d), c);
@@ -127,7 +127,7 @@ final class InteractionPanel extends JPanel {
 
 		// Layout components
 
-		var c = defaultConstraints();
+		var c = constraintsInsets5();
 		c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		add(label1, c);
@@ -138,7 +138,7 @@ final class InteractionPanel extends JPanel {
 		c.gridy = 2;
 		add(statusLabel, c);
 
-		c = defaultConstraints();
+		c = constraintsInsets5();
 		c.anchor = GridBagConstraints.EAST;
 		c.gridx = 1;
 		c.gridheight = 3;

@@ -11,7 +11,6 @@ import simple_json.SjObject;
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(final DiscordClient client, final Guild guild) {
 		super(client, guild);
-		refreshCache();
 	}
 
 	@Override
@@ -42,8 +41,6 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAcceptAsync(r ->
-				r.toJsonObjectArray().forEach(c -> client.channels.cache(cache(c)))
-			);
+			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(c -> client.channels.cache(cache(c))));
 	}
 }

@@ -16,7 +16,6 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 		super(client, member.guild);
 		this.member = member;
 		basePath = "/guilds/" + member.guild.id() + "/members/" + member.user.id() + "/roles/";
-		refreshCache();
 	}
 
 	@Override

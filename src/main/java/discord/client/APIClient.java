@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import simple_json.SimpleJson;
-import simple_json.SjObject;;
+import simple_json.SjObject;
 
 /**
- * An HttpClient wrapper for making requests to the Discord REST API.
+ * An HttpClient wrapper for making requests to the Discord API.
  */
 public final class APIClient {
 	private static record HttpRequestWithBody(HttpRequest request, String body) {

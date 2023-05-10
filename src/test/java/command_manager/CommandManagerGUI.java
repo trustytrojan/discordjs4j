@@ -14,7 +14,7 @@ import swing_extensions.LoadingDialog;
 final class CommandManagerGUI extends JFrame {
 	private final CommandsTable table = new CommandsTable();
 	private final CommandDialog commandDialog = new CommandDialog(this);
-	private final LoadingDialog loadingDialog = new LoadingDialog(this);
+	private final LoadingDialog loadingDialog = new LoadingDialog(this, "Waiting for Discord...");
 	private final ApplicationCommandManager commandManager;
 
 	CommandManagerGUI(ApplicationCommandManager commandManager) {
@@ -54,7 +54,7 @@ final class CommandManagerGUI extends JFrame {
 	private void refreshCacheAndTable() {
 		table.clear();
 		loadingDialog.setVisible(true);
-		commandManager.refreshCache().thenRun(() -> {
+		commandManager.refreshCache().thenRunAsync(() -> {
 			commandManager.cache.values().forEach(table::addRow);
 			loadingDialog.dispose();
 		});

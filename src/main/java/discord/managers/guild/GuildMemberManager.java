@@ -13,7 +13,6 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	public GuildMemberManager(final DiscordClient client, final Guild guild) {
 		super(client, guild);
 		basePath = "/guilds/" + guild.id() + "/members";
-		refreshCache();
 	}
 
 	@Override
