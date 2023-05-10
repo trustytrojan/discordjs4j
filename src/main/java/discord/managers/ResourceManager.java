@@ -14,7 +14,7 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 	public final IdMap<T> cache = new IdMap<>();
 	protected final DiscordClient client;
 
-	protected ResourceManager(final DiscordClient client) {
+	protected ResourceManager(DiscordClient client) {
 		this.client = Objects.requireNonNull(client);
 	}
 
@@ -23,20 +23,20 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 		return cache.values().iterator();
 	}
 
-	public abstract T construct(final SjObject data);
+	public abstract T construct(SjObject data);
 
-	protected String getIdFromData(final SjObject data) {
+	protected String getIdFromData(SjObject data) {
 		return data.getString("id");
 	}
 
 	// cache an already constructed object
-	public T cache(final T resource) {
+	public T cache(T resource) {
 		cache.put(resource.id(), resource);
 		return resource;
 	}
 
 	// if this is called we know the cache WILL be modified
-	public T cache(final SjObject data) {
+	public T cache(SjObject data) {
 		final var cached = cache.get(getIdFromData(data));
 		
 		// if not already cached, construct new object
@@ -49,13 +49,13 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 		return cached;
 	}
 
-	public CompletableFuture<T> fetch(final String id) {
+	public CompletableFuture<T> fetch(String id) {
 		return fetch(id, false);
 	}
 
-	public abstract CompletableFuture<T> fetch(final String id, final boolean force);
+	public abstract CompletableFuture<T> fetch(String id, boolean force);
 
-	protected CompletableFuture<T> fetch(final String id, final String path, final boolean force) {
+	protected CompletableFuture<T> fetch(String id, String path, boolean force) {
 		if (!force) {
 			final var cached = cache.get(id);
 			
@@ -64,7 +64,8 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 			}
 		}
 
-		return client.api.get(path).thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+		return client.api.get(path)
+			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
 	public abstract CompletableFuture<Void> refreshCache();

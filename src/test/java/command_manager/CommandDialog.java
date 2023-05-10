@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 
 import discord.structures.ApplicationCommand;
 import discord.structures.ApplicationCommandOption;
+import swing_extensions.MyDialog;
 
 final class CommandDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);

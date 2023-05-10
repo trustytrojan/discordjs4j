@@ -1,4 +1,4 @@
-package command_manager;
+package swing_extensions;
 
 import java.awt.Window;
 

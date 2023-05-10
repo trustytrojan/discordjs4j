@@ -27,12 +27,12 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	public CompletableFuture<GuildChannel> create(final GuildChannel.Payload payload) {
 		return client.api.post("/guilds/" + guild.id() + "/channels", payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<GuildChannel> edit(final String id, final GuildChannel.Payload payload) {
 		return client.api.patch("/channels/" + id, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(final String id) {
@@ -42,10 +42,8 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAcceptAsync((final var r) -> {
-				for (final var rawChannel : r.toJSONObjectArray()) {
-					client.channels.cache(cache(rawChannel));
-				}
-			});
+			.thenAcceptAsync(r ->
+				r.toJsonObjectArray().forEach(c -> client.channels.cache(cache(c)))
+			);
 	}
 }

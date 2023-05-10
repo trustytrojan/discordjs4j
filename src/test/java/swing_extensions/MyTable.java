@@ -1,4 +1,4 @@
-package command_manager;
+package swing_extensions;
 
 import java.util.Vector;
 
@@ -8,33 +8,33 @@ import javax.swing.table.TableRowSorter;
 
 public class MyTable extends JTable {
 	private final DefaultTableModel model = new DefaultTableModel();
-	private boolean editable = false;
+	private boolean editable;
 
-	MyTable(final String... columnNames) {
+	public MyTable(final String... columnNames) {
 		super();
 		setModel(model);
 		model.setColumnIdentifiers(columnNames);
 	}
 
-	void addRow(final Object... data) {
+	public void addRow(final Object... data) {
 		model.addRow(data);
 	}
 
-	void setRow(final int row, final Object... data) {
+	public void setRow(final int row, final Object... data) {
 		for (int i = 0; i < data.length; ++i) {
 			model.setValueAt(data[i], row, i);
 		}
 	}
 
-	void removeRow(final int index) {
+	public void removeRow(final int index) {
 		model.removeRow(index);
 	}
 
-	void removeSelectedRow() {
+	public void removeSelectedRow() {
 		removeRow(getSelectedRow());
 	}
 
-	void clear() {
+	public void clear() {
 		for (int i = getRowCount(); i >= 0; --i) {
 			try {
 				removeRow(i);
@@ -43,16 +43,16 @@ public class MyTable extends JTable {
 		}
 	}
 
-	void setEditable(final boolean b) {
+	public void setEditable(final boolean b) {
 		editable = b;
 	}
 
-	void setSortable(final boolean b) {
+	public void setSortable(final boolean b) {
 		setRowSorter(b ? new TableRowSorter<>(model) : null);
 	}
 
 	@SuppressWarnings("rawtypes")
-	Vector<Vector> rows() {
+	public Vector<Vector> rows() {
 		return model.getDataVector();
 	}
 

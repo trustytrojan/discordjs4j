@@ -14,6 +14,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import discord.structures.ApplicationCommandOption;
+import swing_extensions.MyTable;
 
 final class CommandOptionsTable extends MyTable {
 	CommandOptionsTable() {

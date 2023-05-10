@@ -119,47 +119,47 @@ public final class APIClient {
 		return sendRequest(requestWrapper);
 	}
 
-	public static class JSONHttpResponse {
+	public static class JsonHttpResponse {
 		public final String body;
 
-		public JSONHttpResponse(final String body) {
+		private JsonHttpResponse(String body) {
 			this.body = body;
 		}
 
-		public SjObject toJSONObject() {
+		public SjObject toJsonObject() {
 			return SimpleJson.parseObject(body);
 		}
 
-		public List<SjObject> toJSONObjectArray() {
+		public List<SjObject> toJsonObjectArray() {
 			return SimpleJson.parseObjectArray(body);
 		}
 	}
 
-	private CompletableFuture<JSONHttpResponse> _sendRequest(HttpMethod method, String path, String body) {
+	private CompletableFuture<JsonHttpResponse> _sendRequest(HttpMethod method, String path, String body) {
 		final var request = buildRequest(method, path, body);
 		return CompletableFuture.supplyAsync(() -> {
 			final var response = sendRequest(request);
-			return new JSONHttpResponse(response.body());
+			return new JsonHttpResponse(response.body());
 		});
 	}
 
-	public CompletableFuture<JSONHttpResponse> get(String path) {
+	public CompletableFuture<JsonHttpResponse> get(String path) {
 		return _sendRequest(HttpMethod.GET, path, null);
 	}
 
-	public CompletableFuture<JSONHttpResponse> post(String path, String body) {
+	public CompletableFuture<JsonHttpResponse> post(String path, String body) {
 		return _sendRequest(HttpMethod.POST, path, body);
 	}
 
-	public CompletableFuture<JSONHttpResponse> put(String path, String body) {
+	public CompletableFuture<JsonHttpResponse> put(String path, String body) {
 		return _sendRequest(HttpMethod.PUT, path, body);
 	}
 
-	public CompletableFuture<JSONHttpResponse> patch(String path, String body) {
+	public CompletableFuture<JsonHttpResponse> patch(String path, String body) {
 		return _sendRequest(HttpMethod.PATCH, path, body);
 	}
 
-	public CompletableFuture<JSONHttpResponse> delete(String path) {
+	public CompletableFuture<JsonHttpResponse> delete(String path) {
 		return _sendRequest(HttpMethod.DELETE, path, null);
 	}
 }

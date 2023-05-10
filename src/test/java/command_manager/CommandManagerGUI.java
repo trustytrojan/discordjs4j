@@ -9,6 +9,7 @@ import javax.swing.JScrollPane;
 import discord.client.BotDiscordClient;
 import discord.managers.ApplicationCommandManager;
 import discord.util.Util;
+import swing_extensions.LoadingDialog;
 
 final class CommandManagerGUI extends JFrame {
 	private final CommandsTable table = new CommandsTable();
@@ -18,7 +19,6 @@ final class CommandManagerGUI extends JFrame {
 
 	CommandManagerGUI(ApplicationCommandManager commandManager) {
 		super("Discord Command Manager");
-
 		this.commandManager = commandManager;
 
 		commandDialog.createRequested = (payload) -> commandManager.create(payload).thenAcceptAsync(table::addRow);

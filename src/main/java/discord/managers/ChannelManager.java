@@ -30,7 +30,7 @@ public class ChannelManager extends ResourceManager<Channel> {
 
 	public CompletableFuture<Void> fetchDMs() {
 		return client.api.get("/users/@me/channels")
-				.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+				.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
 	}
 
 	@Override

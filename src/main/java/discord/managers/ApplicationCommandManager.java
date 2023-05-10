@@ -34,12 +34,12 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 
 	public CompletableFuture<ApplicationCommand> create(final ApplicationCommand.Payload payload) {
 		return client.api.post(basePath, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<ApplicationCommand> edit(final String id, final ApplicationCommand.Payload payload) {
 		return client.api.patch(basePath + '/' + id, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(final String id) {
@@ -49,12 +49,12 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	public CompletableFuture<Void> set(final List<ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
 		return client.api.put(basePath, JSONArray.toJSONString(commandPayloads))
-			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+			.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
 	}
 
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
 		return client.api.get(basePath)
-			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+			.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

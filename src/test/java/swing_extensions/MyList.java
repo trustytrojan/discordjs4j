@@ -1,4 +1,4 @@
-package interactions_frontend;
+package swing_extensions;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;

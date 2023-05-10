@@ -31,23 +31,24 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 
 	public CompletableFuture<Void> add(String id) {
 		return client.api.put(basePath + "/roles/" + id, null)
-				.thenAcceptAsync((final var r) -> cache(r.toJSONObject()));
+				.thenAcceptAsync(r -> cache(r.toJsonObject()));
 	}
 
-	public CompletableFuture<Void> remove(String id) {
+	public CompletableFuture<Void> remove(final String id) {
 		return client.api.delete(basePath + id).thenRunAsync(Util.DO_NOTHING);
 	}
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
-		return CompletableFuture.allOf(member.fetch(), guild.roles.refreshCache()).thenRunAsync(() -> {
-			for (final var roleId : member.getData().getStringArray("roles")) {
-				final var role = guild.roles.cache.get(roleId);
-				if (role == null)
-					continue;
-				cache(role);
-			}
-		});
+		return CompletableFuture.allOf(member.fetch(), guild.roles.refreshCache())
+			.thenRunAsync(() -> {
+				for (final var roleId : member.getData().getStringArray("roles")) {
+					final var role = guild.roles.cache.get(roleId);
+					if (role != null) {
+						cache(role);
+					}
+				}
+			});
 	}
 }

@@ -8,25 +8,26 @@ import discord.structures.User;
 import simple_json.SjObject;
 
 public class UserManager extends ResourceManager<User> {
-	public UserManager(final DiscordClient client) {
+	public UserManager(DiscordClient client) {
 		super(client);
 	}
 
 	@Override
-	public User construct(final SjObject data) {
+	public User construct(SjObject data) {
 		return new User(client, data);
 	}
 
 	@Override
-	public CompletableFuture<User> fetch(final String id, final boolean force) {
+	public CompletableFuture<User> fetch(String id, boolean force) {
 		return super.fetch(id, "/users/" + id, force);
 	}
 
 	public CompletableFuture<ClientUser> fetchMe() {
-		return client.api.get("/users/@me").thenApplyAsync((final var r) -> {
-			final var me = new ClientUser(client, r.toJSONObject());
-			return (ClientUser) cache(me);
-		});
+		return client.api.get("/users/@me")
+			.thenApplyAsync(r -> {
+				final var me = new ClientUser(client, r.toJsonObject());
+				return (ClientUser) cache(me);
+			});
 	}
 
 	@Override

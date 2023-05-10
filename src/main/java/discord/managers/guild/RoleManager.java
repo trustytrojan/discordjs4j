@@ -33,12 +33,12 @@ public class RoleManager extends GuildResourceManager<Role> {
 
 	public CompletableFuture<Role> create(Role.Payload payload) {
 		return client.api.post(basePath, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Role> edit(String id, Role.Payload payload) {
 		return client.api.patch(basePath + id, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJSONObject()));
+			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
@@ -48,6 +48,6 @@ public class RoleManager extends GuildResourceManager<Role> {
 	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get(basePath)
-			.thenAcceptAsync((final var r) -> r.toJSONObjectArray().forEach(this::cache));
+			.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

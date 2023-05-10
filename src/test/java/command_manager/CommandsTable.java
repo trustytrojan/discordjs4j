@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import javax.swing.JPopupMenu;
 
 import discord.structures.ApplicationCommand;
+import swing_extensions.MyTable;
 
 final class CommandsTable extends MyTable {
 	Consumer<CommandEditRequest> editClicked;

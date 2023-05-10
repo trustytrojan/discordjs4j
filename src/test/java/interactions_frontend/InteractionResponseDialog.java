@@ -14,9 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import command_manager.MyDialog;
 import discord.structures.interactions.Interaction;
 import signals.Signal1;
+import swing_extensions.MyDialog;
 
 final class InteractionResponseDialog extends MyDialog {
 	private static final Insets INSETS_5 = new Insets(5, 5, 5, 5);
