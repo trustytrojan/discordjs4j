@@ -14,7 +14,7 @@ public class DMChannel implements DMBasedChannel {
 
 	public DMChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 		messages = new MessageManager(client, this);
 		recipient = client.users.fetch(data.getObjectArray("recipients").get(0).getString("id")).join();
 	}

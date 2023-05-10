@@ -13,7 +13,7 @@ public class Application implements DiscordResource {
 
 	public Application(final DiscordClient client, final SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 		owner = client.users.fetch(data.getObject("owner").getString("id")).join();
 	}
 

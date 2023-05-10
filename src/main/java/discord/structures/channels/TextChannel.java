@@ -16,7 +16,7 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 
 	public TextChannel(DiscordClient client, SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 		guild = client.guilds.fetch(data.getString("guild_id")).join();
 		messages = new MessageManager(client, this);
 	}

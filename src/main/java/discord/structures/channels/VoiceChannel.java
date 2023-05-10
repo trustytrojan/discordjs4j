@@ -30,7 +30,7 @@ public class VoiceChannel implements GuildChannel {
 
 	public VoiceChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 		guild = client.guilds.fetch(guildId()).join();
 	}
 

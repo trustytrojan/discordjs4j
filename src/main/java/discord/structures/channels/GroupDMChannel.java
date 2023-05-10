@@ -16,7 +16,7 @@ public class GroupDMChannel implements DMBasedChannel {
 
 	public GroupDMChannel(final DiscordClient client, final SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 		messages = new MessageManager(client, this);
 
 		recipients = data.getObjectArray("recipients").parallelStream()

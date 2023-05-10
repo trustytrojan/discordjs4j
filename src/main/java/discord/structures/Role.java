@@ -16,7 +16,7 @@ public class Role implements GuildResource, Mentionable {
 	public Role(final DiscordClient client, final Guild guild, final SjObject data) {
 		this.client = client;
 		this.guild = guild;
-		this.data = data;
+		setData(data);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ public sealed class User implements DiscordResource permits ClientUser {
 
 	public User(DiscordClient client, SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 	}
 
 	public String mention() {

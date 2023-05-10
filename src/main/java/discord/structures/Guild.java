@@ -23,7 +23,7 @@ public class Guild implements DiscordResource {
 
 	public Guild(DiscordClient client, SjObject data) {
 		this.client = client;
-		this.data = data;
+		setData(data);
 		
 		channels = new GuildChannelManager(client, this);
 		roles = new RoleManager(client, this);

@@ -35,7 +35,7 @@ public class GuildMember implements GuildResource {
 	public GuildMember(final DiscordClient client, final Guild guild, final SjObject data) {
 		this.client = client;
 		this.guild = guild;
-		this.data = data;
+		setData(data);
 		user = client.users.fetch(data.getObject("user").getString("id")).join();
 		roles = new GuildMemberRoleManager(client, this);
 	}
