@@ -35,18 +35,18 @@
 			<version>cd35118f91</version>
 		</dependency>
 
-		<!-- https://jitpack.io/#trustytrojan/simple-json
+		<!-- https://jitpack.io/#trustytrojan/simple-json -->
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>simple-json</artifactId>
-			<version>4cf46214</version>
-		</dependency> -->
+			<version>71b790eff3</version>
+		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>trustytrojan</groupId>
 			<artifactId>simple-json</artifactId>
 			<version>1.0-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 
 </project>
