@@ -4,64 +4,11 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
+import discord.structures.AbstractDiscordResource;
 import discord.structures.Guild;
 import simple_json.SjObject;
 
-public class TextChannel implements GuildChannel, TextBasedChannel {
-	private final DiscordClient client;
-	private SjObject data;
-
-	private final MessageManager messages;
-	private final Guild guild;
-
-	public TextChannel(DiscordClient client, SjObject data) {
-		this.client = client;
-		setData(data);
-		guild = client.guilds.fetch(data.getString("guild_id")).join();
-		messages = new MessageManager(client, this);
-	}
-
-	public CompletableFuture<GuildChannel> edit(Payload payload) {
-		return guild.channels.edit(id(), payload);
-	}
-
-	public String topic() {
-		return data.getString("topic");
-	}
-
-	public Long slowmodeDuration() {
-		return data.getLong("rate_limit_per_user");
-	}
-
-	public boolean nsfw() {
-		return data.getBooleanDefaultFalse("nsfw");
-	}
-
-	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(SjObject data) {
-		this.data = data;
-	}
-
-	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
-	@Override
-	public MessageManager messages() {
-		return messages;
-	}
-	
-	@Override
-	public Guild guild() {
-		return guild;
-	}
-
+public class TextChannel extends AbstractDiscordResource implements GuildChannel, TextBasedChannel {
 	public static class Payload extends GuildChannel.Payload {
 		public Channel.Type type;
 		public String topic;
@@ -88,5 +35,40 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 				obj.put("parent_id", parentId);
 			return obj.toString();
 		}
+	}
+
+	private final MessageManager messages;
+	private final Guild guild;
+
+	public TextChannel(DiscordClient client, SjObject data) {
+		super(client, data);
+		guild = client.guilds.fetch(guildId()).join();
+		messages = new MessageManager(client, this);
+	}
+
+	public CompletableFuture<GuildChannel> edit(Payload payload) {
+		return guild.channels.edit(id, payload);
+	}
+
+	public String topic() {
+		return data.getString("topic");
+	}
+
+	public Long slowmodeDuration() {
+		return data.getLong("rate_limit_per_user");
+	}
+
+	public boolean nsfw() {
+		return data.getBooleanDefaultFalse("nsfw");
+	}
+
+	@Override
+	public MessageManager messages() {
+		return messages;
+	}
+	
+	@Override
+	public Guild guild() {
+		return guild;
 	}
 }

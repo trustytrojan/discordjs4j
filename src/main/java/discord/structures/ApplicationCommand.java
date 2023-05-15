@@ -2,42 +2,39 @@ package discord.structures;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 import org.json.simple.JSONAware;
 
 import discord.client.BotDiscordClient;
-import discord.client.DiscordClient;
 import simple_json.SjObject;
 
-public class ApplicationCommand implements DiscordResource {
+public class ApplicationCommand extends AbstractDiscordResource {
 	public static enum Type {
 		CHAT_INPUT(1),
 		MESSAGE(2),
 		USER(3);
 
-		public static Type resolve(long value) {
-			for (final var x : Type.values())
-				if (x.value == value)
-					return x;
-			return null;
+		public static final Type[] TYPE_TABLE = new Type[4];
+
+		static {
+			Stream.of(Type.values())
+				.forEach(t -> TYPE_TABLE[t.value] = t);
 		}
 
-		public final int value;
+		public final short value;
 
 		private Type(int value) {
-			this.value = value;
+			this.value = (short) value;
 		}
 	}
 
 	private final BotDiscordClient client;
-	private SjObject data;
-
 	private List<ApplicationCommandOption> options;
 
-	public ApplicationCommand(final BotDiscordClient client, final SjObject data) {
+	public ApplicationCommand(BotDiscordClient client, SjObject data) {
+		super(client, data);
 		this.client = client;
-		setData(data);
 	}
 
 	public List<ApplicationCommandOption> options() {
@@ -45,7 +42,7 @@ public class ApplicationCommand implements DiscordResource {
 	}
 
 	public Type type() {
-		return Type.resolve(data.getLong("type"));
+		return Type.TYPE_TABLE[data.getShort("type")];
 	}
 
 	public String name() {
@@ -56,26 +53,8 @@ public class ApplicationCommand implements DiscordResource {
 		return data.getString("description");
 	}
 
-	public CompletableFuture<ApplicationCommand> edit(Payload payload) {
-		return client.commands.edit(id(), payload);
-	}
-
-	public CompletableFuture<Void> delete() {
-		return client.commands.delete(id());
-	}
-
 	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
-	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(final SjObject data) {
+	public void setData(SjObject data) {
 		this.data = data;
 		final var rawOptions = data.getObjectArray("options");
 		options = (rawOptions == null)
@@ -85,7 +64,7 @@ public class ApplicationCommand implements DiscordResource {
 
 	@Override
 	public String apiPath() {
-		return "/applications/" + client.application.id() + '/' + id();
+		return "/applications/" + client.application.id + '/' + id;
 	}
 
 	public static class Payload implements JSONAware {

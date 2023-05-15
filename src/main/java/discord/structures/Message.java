@@ -8,68 +8,13 @@ import java.util.concurrent.CompletableFuture;
 import org.json.simple.JSONAware;
 
 import discord.client.DiscordClient;
+import discord.structures.channels.GuildChannel;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.components.ActionRow;
 import discord.structures.components.MessageComponent;
 import simple_json.SjObject;
 
-public class Message implements DiscordResource {
-	private final DiscordClient client;
-	private SjObject data;
-
-	public List<MessageComponent> components;
-
-	public final User author;
-	public final TextBasedChannel channel;
-
-	public Message(final DiscordClient client, final SjObject data) {
-		this.client = client;
-		final var authorFuture = client.users.fetch(data.getObject("author").getString("id"));
-		final var channelFuture = client.channels.fetch(data.getString("channel_id"));
-		CompletableFuture.allOf(authorFuture, channelFuture).join();
-		author = authorFuture.join();
-		channel = (TextBasedChannel) channelFuture.join();
-		setData(data);
-	}
-
-	public String content() {
-		return data.getString("content");
-	}
-
-	public Boolean isPinned() {
-		return data.getBoolean("pinned");
-	}
-
-	@Override
-	public String apiPath() {
-		return "/channels/" + channel.id() + "/messages/" + id();
-	}
-
-	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
-	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(final SjObject data) {
-		this.data = data;
-		final var rawComponents = data.getObjectArray("components");
-		if (rawComponents != null) {
-			final var _components = new LinkedList<MessageComponent>();
-			for (final var rawComponent : data.getObjectArray("components")) {
-				_components.add(MessageComponent.construct(rawComponent));
-			}
-			components = Collections.unmodifiableList(_components);
-		} else {
-			components = Collections.emptyList();
-		}
-	}
-
+public class Message extends AbstractDiscordResource {
 	public static class Payload implements JSONAware {
 		public String content;
 		public String replyMessageId;
@@ -108,6 +53,61 @@ public class Message implements DiscordResource {
 		@Override
 		public String toJSONString() {
 			return toJSONObject().toString();
+		}
+	}
+
+	public List<MessageComponent> components;
+	public final User author;
+	public final TextBasedChannel channel;
+
+	private final boolean inGuild;
+	private final String apiPath;
+	private final String url;
+
+	public Message(DiscordClient client, SjObject data) {
+		super(client, data);
+		final var authorFuture = client.users.fetch(data.getObject("author").getString("id"));
+		final var channelFuture = client.channels.fetch(data.getString("channel_id"));
+		CompletableFuture.allOf(authorFuture, channelFuture).join();
+		author = authorFuture.join();
+		channel = (TextBasedChannel) channelFuture.join();
+		inGuild = (channel instanceof GuildChannel);
+		apiPath = "/channels/" + channel.id() + "/messages/" + id;
+		final var guildId = (inGuild)
+				? ((GuildChannel) channel).guildId()
+				: "@me";
+		url = "https://discord.com/channels/" + guildId + "/" + channel.id() + "/" + id;
+	}
+
+	public String content() {
+		return data.getString("content");
+	}
+
+	public Boolean isPinned() {
+		return data.getBoolean("pinned");
+	}
+
+	@Override
+	public String apiPath() {
+		return apiPath;
+	}
+
+	public String url() {
+		return url;
+	}
+
+	@Override
+	public void setData(SjObject data) {
+		this.data = data;
+		final var rawComponents = data.getObjectArray("components");
+		if (rawComponents != null) {
+			final var _components = new LinkedList<MessageComponent>();
+			for (final var rawComponent : data.getObjectArray("components")) {
+				_components.add(MessageComponent.construct(rawComponent));
+			}
+			components = Collections.unmodifiableList(_components);
+		} else {
+			components = Collections.emptyList();
 		}
 	}
 }

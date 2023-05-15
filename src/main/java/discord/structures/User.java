@@ -3,23 +3,57 @@ package discord.structures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;
+import discord.util.Util;
 import discord.util.CDN.URLFactory;
 import simple_json.SjObject;
 
-public sealed class User implements DiscordResource permits ClientUser {
-	protected final DiscordClient client;
-	protected SjObject data;
+public class User extends AbstractDiscordResource {
+	public static enum Flag {
+		STAFF(1 << 0),
+		PARTNER(1 << 1),
+		HYPESQUAD(1 << 2),
+		BUG_HUNTER_LEVEL_1(1 << 3),
+		HYPESQUAD_ONLINE_HOUSE_1(1 << 6),
+		HYPESQUAD_ONLINE_HOUSE_2(1 << 7),
+		HYPESQUAD_ONLINE_HOUSE_3(1 << 8),
+		PREMIUM_EARLY_SUPPORTER(1 << 9),
+		TEAM_PSEUDO_USER(1 << 10),
+		BUG_HUNTER_LEVEL_2(1 << 14),
+		VERIFIED_BOT(1 << 16),
+		VERIFIED_DEVELOPER(1 << 17),
+		CERTIFIED_MODERATOR(1 << 18),
+		BOT_HTTP_INTERACTIONS(1 << 19),
+		ACTIVE_DEVELOPER(1 << 22);
+
+		public final int value;
+
+		private Flag(final int value) {
+			this.value = value;
+		}
+	}
+
+	private final String mention = "<@" + id + '>';
+	private final String apiPath = "/users/" + id;
 
 	public User(DiscordClient client, SjObject data) {
-		this.client = client;
-		setData(data);
+		super(client, data);
+	}
+
+	public CompletableFuture<Void> setNote(String note) {
+		final var body = """
+				{
+					"note": \"%s\"
+				}
+				""".formatted(note);
+		return client.api.put("/users/@me/notes" + id, body).thenRun(Util.DO_NOTHING);
 	}
 
 	public String mention() {
-		return "<@" + id() + '>';
+		return mention;
 	}
 
 	public String username() {
@@ -48,7 +82,7 @@ public sealed class User implements DiscordResource permits ClientUser {
 		public String url(int size, String extension) {
 			final var hash = hash();
 			if (hash != null)
-				return CDN.userAvatar(id(), hash, size, extension);
+				return CDN.userAvatar(id, hash, size, extension);
 			return CDN.defaultUserAvatar(discriminator());
 		}
 	};
@@ -61,28 +95,13 @@ public sealed class User implements DiscordResource permits ClientUser {
 
 		@Override
 		public String url(int size, String extension) {
-			return CDN.guildOrUserBanner(id(), hash(), size, extension);
+			return CDN.guildOrUserBanner(id, hash(), size, extension);
 		}
 	};
 
 	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(SjObject data) {
-		this.data = data;
-	}
-
-	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
-	@Override
 	public String apiPath() {
-		return "/users/" + id();
+		return apiPath;
 	}
 
 	public List<Flag> publicFlags() {
@@ -97,29 +116,5 @@ public sealed class User implements DiscordResource permits ClientUser {
 			}
 		}
 		return Collections.unmodifiableList(flags);
-	}
-
-	public static enum Flag {
-		STAFF(1 << 0),
-		PARTNER(1 << 1),
-		HYPESQUAD(1 << 2),
-		BUG_HUNTER_LEVEL_1(1 << 3),
-		HYPESQUAD_ONLINE_HOUSE_1(1 << 6),
-		HYPESQUAD_ONLINE_HOUSE_2(1 << 7),
-		HYPESQUAD_ONLINE_HOUSE_3(1 << 8),
-		PREMIUM_EARLY_SUPPORTER(1 << 9),
-		TEAM_PSEUDO_USER(1 << 10),
-		BUG_HUNTER_LEVEL_2(1 << 14),
-		VERIFIED_BOT(1 << 16),
-		VERIFIED_DEVELOPER(1 << 17),
-		CERTIFIED_MODERATOR(1 << 18),
-		BOT_HTTP_INTERACTIONS(1 << 19),
-		ACTIVE_DEVELOPER(1 << 22);
-
-		public final int value;
-
-		private Flag(final int value) {
-			this.value = value;
-		}
 	}
 }

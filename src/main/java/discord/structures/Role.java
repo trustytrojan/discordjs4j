@@ -7,21 +7,20 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.SjObject;
 
-public class Role implements GuildResource, Mentionable {
-	private final DiscordClient client;
-	private SjObject data;
+public class Role extends AbstractDiscordResource implements GuildResource, Mentionable {
+	private final Guild guild;
+	private final String mention = "<@&" + id + '>';
+	private final String apiPath;
 
-	public final Guild guild;
-
-	public Role(final DiscordClient client, final Guild guild, final SjObject data) {
-		this.client = client;
+	public Role(DiscordClient client, Guild guild, SjObject data) {
+		super(client, data);
 		this.guild = guild;
-		setData(data);
+		apiPath = "/guild/" + guild.id + "/roles/" + id;
 	}
 
 	@Override
 	public String mention() {
-		return "<@&" + id() + '>';
+		return mention;
 	}
 
 	public String name() {
@@ -64,7 +63,7 @@ public class Role implements GuildResource, Mentionable {
 
 		@Override
 		public String url(final int size, final String extension) {
-			return CDN.roleIcon(id(), hash(), size, extension);
+			return CDN.roleIcon(id, hash(), size, extension);
 		}
 	};
 
@@ -72,10 +71,6 @@ public class Role implements GuildResource, Mentionable {
 		return data.getString("unicode_emoji");
 	}
 
-	@Override
-	public DiscordClient client() {
-		return client;
-	}
 
 	@Override
 	public Guild guild() {
@@ -83,18 +78,8 @@ public class Role implements GuildResource, Mentionable {
 	}
 
 	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(final SjObject data) {
-		this.data = data;
-	}
-
-	@Override
 	public String apiPath() {
-		return "/guilds/" + guild.id() + "/roles/" + id();
+		return apiPath;
 	}
 
 	public static class Payload implements JSONAware {

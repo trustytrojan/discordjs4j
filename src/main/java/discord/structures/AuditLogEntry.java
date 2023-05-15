@@ -7,7 +7,7 @@ import discord.client.DiscordClient;
 import discord.enums.AuditLogEvent;
 import simple_json.SjObject;
 
-public class AuditLogEntry implements Identifiable {
+public class AuditLogEntry {
 	public final String id;
 	public final User executor;
 	public final Guild guild;
@@ -28,11 +28,6 @@ public class AuditLogEntry implements Identifiable {
 			final var change = new AuditLogChange(changeData);
 			changes.put(change.key, change);
 		}
-	}
-
-	@Override
-	public String id() {
-		return id;
 	}
 
 	public static class AuditLogChange {

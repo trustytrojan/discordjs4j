@@ -10,24 +10,24 @@ import simple_json.SjObject;
 public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	private final String basePath;
 
-	public GuildMemberManager(final DiscordClient client, final Guild guild) {
+	public GuildMemberManager(DiscordClient client, Guild guild) {
 		super(client, guild);
-		basePath = "/guilds/" + guild.id() + "/members";
+		basePath = "/guilds/" + guild.id + "/members";
 	}
 
 	@Override
-	public GuildMember construct(final SjObject data) {
+	public GuildMember construct(SjObject data) {
 		return new GuildMember(client, guild, data);
 	}
 
 	@Override
-	public CompletableFuture<GuildMember> fetch(final String id, final boolean force) {
+	public CompletableFuture<GuildMember> fetch(String id, boolean force) {
 		return super.fetch(id, basePath + '/' + id, force);
 	}
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get(basePath)
-			.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
+			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

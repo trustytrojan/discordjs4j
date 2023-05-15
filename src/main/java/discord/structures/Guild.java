@@ -11,26 +11,19 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.SjObject;
 
-public class Guild implements DiscordResource {
-
-	private final DiscordClient client;
-	private SjObject data;
-
+public class Guild extends AbstractDiscordResource {
 	public final GuildMemberManager members;
 	public final GuildChannelManager channels;
 	public final RoleManager roles;
 	public final ApplicationCommandManager commands;
 
 	public Guild(DiscordClient client, SjObject data) {
-		this.client = client;
-		setData(data);
-		
+		super(client, data);
 		channels = new GuildChannelManager(client, this);
 		roles = new RoleManager(client, this);
 		members = new GuildMemberManager(client, this);
-
 		commands = (client instanceof BotDiscordClient)
-				? new ApplicationCommandManager((BotDiscordClient) client, id())
+				? new ApplicationCommandManager((BotDiscordClient) client, id)
 				: null;
 	}
 
@@ -54,27 +47,12 @@ public class Guild implements DiscordResource {
 
 		@Override
 		public String url(int size, String extension) {
-			return CDN.guildIcon(id(), hash(), size, extension);
+			return CDN.guildIcon(id, hash(), size, extension);
 		}
 	};
 
 	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
-	@Override
-	public void setData(SjObject data) {
-		this.data = data;
-	}
-
-	@Override
 	public String apiPath() {
-		return "/guilds/" + id();
+		return "/guilds/" + id;
 	}
 }

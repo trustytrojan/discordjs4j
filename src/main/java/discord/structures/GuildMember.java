@@ -1,8 +1,6 @@
 package discord.structures;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 
 import discord.client.DiscordClient;
 import discord.managers.guild.GuildMemberRoleManager;
@@ -10,7 +8,7 @@ import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 import simple_json.SjObject;
 
-public class GuildMember implements GuildResource {
+public class GuildMember extends AbstractDiscordResource implements GuildResource {
 	public static enum Flags {
 		DID_REJOIN(1 << 0),
 		COMPLETED_ONBOARDING(1 << 1),
@@ -24,18 +22,13 @@ public class GuildMember implements GuildResource {
 		}
 	}
 
-	private final DiscordClient client;
-	private SjObject data;
-
 	public final GuildMemberRoleManager roles;
-
 	public final User user;
 	public final Guild guild;
 
-	public GuildMember(final DiscordClient client, final Guild guild, final SjObject data) {
-		this.client = client;
+	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
+		super(client, data);
 		this.guild = guild;
-		setData(data);
 		user = client.users.fetch(data.getObject("user").getString("id")).join();
 		roles = new GuildMemberRoleManager(client, this);
 	}
@@ -52,7 +45,7 @@ public class GuildMember implements GuildResource {
 
 		@Override
 		public String url(final int size, final String extension) {
-			return CDN.guildMemberAvatar(guild.id(), user.id(), hash(), size, extension);
+			return CDN.guildMemberAvatar(guild.id, user.id, hash(), size, extension);
 		}
 	};
 
@@ -72,15 +65,6 @@ public class GuildMember implements GuildResource {
 		return data.getBoolean("mute");
 	}
 
-	public Set<Flags> flags() {
-		final var bitset = data.getLong("flags").shortValue();
-		final var flags = new HashSet<Flags>();
-		for (final var flag : Flags.values())
-			if (bitset / flag.value == 1)
-				flags.add(flag);
-		return flags;
-	}
-
 	public boolean pending() {
 		return data.getBoolean("pending");
 	}
@@ -92,28 +76,8 @@ public class GuildMember implements GuildResource {
 	}
 
 	@Override
-	public DiscordClient client() {
-		return client;
-	}
-
-	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(final SjObject data) {
-		this.data = data;
-	}
-
-	@Override
-	public String id() {
-		return user.id();
-	}
-
-	@Override
 	public String apiPath() {
-		return "/guilds/" + guild.id() + "/members/" + user.id();
+		return "/guilds/" + guild.id + "/members/" + user.id;
 	}
 
 	@Override

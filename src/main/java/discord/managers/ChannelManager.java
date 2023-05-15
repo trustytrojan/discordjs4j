@@ -4,33 +4,48 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.structures.channels.Channel;
-import discord.util.Util;
+import discord.structures.channels.GroupDMChannel;
+import discord.structures.channels.GuildChannel;
 import simple_json.SjObject;
 
 public class ChannelManager extends ResourceManager<Channel> {
-	public ChannelManager(final DiscordClient client) {
+	public ChannelManager(DiscordClient client) {
 		super(client);
 	}
 
 	@Override
-	public Channel construct(final SjObject data) {
+	public Channel construct(SjObject data) {
 		return Channel.fromJSON(client, data);
 	}
 
-	// edit group dm channels
+	public CompletableFuture<GroupDMChannel> editGroupDM(String id, GroupDMChannel.Payload payload) {
+		return client.api.post("/channels/" + id, payload.toJSONString())
+			.thenApply(r -> (GroupDMChannel) cache(r.toJsonObject()));
+	}
 
-	public CompletableFuture<Void> delete(final String id) {
-		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
+	public CompletableFuture<GuildChannel> editGuildChannel(String id, GuildChannel.Payload payload) {
+		return client.api.post("/channels/" + id, payload.toJSONString())
+			.thenApply(r -> (GuildChannel) cache(r.toJsonObject()));
+	}
+
+	public CompletableFuture<Void> delete(String id) {
+		return client.api.delete("/channels/" + id).thenAccept(r -> {
+			cache.remove(id);
+			final var guildId = r.toJsonObject().getString("guild_id");
+			if (guildId != null) {
+				client.guilds.fetch(guildId).thenAccept(g -> g.channels.cache.remove(id));
+			}
+		});
 	}
 
 	@Override
-	public CompletableFuture<Channel> fetch(final String id, final boolean force) {
+	public CompletableFuture<Channel> fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
 
 	public CompletableFuture<Void> fetchDMs() {
 		return client.api.get("/users/@me/channels")
-				.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
+				.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 
 	@Override

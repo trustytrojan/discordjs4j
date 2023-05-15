@@ -2,16 +2,15 @@ package discord.managers;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
-import discord.util.IdMap;
 import simple_json.SjObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
-import discord.structures.Identifiable;
 
-public abstract class ResourceManager<T extends DiscordResource & Identifiable> implements Iterable<T> {
-	public final IdMap<T> cache = new IdMap<>();
+public abstract class ResourceManager<T extends DiscordResource> implements Iterable<T> {
+	public final TreeMap<String, T> cache = new TreeMap<>();
 	protected final DiscordClient client;
 
 	protected ResourceManager(DiscordClient client) {
@@ -27,14 +26,12 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 
 	// cache an already constructed object
 	public T cache(T resource) {
-		Objects.requireNonNull(resource);
 		cache.put(resource.id(), resource);
 		return resource;
 	}
 
 	// if this is called we know the cache WILL be modified
 	public T cache(SjObject data) {
-		Objects.requireNonNull(data);
 		final var cached = cache.get(data.getString("id"));
 		
 		// if not already cached, construct new object
@@ -65,8 +62,7 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 			}
 		}
 
-		return client.api.get(path)
-			.thenApplyAsync(r -> cache(r.toJsonObject()));
+		return client.api.get(path).thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public abstract CompletableFuture<Void> refreshCache();

@@ -18,7 +18,8 @@ import simple_json.SjObject;
  * An HttpClient wrapper for making requests to the Discord API.
  */
 public final class APIClient {
-	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {}
+	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {
+	}
 
 	private static enum HttpMethod {
 		GET, POST, PUT, PATCH, DELETE
@@ -52,28 +53,30 @@ public final class APIClient {
 		final var request = requestWrapper.request;
 
 		return HTTP_CLIENT.sendAsync(request, BODY_HANDLER)
-			.thenApplyAsync(response -> {
-				final var statusCode = response.statusCode();
-				final var responseBody = response.body();
-		
-				if (statusCode == 429)
-					return retryAfter(requestWrapper, responseBody).join();
-				else if (statusCode >= 400) {
-					log(request.method() + ' ' + requestWrapper.path + " -> "
-							+ response.statusCode()
-							+ "\nResponse body: " + response.body()
-							+ "\nRequest body: " + requestWrapper.body);
-					throw new RuntimeException();
-				}
-		
-				log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);
-		
-				return new JsonHttpResponse(response.body());
-			});		
+				.thenApplyAsync(response -> {
+					final var statusCode = response.statusCode();
+					final var responseBody = response.body();
+
+					if (statusCode == 429)
+						return retryAfter(requestWrapper, responseBody).join();
+					else if (statusCode >= 400) {
+						log(request.method() + ' ' + requestWrapper.path + " -> "
+								+ response.statusCode()
+								+ "\nResponse body: " + response.body()
+								+ "\nRequest body: " + requestWrapper.body);
+						throw new RuntimeException();
+					}
+
+					log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);
+
+					return new JsonHttpResponse(response.body());
+				});
 	}
 
-	private static CompletableFuture<JsonHttpResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
-		final var retryAfter = (int) (1000 * SimpleJson.parseObject(responseBody).getDouble("retry_after"));
+	private static CompletableFuture<JsonHttpResponse> retryAfter(HttpRequestWithBody requestWrapper,
+			String responseBody) {
+		final var retryAfter = (int) (1000
+				* SimpleJson.parseObject(responseBody).getDouble("retry_after"));
 		log("Being rate limited for " + retryAfter + "ms");
 
 		try {

@@ -2,26 +2,19 @@ package discord.structures.channels;
 
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
+import discord.structures.AbstractDiscordResource;
 import discord.structures.User;
 import simple_json.SjObject;
 
-public class DMChannel implements DMBasedChannel {
-	private final DiscordClient client;
-	private SjObject data;
-
+public class DMChannel extends AbstractDiscordResource implements TextBasedChannel {
 	private final MessageManager messages;
 	public final User recipient;
+	private final String url = "https://discord.com/channels/@me/" + id;
 
-	public DMChannel(final DiscordClient client, final SjObject data) {
-		this.client = client;
-		setData(data);
+	public DMChannel(DiscordClient client, SjObject data) {
+		super(client, data);
 		messages = new MessageManager(client, this);
 		recipient = client.users.fetch(data.getObjectArray("recipients").get(0).getString("id")).join();
-	}
-
-	@Override
-	public String toString() {
-		return mention();
 	}
 
 	@Override
@@ -39,17 +32,7 @@ public class DMChannel implements DMBasedChannel {
 	}
 
 	@Override
-	public SjObject getData() {
-		return data;
-	}
-
-	@Override
-	public void setData(final SjObject data) {
-		this.data = data;
-	}
-
-	@Override
-	public DiscordClient client() {
-		return client;
+	public String url() {
+		return url;
 	}
 }

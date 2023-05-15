@@ -37,7 +37,7 @@ public class ChatInputInteraction extends Interaction {
 
 		commandId = innerData.getString("id");
 		commandName = innerData.getString("name");
-		commandType = ApplicationCommand.Type.resolve(innerData.getLong("type"));
+		commandType = ApplicationCommand.Type.TYPE_TABLE[innerData.getInteger("type")];
 		options = new OptionResolver(this, data.getObjectArray("options"));
 	}
 }

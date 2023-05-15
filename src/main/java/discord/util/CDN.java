@@ -67,6 +67,10 @@ public final class CDN {
 		return makeURL("/role-icons/"+roleId+'/'+hash, size, extension);
 	}
 
+	public static String channelIcon(String groupDmId, String hash, int size, String extension) {
+		return makeURL("/channel-icons/"+groupDmId+'/'+hash, size, extension);
+	}
+
 	public static interface URLFactory {
 		String hash();
 		String url(int size, String extension);

@@ -15,7 +15,6 @@ public class MessageManager extends ResourceManager<Message> {
 
 	public MessageManager(DiscordClient client, TextBasedChannel channel) {
 		super(client);
-		cache.setSizeLimit(50);
 		this.channel = Objects.requireNonNull(channel);
 		basePath = "/channels/" + channel.id() + "/messages/";
 	}

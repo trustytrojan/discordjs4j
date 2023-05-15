@@ -16,7 +16,7 @@ public interface GuildChannel extends GuildResource, Channel {
 	}
 
 	default Integer position() {
-		return getData().getInt("position");
+		return getData().getInteger("position");
 	}
 
 	default String parentId() {

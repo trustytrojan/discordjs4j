@@ -1,7 +1,8 @@
 package discord.util;
 
-import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Date;
 import java.util.function.Function;
@@ -16,18 +17,18 @@ public final class Util {
 				return null;
 			};
 
-	public static String readFile(String filePath) {
-		try (final var stream = new FileInputStream(filePath)) {
-			return new String(stream.readAllBytes());
-		} catch (final Exception e) {
+	public static String readFile(String path) {
+		try {
+			return Files.readString(Path.of(path));
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public static void writeFile(String filePath, String data) {
-		try (final var writer = new FileWriter(filePath)) {
-			writer.write(data);
-		} catch (final Exception e) {
+	public static void writeFile(String path, String data) {
+		try {
+			Files.writeString(Path.of(path), data);
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

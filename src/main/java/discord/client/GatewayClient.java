@@ -26,7 +26,7 @@ public class GatewayClient extends WebSocketClient {
 	static {
 		try {
 			DISCORD_GATEWAY_URI = new URI("wss://gateway.discord.gg/");
-		} catch (final URISyntaxException e) {
+		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -37,7 +37,7 @@ public class GatewayClient extends WebSocketClient {
 	private long heartbeatSentAt;
 	private long ping;
 
-	public GatewayClient(final DiscordClient client) {
+	public GatewayClient(DiscordClient client) {
 		super(DISCORD_GATEWAY_URI);
 		this.client = client;
 	}
@@ -46,17 +46,17 @@ public class GatewayClient extends WebSocketClient {
 		return ping;
 	}
 
-	public void login(final String token, final GatewayIntent[] intents) {
+	public void login(String token, GatewayIntent[] intents) {
 		try {
 			if (!connectBlocking()) {
 				System.exit(1);
 			}
-		} catch (final InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
-		final var str = """
+		send("""
 				{
 					"op": %d,
 					"d": {
@@ -73,13 +73,11 @@ public class GatewayClient extends WebSocketClient {
 				GatewayOpcode.IDENTIFY.value,
 				token,
 				GatewayIntent.sum(intents),
-				System.getProperty("os.name"));
-
-		send(str);
+				System.getProperty("os.name")));
 	}
 
 	@Override
-	public void onOpen(final ServerHandshake handshake) {
+	public void onOpen(ServerHandshake handshake) {
 		System.out.printf("""
 				[GatewayClient] Connection to Discord gateway opened
 					Status code: %d
@@ -92,14 +90,14 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onMessage(final String message) {
+	public void onMessage(String message) {
 		CompletableFuture.runAsync(() -> onMessageAsync(message))
-			.exceptionallyAsync(Util.PRINT_STACK_TRACE);
+				.exceptionallyAsync(Util.PRINT_STACK_TRACE);
 	}
 
 	// Let's give the WebSocketClient's thread a break from this mess
 
-	public void onMessageAsync(final String rawJson) {
+	public void onMessageAsync(String rawJson) {
 		final var obj = SimpleJson.parseObject(rawJson);
 		final var opcode = GatewayOpcode.resolve(obj.getShort("op"));
 
@@ -188,7 +186,8 @@ public class GatewayClient extends WebSocketClient {
 				// Interval in milliseconds that Discord wants us to wait before
 				// sending another heartbeat.
 				final var heartbeat_interval = d.getLong("heartbeat_interval");
-				System.out.printf("[GatewayClient] Hello event received; Heartbeat interval: %dms\n", heartbeat_interval);
+				System.out.printf("[GatewayClient] Hello event received; Heartbeat interval: %dms\n",
+						heartbeat_interval);
 
 				repeater.repeat(() -> {
 					System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);

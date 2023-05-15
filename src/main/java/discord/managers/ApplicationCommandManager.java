@@ -13,48 +13,48 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	private final BotDiscordClient client;
 	private final String basePath;
 
-	public ApplicationCommandManager(final BotDiscordClient client, final String guildId) {
+	public ApplicationCommandManager(BotDiscordClient client, String guildId) {
 		super(client);
 		this.client = client;
-		final var start = "/applications/" + client.application.id();
+		final var start = "/applications/" + client.application.id;
 		basePath = start + ((guildId != null)
 							? "/guilds/" + guildId + "/commands"
 							: "/commands");
 	}
 
 	@Override
-	public ApplicationCommand construct(final SjObject data) {
+	public ApplicationCommand construct(SjObject data) {
 		return new ApplicationCommand(client, data);
 	}
 
 	@Override
-	public CompletableFuture<ApplicationCommand> fetch(final String id, final boolean force) {
+	public CompletableFuture<ApplicationCommand> fetch(String id, boolean force) {
 		return super.fetch(id, basePath + '/' + id, force);
 	}
 
-	public CompletableFuture<ApplicationCommand> create(final ApplicationCommand.Payload payload) {
+	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {
 		return client.api.post(basePath, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
+			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
-	public CompletableFuture<ApplicationCommand> edit(final String id, final ApplicationCommand.Payload payload) {
+	public CompletableFuture<ApplicationCommand> edit(String id, ApplicationCommand.Payload payload) {
 		return client.api.patch(basePath + '/' + id, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
+			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
-	public CompletableFuture<Void> delete(final String id) {
+	public CompletableFuture<Void> delete(String id) {
 		return client.api.delete(basePath + '/' + id).thenRunAsync(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<Void> set(final List<ApplicationCommand.Payload> commandPayloads) {
+	public CompletableFuture<Void> set(List<ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
 		return client.api.put(basePath, JSONArray.toJSONString(commandPayloads))
-			.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
+			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
 		return client.api.get(basePath)
-			.thenAcceptAsync((final var r) -> r.toJsonObjectArray().forEach(this::cache));
+			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

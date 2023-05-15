@@ -5,17 +5,16 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.GuildMember;
 import discord.structures.Role;
-import discord.util.Util;
 import simple_json.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	public final GuildMember member;
-	public final String basePath;
+	private final String basePath;
 
 	public GuildMemberRoleManager(final DiscordClient client, final GuildMember member) {
 		super(client, member.guild);
 		this.member = member;
-		basePath = "/guilds/" + member.guild.id() + "/members/" + member.user.id() + "/roles/";
+		basePath = "/guilds/" + member.guild.id + "/members/" + member.user.id + "/roles/";
 	}
 
 	@Override
@@ -34,7 +33,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	}
 
 	public CompletableFuture<Void> remove(final String id) {
-		return client.api.delete(basePath + id).thenRunAsync(Util.DO_NOTHING);
+		return client.api.delete(basePath + id).thenRunAsync(() -> cache.remove(id));
 	}
 
 	@Override

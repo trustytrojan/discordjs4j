@@ -1,5 +1,6 @@
 package discord.structures.channels;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -22,22 +23,23 @@ public interface Channel extends DiscordResource {
 		GUILD_DIRECTORY(14),
 		GUILD_FORUM(15);
 
-		public static Type resolve(final short value) {
-			return Stream.of(Type.values())
-					.filter(t -> (t.value == value))
-					.findFirst()
-					.orElse(null);
+		public static final Type[] LOOKUP_TABLE = new Type[15];
+
+		static {
+			Stream.of(Type.values())
+				.forEach(t -> LOOKUP_TABLE[t.value] = t);
 		}
 
 		public final short value;
 
-		private Type(final int value) {
+		private Type(int value) {
 			this.value = (short) value;
 		}
 	}
 
-	public static Channel fromJSON(final DiscordClient client, final SjObject data) {
-		return switch (Type.resolve(data.getShort("type"))) {
+	public static Channel fromJSON(DiscordClient client, SjObject data) {
+		Objects.requireNonNull(client);
+		return switch (Type.LOOKUP_TABLE[data.getInteger("type")]) {
 			case GUILD_TEXT -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
 			case GROUP_DM -> new GroupDMChannel(client, data);
@@ -58,9 +60,17 @@ public interface Channel extends DiscordResource {
 	}
 
 	default Type type() {
-		return Type.resolve(getData().getShort("type"));
+		return Type.LOOKUP_TABLE[getData().getInteger("type")];
 	}
 
+	/**
+	 * Based on the type of this channel, performs one of the following three actions:
+	 * <ul>
+	 * <li>Delete a guild channel.</li>
+	 * <li>Close a DM channel.</li>
+	 * <li>Leave a group DM channel.</li>
+	 * </ul>
+	 */
 	default CompletableFuture<Void> delete() {
 		return client().channels.delete(id());
 	}

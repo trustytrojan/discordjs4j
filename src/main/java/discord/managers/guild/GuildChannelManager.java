@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
-import discord.util.Util;
 import simple_json.SjObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
@@ -20,29 +19,25 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	@Override
 	public CompletableFuture<GuildChannel> fetch(String id, boolean force) {
-		return super.fetch(id, "/channels/" + id, force)
-			.thenApply(channel -> (GuildChannel) client.channels.cache(channel));
+		return super.fetch(id, "/channels/" + id, force).thenApply(this::cache);
 	}
 
 	public CompletableFuture<GuildChannel> create(GuildChannel.Payload payload) {
-		return client.api.post("/guilds/" + guild.id() + "/channels", payload.toJSONString())
+		return client.api.post("/guilds/" + guild.id + "/channels", payload.toJSONString())
 			.thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
-		return client.api.patch("/channels/" + id, payload.toJSONString())
-			.thenApply(r -> cache(r.toJsonObject()));
+		return client.channels.editGuildChannel(id, payload);
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete("/channels/" + id).thenRun(Util.DO_NOTHING);
+		return client.channels.delete(id);
 	}
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAcceptAsync(r ->
-				r.toJsonObjectArray().forEach(c -> client.channels.cache(cache(c)))
-			);
+		return client.api.get("/guilds/" + guild.id + "/channels")
+			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }
