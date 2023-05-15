@@ -33,6 +33,10 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 		return data.getLong("rate_limit_per_user");
 	}
 
+	public boolean nsfw() {
+		return data.getBooleanDefaultFalse("nsfw");
+	}
+
 	@Override
 	public SjObject getData() {
 		return data;
@@ -65,30 +69,23 @@ public class TextChannel implements GuildChannel, TextBasedChannel {
 		public Short rateLimitPerUser;
 		public String parentId;
 
+		public Payload(String name) {
+			super(name);
+		}
+
 		@Override
 		public String toJSONString() {
 			final var obj = toJSONObject();
-
-			if (type != null) {
+			if (type != null)
 				obj.put("type", type.value);
-			}
-
-			if (topic != null) {
+			if (topic != null)
 				obj.put("topic", topic);
-			}
-
-			if (nsfw) {
+			if (nsfw)
 				obj.put("nsfw", Boolean.TRUE);
-			}
-
-			if (rateLimitPerUser != null) {
+			if (rateLimitPerUser != null)
 				obj.put("rate_limit_per_user", rateLimitPerUser);
-			}
-
-			if (parentId != null) {
+			if (parentId != null)
 				obj.put("parent_id", parentId);
-			}
-
 			return obj.toString();
 		}
 	}

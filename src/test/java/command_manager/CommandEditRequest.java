@@ -8,7 +8,7 @@ final class CommandEditRequest {
 	ApplicationCommand currentCommand;
 	ApplicationCommand.Payload payload;
 
-	CommandEditRequest(final String commandId, final int rowInTable) {
+	CommandEditRequest(String commandId, int rowInTable) {
 		this.commandId = commandId;
 		this.rowInTable = rowInTable;
 	}

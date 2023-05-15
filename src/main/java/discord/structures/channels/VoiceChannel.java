@@ -62,6 +62,10 @@ public class VoiceChannel implements GuildChannel {
 		public String rtcRegion;
 		public VideoQualityMode videoQualityMode;
 
+		public Payload(String name) {
+			super(name);
+		}
+
 		@Override
 		public String toJSONString() {
 			final var obj = toJSONObject();

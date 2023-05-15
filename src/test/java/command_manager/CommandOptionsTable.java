@@ -26,15 +26,14 @@ final class CommandOptionsTable extends MyTable {
 		dropdownMenuSetup();
 	}
 
-	void clearAndFill(final List<ApplicationCommandOption> options) {
+	void clearAndFill(List<ApplicationCommandOption> options) {
 		clear();
 		options.forEach(o -> addRow(o.type, o.name, o.description, o.required));
 	}
 
 	private void dropdownMenuSetup() {
 		final var dropdown = new JPopupMenu();
-		dropdown.add("Delete").addActionListener((final var e) -> removeRow(getSelectedRow()));
-
+		dropdown.add("Delete").addActionListener(e -> removeSelectedRow());
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(final MouseEvent e) {

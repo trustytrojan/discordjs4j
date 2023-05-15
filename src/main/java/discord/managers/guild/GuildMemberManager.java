@@ -21,11 +21,6 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	}
 
 	@Override
-	public String getIdFromData(final SjObject data) {
-		return data.getObject("user").getString("id");
-	}
-
-	@Override
 	public CompletableFuture<GuildMember> fetch(final String id, final boolean force) {
 		return super.fetch(id, basePath + '/' + id, force);
 	}

@@ -9,38 +9,40 @@ import discord.util.Util;
 import simple_json.SjObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
-	public GuildChannelManager(final DiscordClient client, final Guild guild) {
+	public GuildChannelManager(DiscordClient client, Guild guild) {
 		super(client, guild);
 	}
 
 	@Override
-	public GuildChannel construct(final SjObject data) {
+	public GuildChannel construct(SjObject data) {
 		return (GuildChannel) client.channels.construct(data);
 	}
 
 	@Override
-	public CompletableFuture<GuildChannel> fetch(final String id, final boolean force) {
+	public CompletableFuture<GuildChannel> fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force)
-			.thenApplyAsync((final var channel) -> (GuildChannel) client.channels.cache(channel));
+			.thenApply(channel -> (GuildChannel) client.channels.cache(channel));
 	}
 
-	public CompletableFuture<GuildChannel> create(final GuildChannel.Payload payload) {
+	public CompletableFuture<GuildChannel> create(GuildChannel.Payload payload) {
 		return client.api.post("/guilds/" + guild.id() + "/channels", payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
+			.thenApply(r -> cache(r.toJsonObject()));
 	}
 
-	public CompletableFuture<GuildChannel> edit(final String id, final GuildChannel.Payload payload) {
+	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
 		return client.api.patch("/channels/" + id, payload.toJSONString())
-			.thenApplyAsync((final var r) -> cache(r.toJsonObject()));
+			.thenApply(r -> cache(r.toJsonObject()));
 	}
 
-	public CompletableFuture<Void> delete(final String id) {
-		return client.api.delete("/channels/" + id).thenRunAsync(Util.DO_NOTHING);
+	public CompletableFuture<Void> delete(String id) {
+		return client.api.delete("/channels/" + id).thenRun(Util.DO_NOTHING);
 	}
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(c -> client.channels.cache(cache(c))));
+			.thenAcceptAsync(r ->
+				r.toJsonObjectArray().forEach(c -> client.channels.cache(cache(c)))
+			);
 	}
 }

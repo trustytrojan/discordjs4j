@@ -3,7 +3,9 @@ package guild_channel_manager;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import discord.client.BotDiscordClient;
@@ -14,13 +16,27 @@ import swing_extensions.LoadingDialog;
 import swing_extensions.SwingUtils;
 
 final class GuildChannelManagerGUI extends JFrame {
-	private final GuildChannelManager dataManager;
+	private final GuildChannelManager channelManager;
 	private final GuildChannelsTable table = new GuildChannelsTable();
 	private final LoadingDialog loadingDialog = new LoadingDialog(this, "Waiting for Discord...");
+	private final GuildChannelDialog gcDialog = new GuildChannelDialog(this);
+	private final TextChannelDialog tcDialog;
 
-	GuildChannelManagerGUI(GuildChannelManager dataManager) {
+	private final JButton
+		refreshButton = SwingUtils.button("Refresh", this::refreshClicked),
+		createButton = SwingUtils.button("Create", gcDialog::display),
+		editButton = SwingUtils.button("Edit", this::editClicked),
+		deleteButton = SwingUtils.button("Delete", this::deleteClicked);
+
+	GuildChannelManagerGUI(GuildChannelManager channelManager) {
 		super("Guild Channel Manager GUI");
-		this.dataManager = dataManager;
+
+		this.channelManager = channelManager;
+		tcDialog = new TextChannelDialog(this, channelManager);
+
+		setupListeners();
+
+		refreshClicked();
 
 		setContentPane(createMainPanel());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -37,23 +53,23 @@ final class GuildChannelManagerGUI extends JFrame {
 		c.weighty = 1;
 		c.gridheight = 5; // # of buttons below + 1
 		final var tablePanel = SwingUtils.tableWithHeaders(table);
-		tablePanel.setPreferredSize(new Dimension(500, 500));
+		tablePanel.setPreferredSize(new Dimension(800, 500));
 		panel.add(tablePanel, c);
 
 		c = GridBagPanel.constraintsInsets5();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
 		c.gridx = 1;
-		panel.add(SwingUtils.button("Refresh", this::refreshClicked), c);
+		panel.add(refreshButton, c);
 
 		c.gridy = 1;
-		panel.add(SwingUtils.button("Create", this::createClicked), c);
+		panel.add(createButton, c);
 
 		c.gridy = 2;
-		panel.add(SwingUtils.button("Edit", this::editClicked), c);
+		panel.add(editButton, c);
 
 		c.gridy = 3;
-		panel.add(SwingUtils.button("Delete", this::deleteClicked), c);
+		panel.add(deleteButton, c);
 
 		c = new GridBagConstraints();
 		c.gridy = 3;
@@ -63,25 +79,61 @@ final class GuildChannelManagerGUI extends JFrame {
 		return panel;
 	}
 
+	private void setupListeners() {
+		gcDialog.typeSelected = (type) -> {
+			switch (type) {
+				case GUILD_TEXT -> tcDialog.showCreate();
+				default -> {
+				}
+			}
+		};
+
+		tcDialog.createRequested = (payload) -> channelManager.create(payload).thenAcceptAsync(table::addRow);
+
+		tcDialog.editRequested = (editRequest) -> channelManager.edit(editRequest.channel.id(), editRequest.payload)
+				.thenAcceptAsync(channel -> table.setRow(editRequest.rowInTable, channel));
+	}
+
 	private void refreshClicked() {
+		setManagerButtonsEnabled(false);
 		table.clear();
 		loadingDialog.setVisible(true);
-		dataManager.refreshCache().thenRunAsync(() -> {
-			dataManager.cache.values().forEach(table::addRow);
+		channelManager.refreshCache().thenRunAsync(() -> {
+			channelManager.cache.values().forEach(table::addRow);
+			setManagerButtonsEnabled(true);
 			loadingDialog.dispose();
 		});
 	}
 
-	private void createClicked() {
-
+	private void setManagerButtonsEnabled(boolean b) {
+		createButton.setEnabled(b);
+		editButton.setEnabled(b);
+		deleteButton.setEnabled(b);
 	}
 
 	private void editClicked() {
-
+		final var rowIndex = table.getSelectedRow();
+		final var channelId = (String) table.getValueAt(rowIndex, 0);
+		channelManager.fetch(channelId).thenAccept(channel -> {
+			final var editRequest = new GuildChannelEditRequest(channel, rowIndex);
+			switch (channel.type()) {
+				case GUILD_TEXT -> tcDialog.showEdit(editRequest);
+				default -> {
+				}
+			}
+		});
 	}
 
 	private void deleteClicked() {
-
+		final var option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the selected channels?",
+				"Delete Selected Channels", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (option == JOptionPane.YES_OPTION) {
+			String channelId;
+			for (final var row : table.getSelectedRows()) {
+				channelId = (String) table.getValueAt(row, 0);
+				channelManager.delete(channelId).thenRunAsync(() -> table.removeRow(row));
+			}
+		}
 	}
 
 	public static void main(String[] args) {
@@ -89,6 +141,7 @@ final class GuildChannelManagerGUI extends JFrame {
 		client.api.setToken(Util.readFile("tokens/java-bot"));
 		client.fetchApplication().join();
 		final var guild = client.guilds.fetch("1094436869531504733").join();
+		guild.channels.refreshCache().join();
 		new GuildChannelManagerGUI(guild.channels);
 	}
 }

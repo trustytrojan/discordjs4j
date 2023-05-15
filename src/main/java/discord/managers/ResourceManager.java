@@ -25,19 +25,17 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 
 	public abstract T construct(SjObject data);
 
-	protected String getIdFromData(SjObject data) {
-		return data.getString("id");
-	}
-
 	// cache an already constructed object
 	public T cache(T resource) {
+		Objects.requireNonNull(resource);
 		cache.put(resource.id(), resource);
 		return resource;
 	}
 
 	// if this is called we know the cache WILL be modified
 	public T cache(SjObject data) {
-		final var cached = cache.get(getIdFromData(data));
+		Objects.requireNonNull(data);
+		final var cached = cache.get(data.getString("id"));
 		
 		// if not already cached, construct new object
 		if (cached == null) {
@@ -56,6 +54,9 @@ public abstract class ResourceManager<T extends DiscordResource & Identifiable> 
 	public abstract CompletableFuture<T> fetch(String id, boolean force);
 
 	protected CompletableFuture<T> fetch(String id, String path, boolean force) {
+		Objects.requireNonNull(id);
+		Objects.requireNonNull(path);
+
 		if (!force) {
 			final var cached = cache.get(id);
 			

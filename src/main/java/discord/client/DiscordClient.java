@@ -34,7 +34,7 @@ public abstract class DiscordClient {
 
 	public ClientUser user;
 
-	public void login(final String token, final GatewayIntent[] intents) {
+	public void login(String token, GatewayIntent[] intents) {
 		api.setToken(token);
 		gateway.login(token, intents);
 	}

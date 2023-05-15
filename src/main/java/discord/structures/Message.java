@@ -26,7 +26,7 @@ public class Message implements DiscordResource {
 		this.client = client;
 		final var authorFuture = client.users.fetch(data.getObject("author").getString("id"));
 		final var channelFuture = client.channels.fetch(data.getString("channel_id"));
-		CompletableFuture.allOf(authorFuture, channelFuture);
+		CompletableFuture.allOf(authorFuture, channelFuture).join();
 		author = authorFuture.join();
 		channel = (TextBasedChannel) channelFuture.join();
 		setData(data);

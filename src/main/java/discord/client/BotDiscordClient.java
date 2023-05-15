@@ -20,15 +20,15 @@ public class BotDiscordClient extends DiscordClient {
 
 	public CompletableFuture<Void> fetchApplication() {
 		return api.get("/oauth2/applications/@me")
-			.thenAcceptAsync((final var r) -> {
+			.thenAcceptAsync(r -> {
 				application = new Application(this, r.toJsonObject());
 				commands = new ApplicationCommandManager(this, null);
 			});
 	}
 
 	@Override
-	public void login(final String token, final GatewayIntent[] intents) {
+	public void login(String token, GatewayIntent[] intents) {
 		super.login(token, intents);
-		fetchApplication();
+		fetchApplication().join();
 	}
 }

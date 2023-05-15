@@ -24,7 +24,7 @@ public interface Channel extends DiscordResource {
 
 		public static Type resolve(final short value) {
 			return Stream.of(Type.values())
-					.filter((final var t) -> t.value == value)
+					.filter(t -> (t.value == value))
 					.findFirst()
 					.orElse(null);
 		}

@@ -9,6 +9,6 @@ public class LoadingDialog extends MyDialog {
 		super(owner, title);
 		final var progressBar = new JProgressBar();
 		progressBar.setIndeterminate(true);
-		add(progressBar);
+		setContentPane(progressBar);
 	}
 }

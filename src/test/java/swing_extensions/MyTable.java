@@ -10,23 +10,26 @@ public class MyTable extends JTable {
 	private final DefaultTableModel model = new DefaultTableModel();
 	private boolean editable;
 
-	public MyTable(final String... columnNames) {
+	public MyTable(String... columnNames) {
 		super();
 		setModel(model);
 		model.setColumnIdentifiers(columnNames);
 	}
 
-	public void addRow(final Object... data) {
+	public void addRow(Object... data) {
 		model.addRow(data);
 	}
 
-	public void setRow(final int row, final Object... data) {
-		for (int i = 0; i < data.length; ++i) {
-			model.setValueAt(data[i], row, i);
+	@SuppressWarnings("unchecked")
+	public void setRow(int index, Object... data) {
+		final var row = rows().get(index);
+		final var columnCount = row.size();
+		for (int i = 0; i < columnCount; ++i) {
+			row.set(i, data[i]);
 		}
 	}
 
-	public void removeRow(final int index) {
+	public void removeRow(int index) {
 		model.removeRow(index);
 	}
 
@@ -34,20 +37,20 @@ public class MyTable extends JTable {
 		removeRow(getSelectedRow());
 	}
 
-	public void clear() {
-		for (int i = getRowCount(); i >= 0; --i) {
-			try {
-				removeRow(i);
-			} catch (final ArrayIndexOutOfBoundsException e) {
-			}
-		}
+	@SuppressWarnings("rawtypes")
+	public Vector getSelectedRowData() {
+		return rows().get(getSelectedRow());
 	}
 
-	public void setEditable(final boolean b) {
+	public void clear() {
+		model.setRowCount(0);
+	}
+
+	public void setEditable(boolean b) {
 		editable = b;
 	}
 
-	public void setSortable(final boolean b) {
+	public void setSortable(boolean b) {
 		setRowSorter(b ? new TableRowSorter<>(model) : null);
 	}
 
@@ -57,7 +60,7 @@ public class MyTable extends JTable {
 	}
 
 	@Override
-	public boolean isCellEditable(final int row, final int col) {
+	public boolean isCellEditable(int row, int col) {
 		return editable;
 	}
 }
