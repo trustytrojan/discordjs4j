@@ -23,7 +23,7 @@ public interface Channel extends DiscordResource {
 		GUILD_DIRECTORY(14),
 		GUILD_FORUM(15);
 
-		public static final Type[] LOOKUP_TABLE = new Type[15];
+		public static final Type[] LOOKUP_TABLE = new Type[16];
 
 		static {
 			Stream.of(Type.values())

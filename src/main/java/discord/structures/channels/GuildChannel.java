@@ -5,15 +5,11 @@ import java.util.concurrent.CompletableFuture;
 import org.json.simple.JSONAware;
 
 import discord.structures.GuildResource;
+import discord.util.Util;
 import simple_json.SjObject;
 
 public interface GuildChannel extends GuildResource, Channel {
 	// public PermissionOverwrites permission_overwrites;
-
-	@Override
-	default String url() {
-		return "https://discord.com/channels/" + guildId() + '/' + id();
-	}
 
 	default Integer position() {
 		return getData().getInteger("position");
@@ -23,26 +19,39 @@ public interface GuildChannel extends GuildResource, Channel {
 		return getData().getString("parent_id");
 	}
 
-	default CompletableFuture<CategoryChannel> fetchParent() {
+	default CompletableFuture<CategoryChannel> parent() {
 		final var parentId = parentId();
-		if (parentId == null)
-			return CompletableFuture.completedFuture(null);
-		return client().channels.fetch(parentId()).thenApplyAsync(c -> (CategoryChannel) c);
+		return (parentId == null)
+			? CompletableFuture.completedFuture(null)
+			: client().channels.fetch(parentId).thenApply(c -> (CategoryChannel) c);
+	}
+
+	/**
+	 * Edit this channel using the data in {@code payload}. If successful, changes
+	 * will be reflected in {@code this}.
+	 * 
+	 * @param payload The data to change in this channel
+	 */
+	default CompletableFuture<Void> edit(Payload payload) {
+		return guild().channels.edit(id(), payload).thenRun(Util.DO_NOTHING);
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel
 	public abstract class Payload implements JSONAware {
+		// subclasses can hardcode the channel type!
 		public final String name;
+		public Integer position;
 		// permission overwrites
 
 		protected Payload(String name) {
 			this.name = name;
 		}
 
-		public SjObject toJSONObject() {
+		protected SjObject toSjObject() {
 			final var obj = new SjObject();
-			if (name != null)
-				obj.put("name", name);
+			obj.put("name", name);
+			if (position != null)
+				obj.put("position", position);
 			// overwrites
 			return obj;
 		}

@@ -1,14 +1,10 @@
 package discord.structures.channels;
 
-import java.util.concurrent.CompletableFuture;
-
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
-import discord.structures.AbstractDiscordResource;
-import discord.structures.Guild;
 import simple_json.SjObject;
 
-public class TextChannel extends AbstractDiscordResource implements GuildChannel, TextBasedChannel {
+public class TextChannel extends AbstractGuildChannel implements TextBasedChannel {
 	public static class Payload extends GuildChannel.Payload {
 		public Channel.Type type;
 		public String topic;
@@ -22,7 +18,7 @@ public class TextChannel extends AbstractDiscordResource implements GuildChannel
 
 		@Override
 		public String toJSONString() {
-			final var obj = toJSONObject();
+			final var obj = toSjObject();
 			if (type != null)
 				obj.put("type", type.value);
 			if (topic != null)
@@ -38,16 +34,10 @@ public class TextChannel extends AbstractDiscordResource implements GuildChannel
 	}
 
 	private final MessageManager messages;
-	private final Guild guild;
 
 	public TextChannel(DiscordClient client, SjObject data) {
 		super(client, data);
-		guild = client.guilds.fetch(guildId()).join();
 		messages = new MessageManager(client, this);
-	}
-
-	public CompletableFuture<GuildChannel> edit(Payload payload) {
-		return guild.channels.edit(id, payload);
 	}
 
 	public String topic() {
@@ -65,10 +55,5 @@ public class TextChannel extends AbstractDiscordResource implements GuildChannel
 	@Override
 	public MessageManager messages() {
 		return messages;
-	}
-	
-	@Override
-	public Guild guild() {
-		return guild;
 	}
 }

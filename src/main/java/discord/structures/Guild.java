@@ -22,8 +22,8 @@ public class Guild extends AbstractDiscordResource {
 		channels = new GuildChannelManager(client, this);
 		roles = new RoleManager(client, this);
 		members = new GuildMemberManager(client, this);
-		commands = (client instanceof BotDiscordClient)
-				? new ApplicationCommandManager((BotDiscordClient) client, id)
+		commands = (client instanceof final BotDiscordClient bot && bot.application != null)
+				? new ApplicationCommandManager(bot, id)
 				: null;
 	}
 

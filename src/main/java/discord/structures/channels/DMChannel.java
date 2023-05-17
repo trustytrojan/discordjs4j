@@ -2,14 +2,12 @@ package discord.structures.channels;
 
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
-import discord.structures.AbstractDiscordResource;
 import discord.structures.User;
 import simple_json.SjObject;
 
-public class DMChannel extends AbstractDiscordResource implements TextBasedChannel {
+public class DMChannel extends DMBasedChannel implements TextBasedChannel {
 	private final MessageManager messages;
 	public final User recipient;
-	private final String url = "https://discord.com/channels/@me/" + id;
 
 	public DMChannel(DiscordClient client, SjObject data) {
 		super(client, data);
@@ -29,10 +27,5 @@ public class DMChannel extends AbstractDiscordResource implements TextBasedChann
 
 	public String lastMessageId() {
 		return data.getString("last_message_id");
-	}
-
-	@Override
-	public String url() {
-		return url;
 	}
 }

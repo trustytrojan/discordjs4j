@@ -13,12 +13,11 @@ import org.json.simple.JSONAware;
 import simple_json.SjObject;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
-import discord.structures.AbstractDiscordResource;
 import discord.structures.User;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
 
-public class GroupDMChannel extends AbstractDiscordResource implements TextBasedChannel {
+public class GroupDMChannel extends DMBasedChannel implements TextBasedChannel {
 	public static class Payload implements JSONAware {
 		public String name;
 		private String iconBase64;
@@ -54,7 +53,6 @@ public class GroupDMChannel extends AbstractDiscordResource implements TextBased
 	private final MessageManager messages;
 	public final List<User> recipients;
 	public final User owner;
-	private final String url = "https://discord.com/channels/@me/" + id;
 
 	public GroupDMChannel(DiscordClient client, SjObject data) {
 		super(client, data);
@@ -97,10 +95,5 @@ public class GroupDMChannel extends AbstractDiscordResource implements TextBased
 	@Override
 	public MessageManager messages() {
 		return messages;
-	}
-
-	@Override
-	public String url() {
-		return url;
 	}
 }
