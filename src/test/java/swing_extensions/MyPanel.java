@@ -14,6 +14,7 @@ public class MyPanel extends JPanel {
 		try {
 			remove(index);
 		} catch (ArrayIndexOutOfBoundsException e) {
+			e.printStackTrace();
 		}
 
 		add(comp, index);

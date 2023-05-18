@@ -11,7 +11,9 @@ public class CategoryChannel extends AbstractGuildChannel {
 
 		@Override
 		public String toJSONString() {
-			return toSjObject().toJSONString();
+			final var obj = toSjObject();
+			obj.put("type", Channel.Type.GUILD_CATEGORY.value);
+			return obj.toJSONString();
 		}
 	}
 

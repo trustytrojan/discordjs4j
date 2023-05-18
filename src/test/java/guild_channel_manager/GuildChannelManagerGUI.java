@@ -132,8 +132,8 @@ final class GuildChannelManagerGUI extends JFrame {
 			final var editRequest = new GuildChannelEditRequest(channel, rowIndex);
 			switch (channel.type()) {
 				case GUILD_TEXT -> tcDialog.showEdit(editRequest);
-				default -> {
-				}
+				case GUILD_CATEGORY -> ccDialog.showEdit(editRequest);
+				default -> {}
 			}
 		});
 	}

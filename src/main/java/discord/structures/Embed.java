@@ -72,7 +72,7 @@ public class Embed implements JSONAware {
 	public Integer color;
 	
 	public void setColor(String hexColor) throws IllegalArgumentException {
-		color = Util.resolveColor(hexColor);
+		color = Util.resolveHexColor(hexColor);
 	}
 
 	public void setAuthor(String name, String iconURL, String url) {

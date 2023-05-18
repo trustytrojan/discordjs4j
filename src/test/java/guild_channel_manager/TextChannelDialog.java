@@ -30,15 +30,15 @@ public class TextChannelDialog extends MyDialog {
 	private final JCheckBox nsfwCheckBox = new JCheckBox("Mark as Age-Restricted");
 	private final JCheckBox announcementCheckBox = new JCheckBox("Convert to Announcement Channel");
 
-	private final GuildChannelManager dataManager;
+	private final GuildChannelManager channelManager;
 	private GuildChannelEditRequest editRequest;
 
 	public Consumer<GuildChannel.Payload> createRequested;
 	public Consumer<GuildChannelEditRequest> editRequested;
 
-	TextChannelDialog(Window owner, GuildChannelManager dataManager) {
+	TextChannelDialog(Window owner, GuildChannelManager channelManager) {
 		super(owner);
-		this.dataManager = dataManager;
+		this.channelManager = channelManager;
 
 		topicInput.setPreferredSize(new Dimension(200, 100));
 		topicInput.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -91,19 +91,19 @@ public class TextChannelDialog extends MyDialog {
 		panel.addCheckBox(nsfwCheckBox);
 		panel.addCheckBox(announcementCheckBox);
 		panel.addBottomButtons(
-			SwingUtils.button("Send to Discord", this::onSendPressed),
-			SwingUtils.button("Cancel", this::dispose)
-		);
+				SwingUtils.button("Send to Discord", this::onSendPressed),
+				SwingUtils.button("Cancel", this::dispose));
 
 		return panel;
 	}
 
 	private void parentDropdownRefresh() {
-		dataManager.cache.values().stream()
-			.filter(c -> (c.type() == Channel.Type.GUILD_CATEGORY))
-			.sorted((a, b) -> a.position().compareTo(b.position()))
-			.map(GuildChannelNameWrapper::new)
-			.forEach(parentInput::addItem);
+		parentInput.removeAllItems();
+		parentInput.addItem(GuildChannelNameWrapper.NO_PARENT_SELECTION);
+		channelManager.cache.values().stream()
+				.filter(c -> (c.type() == Channel.Type.GUILD_CATEGORY))
+				.sorted((a, b) -> a.position().compareTo(b.position()))
+				.forEach(c -> parentInput.addItem(new GuildChannelNameWrapper(c)));
 	}
 
 	private void onSendPressed() {
@@ -120,9 +120,10 @@ public class TextChannelDialog extends MyDialog {
 
 		/* parent channel */ {
 			final var selectedParent = (GuildChannelNameWrapper) parentInput.getSelectedItem();
-			if (selectedParent != null) {
+			if (selectedParent == GuildChannelNameWrapper.NO_PARENT_SELECTION)
+				payload.parentId = null;
+			else if (selectedParent != null)
 				payload.parentId = selectedParent.channel.id();
-			}
 		}
 
 		/* slowmode duration */ {

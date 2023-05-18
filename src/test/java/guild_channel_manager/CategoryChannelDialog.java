@@ -57,7 +57,7 @@ public class CategoryChannelDialog extends MyDialog {
 
 	private void fillInputs(CategoryChannel channel) {
 		nameInput.setText(channel.name());
-		positionInput.setSelectedIndex(channel.position());
+		positionInput.setSelectedIndex(channel.position().intValue());
 	}
 
 	private void positionDropdownRefresh() {
@@ -96,7 +96,7 @@ public class CategoryChannelDialog extends MyDialog {
 		/* position (relative to other categories) */ {
 			final var selectedPosition = (GuildChannelNameWrapper) positionInput.getSelectedItem();
 			if (selectedPosition != null) {
-				payload.position = selectedPosition.channel.position();
+				payload.position = selectedPosition.channel.position().intValue();
 			}
 		}
 

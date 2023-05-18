@@ -16,6 +16,8 @@ public class MyDialog extends JDialog {
 	@Override
 	public void setVisible(boolean b) {
 		if (b) {
+			validate();
+			pack();
 			setLocationRelativeTo(getOwner());
 		}
 

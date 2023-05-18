@@ -2,6 +2,7 @@ package guild_channel_manager;
 
 import java.awt.GridBagConstraints;
 import java.awt.Window;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -16,7 +17,14 @@ import swing_extensions.MyDialog;
 import swing_extensions.SwingUtils;
 
 final class GuildChannelDialog extends MyDialog {
-	private final JComboBox<Channel.Type> typeInput = new JComboBox<>(Channel.Type.values());
+	private static final HashMap<String, Channel.Type> GUILD_CHANNEL_TYPES = new HashMap<>();
+
+	static {
+		GUILD_CHANNEL_TYPES.put("Text", Channel.Type.GUILD_TEXT);
+		GUILD_CHANNEL_TYPES.put("Category", Channel.Type.GUILD_CATEGORY);
+	}
+
+	private final JComboBox<String> typeInput = new JComboBox<>();
 	private final JButton cancelButton = SwingUtils.button("Cancel", this::dispose);
 	private final JButton nextButton = SwingUtils.button("Next", this::nextClicked);
 
@@ -24,7 +32,10 @@ final class GuildChannelDialog extends MyDialog {
 
 	GuildChannelDialog(Window owner) {
 		super(owner, "Create Channel");
+
+		GUILD_CHANNEL_TYPES.keySet().forEach(typeInput::addItem);
 		typeInput.addActionListener(__ -> nextButton.setEnabled(typeInput.getSelectedIndex() != -1));
+
 		setContentPane(createMainPanel());
 		validate();
 		pack();
@@ -58,7 +69,7 @@ final class GuildChannelDialog extends MyDialog {
 	}
 
 	private void nextClicked() {
-		createRequested.accept((Channel.Type) typeInput.getSelectedItem());
+		createRequested.accept(GUILD_CHANNEL_TYPES.get(typeInput.getSelectedItem()));
 		dispose();
 	}
 }

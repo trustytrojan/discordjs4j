@@ -37,10 +37,11 @@ public final class Util {
 		return Date.from(Instant.ofEpochMilli(ms));
 	}
 
-	public static int resolveColor(String hexColor) throws IllegalArgumentException {
-		final var regex = Pattern.compile("^#?[0-9a-fA-F]{6}$", Pattern.CASE_INSENSITIVE);
-		if (!regex.matcher(hexColor).find())
-			throw new IllegalArgumentException("Hex color string is not in correct format");
+	private static final Pattern HEXADECIMAL_COLOR_CODE_REGEX = Pattern.compile("^#?[0-9a-fA-F]{6}$");
+
+	public static int resolveHexColor(String hexColor) throws IllegalArgumentException {
+		if (!HEXADECIMAL_COLOR_CODE_REGEX.matcher(hexColor).find())
+			throw new IllegalArgumentException("Hex color string is not in correct format: #RRGGBB");
 		return Integer.parseInt(hexColor, 16);
 	}
 }
