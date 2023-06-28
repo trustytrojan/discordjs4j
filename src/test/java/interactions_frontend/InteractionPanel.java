@@ -13,15 +13,17 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import discord.structures.interactions.ChatInputInteraction;
-import discord.structures.interactions.OptionResolver;
 import discord.structures.interactions.Interaction;
 import discord.structures.interactions.MessageComponentInteraction;
+import discord.structures.interactions.OptionResolver;
 
 final class InteractionPanel extends JPanel {
 	private static final Calendar CALENDAR = Calendar.getInstance();
+	
 	private static String timeHoursMinutes() {
 		return "" + CALENDAR.get(Calendar.HOUR_OF_DAY) + ':' + CALENDAR.get(Calendar.MINUTE);
 	}
+	
 	private static String fifteenMinutesFromNow() {
 		return "" + CALENDAR.get(Calendar.HOUR_OF_DAY) + ':' + (CALENDAR.get(Calendar.MINUTE) + 15);
 	}

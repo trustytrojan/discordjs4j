@@ -5,9 +5,9 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
-import simple_json.SjObject;
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
+import simple_json.SjObject;
 
 public abstract class ResourceManager<T extends DiscordResource> implements Iterable<T> {
 	public final TreeMap<String, T> cache = new TreeMap<>();
@@ -32,6 +32,9 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 
 	// if this is called we know the cache WILL be modified
 	public T cache(SjObject data) {
+		if (data.getString("id") == null)
+			System.out.println(data);
+
 		final var cached = cache.get(data.getString("id"));
 		
 		// if not already cached, construct new object

@@ -24,7 +24,8 @@ final class GuildChannelManagerGUI extends JFrame {
 	private final TextChannelDialog tcDialog;
 	private final CategoryChannelDialog ccDialog;
 
-	private final JButton refreshButton = SwingUtils.button("Refresh", this::refreshClicked),
+	private final JButton
+			refreshButton = SwingUtils.button("Refresh", this::refreshClicked),
 			createButton = SwingUtils.button("Create", gcDialog::showCreate),
 			editButton = SwingUtils.button("Edit", this::editClicked),
 			deleteButton = SwingUtils.button("Delete", this::deleteClicked);
@@ -92,8 +93,7 @@ final class GuildChannelManagerGUI extends JFrame {
 			switch (type) {
 				case GUILD_TEXT -> tcDialog.showCreate();
 				case GUILD_CATEGORY -> ccDialog.showCreate();
-				default -> {
-				}
+				default -> {}
 			}
 		};
 
