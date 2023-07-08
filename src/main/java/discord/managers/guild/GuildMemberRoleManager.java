@@ -29,7 +29,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 
 	public CompletableFuture<Void> add(String id) {
 		return client.api.put(basePath + "/roles/" + id, null)
-				.thenAcceptAsync(r -> cache(r.toJsonObject()));
+			.thenAcceptAsync(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> remove(final String id) {
@@ -43,9 +43,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 			.thenRunAsync(() -> {
 				for (final var roleId : member.getData().getStringArray("roles")) {
 					final var role = guild.roles.cache.get(roleId);
-					if (role != null) {
-						cache(role);
-					}
+					if (role != null) cache(role);
 				}
 			});
 	}

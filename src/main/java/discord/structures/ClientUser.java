@@ -6,9 +6,7 @@ import discord.client.DiscordClient;
 import sj.SjObject;
 
 public final class ClientUser extends User {
-	public static enum PremiumType {
-		NONE, NITRO_CLASSIC, NITRO, NITRO_BASIC
-	}
+	public static enum PremiumType { NONE, NITRO_CLASSIC, NITRO, NITRO_BASIC }
 
 	public ClientUser(final DiscordClient client, final SjObject data) {
 		super(client, data);
