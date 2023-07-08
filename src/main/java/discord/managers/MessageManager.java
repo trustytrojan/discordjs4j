@@ -7,7 +7,7 @@ import discord.client.DiscordClient;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.util.Util;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class MessageManager extends ResourceManager<Message> {
 	public final String basePath;
@@ -30,12 +30,12 @@ public class MessageManager extends ResourceManager<Message> {
 	}
 
 	public CompletableFuture<Message> create(Message.Payload payload) {
-		return client.api.post(basePath, payload.toJSONString())
+		return client.api.post(basePath, payload.toJsonString())
 				.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
-		return client.api.patch(basePath + id, payload.toJSONString())
+		return client.api.patch(basePath + id, payload.toJsonString())
 				.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 

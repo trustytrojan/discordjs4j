@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class CustomIdButton extends Button {
 	public final String customId;
@@ -27,11 +27,11 @@ public class CustomIdButton extends Button {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = toJSONObject();
 		obj.put("custom_id", customId);
 		if (unicodeEmoji != null)
 			obj.put("emoji", unicodeEmoji);
-		return obj.toJSONString();
+		return obj.toJsonString();
 	}
 }

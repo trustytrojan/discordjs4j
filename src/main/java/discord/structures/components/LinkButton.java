@@ -1,6 +1,6 @@
 package discord.structures.components;
 
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class LinkButton extends Button {
 	public final String url;
@@ -16,9 +16,9 @@ public class LinkButton extends Button {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = toJSONObject();
 		obj.put("url", url);
-		return obj.toJSONString();
+		return obj.toJsonString();
 	}
 }

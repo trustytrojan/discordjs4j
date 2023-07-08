@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class SelectMenu extends MessageComponent {
 	public final String customId;
@@ -26,7 +26,7 @@ public class SelectMenu extends MessageComponent {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = toJSONObject();
 		obj.put("custom_id", customId);
 		if (placeholder != null)
@@ -37,6 +37,6 @@ public class SelectMenu extends MessageComponent {
 			obj.put("min_values", minValues);
 		if (maxValues != null)
 			obj.put("max_values", maxValues);
-		return obj.toJSONString();
+		return obj.toJsonString();
 	}
 }

@@ -3,16 +3,15 @@ package discord.structures;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONAware;
-
 import discord.util.Util;
-import simple_json.SjObject;
+import sj.SjObject;
+import sj.SjSerializable;
 
-public class Embed implements JSONAware {
+public class Embed implements SjSerializable {
 
-	private static record Author(String name, String iconURL, String url) implements JSONAware {
+	private static record Author(String name, String iconURL, String url) implements SjSerializable {
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 	
 			obj.put("name", name);
@@ -29,9 +28,9 @@ public class Embed implements JSONAware {
 		}
 	}
 
-	private static record Field(String name, String value, boolean inline) implements JSONAware {
+	private static record Field(String name, String value, boolean inline) implements SjSerializable {
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 			
 			obj.put("name", name);
@@ -45,9 +44,9 @@ public class Embed implements JSONAware {
 		}
 	}
 	
-	private static record Footer(String text, String iconURL) implements JSONAware {
+	private static record Footer(String text, String iconURL) implements SjSerializable {
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 	
 			obj.put("text", text);
@@ -104,7 +103,7 @@ public class Embed implements JSONAware {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = new SjObject();
 
 		if (title != null) {

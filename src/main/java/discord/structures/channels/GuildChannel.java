@@ -2,11 +2,10 @@ package discord.structures.channels;
 
 import java.util.concurrent.CompletableFuture;
 
-import org.json.simple.JSONAware;
-
 import discord.structures.GuildResource;
 import discord.util.Util;
-import simple_json.SjObject;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public interface GuildChannel extends GuildResource, Channel {
 	// public PermissionOverwrites permission_overwrites;
@@ -37,7 +36,7 @@ public interface GuildChannel extends GuildResource, Channel {
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel
-	public abstract class Payload implements JSONAware {
+	public abstract class Payload implements SjSerializable {
 		// subclasses can hardcode the channel type!
 		public final String name;
 		public Integer position;
@@ -57,7 +56,7 @@ public interface GuildChannel extends GuildResource, Channel {
 		}
 	}
 
-	public class PositionPayload implements JSONAware {
+	public class PositionPayload implements SjSerializable {
 		private final String id;
 		public Integer position;
 		public boolean syncPermissions;
@@ -68,7 +67,7 @@ public interface GuildChannel extends GuildResource, Channel {
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 			obj.put("id", id);
 			if (position != null)
@@ -77,7 +76,7 @@ public interface GuildChannel extends GuildResource, Channel {
 				obj.put("lock_permissions", Boolean.TRUE);
 			if (parentId != null)
 				obj.put("parent_id", parentId);
-			return obj.toJSONString();
+			return obj.toJsonString();
 		}
 	}
 

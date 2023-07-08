@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import discord.client.BotDiscordClient;
 import discord.client.APIClient.JsonHttpResponse;
+import discord.client.BotDiscordClient;
 import discord.structures.Embed;
 import discord.structures.Guild;
 import discord.structures.GuildMember;
@@ -14,7 +14,7 @@ import discord.structures.Permissions;
 import discord.structures.User;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.components.ActionRow;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public abstract class Interaction {
 	public static enum Type {
@@ -62,7 +62,7 @@ public abstract class Interaction {
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = toJSONObject();
 			if (ephemeral)
 				obj.put("ephemeral", Boolean.TRUE);
@@ -139,7 +139,7 @@ public abstract class Interaction {
 		data.put("type", type.value);
 		if (payload != null)
 			data.put("data", payload);
-		return client.api.post(path, data.toJSONString());
+		return client.api.post(path, data.toJsonString());
 	}
 
 	public CompletableFuture<Void> deferResponse() {
@@ -159,7 +159,7 @@ public abstract class Interaction {
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
 		final var path = "/webhooks/" + client.application.id + '/' + token;
-		return client.api.post(path, payload.toJSONString())
+		return client.api.post(path, payload.toJsonString())
 			.thenApplyAsync(r -> new Message(client, r.toJsonObject()));
 	}
 

@@ -4,10 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.json.simple.JSONAware;
-
 import discord.client.BotDiscordClient;
-import simple_json.SjObject;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public class ApplicationCommand extends AbstractDiscordResource {
 	public static enum Type {
@@ -67,14 +66,14 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		return "/applications/" + client.application.id + '/' + id;
 	}
 
-	public static class Payload implements JSONAware {
+	public static class Payload implements SjSerializable {
 		public Type type;
 		public String name;
 		public String description;
 		public List<ApplicationCommandOption.Payload> options;
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 			obj.put("name", name);
 			if (type != null)
@@ -83,7 +82,7 @@ public class ApplicationCommand extends AbstractDiscordResource {
 				obj.put("description", description);
 			if (options != null && options.size() > 0)
 				obj.put("options", options);
-			return obj.toJSONString();
+			return obj.toJsonString();
 		}
 	}
 }

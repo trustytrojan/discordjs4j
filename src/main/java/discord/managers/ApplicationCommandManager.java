@@ -3,11 +3,10 @@ package discord.managers;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.json.simple.JSONArray;
-
 import discord.client.BotDiscordClient;
 import discord.structures.ApplicationCommand;
-import simple_json.SjObject;
+import sj.Sj;
+import sj.SjObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
 	private final BotDiscordClient client;
@@ -33,12 +32,12 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	}
 
 	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {
-		return client.api.post(basePath, payload.toJSONString())
+		return client.api.post(basePath, payload.toJsonString())
 			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<ApplicationCommand> edit(String id, ApplicationCommand.Payload payload) {
-		return client.api.patch(basePath + '/' + id, payload.toJSONString())
+		return client.api.patch(basePath + '/' + id, payload.toJsonString())
 			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
@@ -48,7 +47,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 
 	public CompletableFuture<Void> set(List<ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
-		return client.api.put(basePath, JSONArray.toJSONString(commandPayloads))
+		return client.api.put(basePath, Sj.write(commandPayloads))
 			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 

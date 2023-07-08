@@ -3,23 +3,22 @@ package discord.client;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import simple_json.SimpleJson;
-import simple_json.SjObject;
+import sj.Sj;
+import sj.SjObject;
 
 /**
  * An HttpClient wrapper for making requests to the Discord API.
  */
 public final class APIClient {
-	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {
-	}
+	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {}
 
 	private static enum HttpMethod {
 		GET, POST, PUT, PATCH, DELETE
@@ -41,11 +40,11 @@ public final class APIClient {
 		}
 
 		public SjObject toJsonObject() {
-			return SimpleJson.parseObject(body);
+			return Sj.parseObject(body);
 		}
 
 		public List<SjObject> toJsonObjectArray() {
-			return SimpleJson.parseObjectArray(body);
+			return Sj.parseObjectArray(body);
 		}
 	}
 
@@ -53,30 +52,29 @@ public final class APIClient {
 		final var request = requestWrapper.request;
 
 		return HTTP_CLIENT.sendAsync(request, BODY_HANDLER)
-				.thenApplyAsync(response -> {
-					final var statusCode = response.statusCode();
-					final var responseBody = response.body();
+			.thenApplyAsync(response -> {
+				final var statusCode = response.statusCode();
+				final var responseBody = response.body();
 
-					if (statusCode == 429)
-						return retryAfter(requestWrapper, responseBody).join();
-					else if (statusCode >= 400) {
-						log(request.method() + ' ' + requestWrapper.path + " -> "
-								+ response.statusCode()
-								+ "\nResponse body: " + response.body()
-								+ "\nRequest body: " + requestWrapper.body);
-						throw new RuntimeException();
-					}
+				if (statusCode == 429)
+					return retryAfter(requestWrapper, responseBody).join();
+				else if (statusCode >= 400) {
+					log(request.method() + ' ' + requestWrapper.path + " -> "
+						+ response.statusCode()
+						+ "\nResponse body: " + response.body()
+						+ "\nRequest body: " + requestWrapper.body);
+					throw new RuntimeException();
+				}
 
-					log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);
+				log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);
 
-					return new JsonHttpResponse(response.body());
-				});
+				return new JsonHttpResponse(response.body());
+			});
 	}
 
-	private static CompletableFuture<JsonHttpResponse> retryAfter(HttpRequestWithBody requestWrapper,
-			String responseBody) {
-		final var retryAfter = (int) (1000
-				* SimpleJson.parseObject(responseBody).getDouble("retry_after"));
+	private static CompletableFuture<JsonHttpResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
+		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
+
 		log("Being rate limited for " + retryAfter + "ms");
 
 		try {
@@ -98,9 +96,7 @@ public final class APIClient {
 	}
 
 	public void setToken(String token) {
-		this.token = (bot)
-				? "Bot " + token
-				: token;
+		this.token = bot ? ("Bot " + token) : token;
 	}
 
 	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String requestBody) {

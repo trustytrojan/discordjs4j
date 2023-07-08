@@ -5,7 +5,7 @@ import java.util.Map;
 
 import discord.client.DiscordClient;
 import discord.enums.AuditLogEvent;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class AuditLogEntry {
 	public final String id;

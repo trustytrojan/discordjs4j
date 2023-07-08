@@ -1,7 +1,7 @@
 package discord.structures;
 
 import discord.client.DiscordClient;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public abstract class AbstractGuildResource extends AbstractDiscordResource implements GuildResource {
 	protected final Guild guild;

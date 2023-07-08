@@ -28,25 +28,17 @@
 			<version>1.5.3</version>
 		</dependency>
 
-		<!-- https://jitpack.io/#trustytrojan/java-signals -->
+		<dependency>
+			<groupId>com.github.trustytrojan</groupId>
+			<artifactId>simple-json</artifactId>
+			<version>26d3d03915</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>java-signals</artifactId>
-			<version>cd35118f91</version>
+			<version>a588941e55</version>
 		</dependency>
-
-		<!-- https://jitpack.io/#trustytrojan/simple-json -->
-		<dependency>
-			<groupId>com.github.trustytrojan</groupId>
-			<artifactId>simple-json</artifactId>
-			<version>71b790eff3</version>
-		</dependency>
-
-		<!-- <dependency>
-			<groupId>trustytrojan</groupId>
-			<artifactId>simple-json</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency> -->
 	</dependencies>
 
 </project>

@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.channels.GuildChannel;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(DiscordClient client, Guild guild) {
@@ -23,7 +23,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	}
 
 	public CompletableFuture<GuildChannel> create(GuildChannel.Payload payload) {
-		return client.api.post("/guilds/" + guild.id + "/channels", payload.toJSONString())
+		return client.api.post("/guilds/" + guild.id + "/channels", payload.toJsonString())
 			.thenApply(r -> cache(r.toJsonObject()));
 	}
 

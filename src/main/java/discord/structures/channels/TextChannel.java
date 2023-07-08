@@ -2,7 +2,7 @@ package discord.structures.channels;
 
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class TextChannel extends AbstractGuildChannel implements TextBasedChannel {
 	public static class Payload extends GuildChannel.Payload {
@@ -17,7 +17,7 @@ public class TextChannel extends AbstractGuildChannel implements TextBasedChanne
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = toSjObject();
 			if (type != null)
 				obj.put("type", type.value);

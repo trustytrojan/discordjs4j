@@ -9,7 +9,7 @@ import discord.managers.guild.RoleManager;
 import discord.structures.channels.TextChannel;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class Guild extends AbstractDiscordResource {
 	public final GuildMemberManager members;

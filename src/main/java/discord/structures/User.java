@@ -7,9 +7,9 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;
-import discord.util.Util;
 import discord.util.CDN.URLFactory;
-import simple_json.SjObject;
+import discord.util.Util;
+import sj.SjObject;
 
 public class User extends AbstractDiscordResource {
 	public static enum Flag {

@@ -17,8 +17,8 @@ import discord.structures.channels.TextBasedChannel;
 import discord.structures.interactions.Interaction;
 import discord.util.RunnableRepeater;
 import discord.util.Util;
-import simple_json.SimpleJson;
-import simple_json.SjObject;
+import sj.Sj;
+import sj.SjObject;
 
 public class GatewayClient extends WebSocketClient {
 	private static final URI DISCORD_GATEWAY_URI;
@@ -98,7 +98,7 @@ public class GatewayClient extends WebSocketClient {
 	// Let's give the WebSocketClient's thread a break from this mess
 
 	public void onMessageAsync(String rawJson) {
-		final var obj = SimpleJson.parseObject(rawJson);
+		final var obj = Sj.parseObject(rawJson);
 		final var opcode = GatewayOpcode.resolve(obj.getShort("op"));
 
 		switch (opcode) {
@@ -168,7 +168,7 @@ public class GatewayClient extends WebSocketClient {
 					}
 
 					default -> {
-						final var dataString = obj.get("d").toString();
+						final var dataString = obj.getObject("d").toString();
 						if (dataString.length() < 1000)
 							System.out.println(dataString);
 					}

@@ -3,7 +3,7 @@ package discord.structures;
 import java.util.List;
 
 import discord.client.DiscordClient;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public final class ClientUser extends User {
 	public static enum PremiumType {

@@ -6,7 +6,7 @@ import discord.client.DiscordClient;
 import discord.managers.guild.GuildMemberRoleManager;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class GuildMember extends AbstractDiscordResource implements GuildResource {
 	public static enum Flags {

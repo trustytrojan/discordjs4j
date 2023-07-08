@@ -3,7 +3,7 @@ package discord.structures.components;
 import java.util.Arrays;
 import java.util.List;
 
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class ActionRow extends MessageComponent {
 	public final List<MessageComponent> components;
@@ -21,9 +21,9 @@ public class ActionRow extends MessageComponent {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = toJSONObject();
 		obj.put("components", components);
-		return obj.toJSONString();
+		return obj.toJsonString();
 	}
 }

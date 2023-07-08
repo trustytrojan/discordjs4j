@@ -8,17 +8,16 @@ import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.json.simple.JSONAware;
-
-import simple_json.SjObject;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.User;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public class GroupDMChannel extends DMBasedChannel implements TextBasedChannel {
-	public static class Payload implements JSONAware {
+	public static class Payload implements SjSerializable {
 		public String name;
 		private String iconBase64;
 
@@ -40,13 +39,13 @@ public class GroupDMChannel extends DMBasedChannel implements TextBasedChannel {
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 			if (name != null)
 				obj.put("name", name);
 			if (iconBase64 != null)
 				obj.put("icon", iconBase64);
-			return obj.toJSONString();
+			return obj.toJsonString();
 		}
 	}
 

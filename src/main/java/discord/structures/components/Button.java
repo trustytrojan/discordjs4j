@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.SjObject;
+import sj.SjObject;
 
 public abstract class Button extends MessageComponent {
 	public static enum Style {

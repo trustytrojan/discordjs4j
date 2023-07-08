@@ -5,17 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.json.simple.JSONAware;
-
 import discord.client.DiscordClient;
 import discord.structures.channels.GuildChannel;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.components.ActionRow;
 import discord.structures.components.MessageComponent;
-import simple_json.SjObject;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public class Message extends AbstractDiscordResource {
-	public static class Payload implements JSONAware {
+	public static class Payload implements SjSerializable {
 		public String content;
 		public String replyMessageId;
 		public List<Embed> embeds;
@@ -51,7 +50,7 @@ public class Message extends AbstractDiscordResource {
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			return toJSONObject().toString();
 		}
 	}
@@ -102,9 +101,8 @@ public class Message extends AbstractDiscordResource {
 		final var rawComponents = data.getObjectArray("components");
 		if (rawComponents != null) {
 			final var _components = new LinkedList<MessageComponent>();
-			for (final var rawComponent : data.getObjectArray("components")) {
+			for (final var rawComponent : data.getObjectArray("components"))
 				_components.add(MessageComponent.construct(rawComponent));
-			}
 			components = Collections.unmodifiableList(_components);
 		} else {
 			components = Collections.emptyList();

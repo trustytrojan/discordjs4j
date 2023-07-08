@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.GuildMember;
 import discord.structures.Role;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	public final GuildMember member;

@@ -2,7 +2,7 @@ package discord.structures.channels;
 
 import discord.client.DiscordClient;
 import discord.structures.AbstractGuildResource;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public abstract class AbstractGuildChannel extends AbstractGuildResource implements GuildChannel {
 	private final String url = "https://discord.com/channels/" + guild.id + '/' + id;

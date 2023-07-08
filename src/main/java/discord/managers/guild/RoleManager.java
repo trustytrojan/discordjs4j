@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.Role;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class RoleManager extends GuildResourceManager<Role> {
 	public final String basePath;
@@ -30,12 +30,12 @@ public class RoleManager extends GuildResourceManager<Role> {
 	}
 
 	public CompletableFuture<Role> create(Role.Payload payload) {
-		return client.api.post(basePath, payload.toJSONString())
+		return client.api.post(basePath, payload.toJsonString())
 			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Role> edit(String id, Role.Payload payload) {
-		return client.api.patch(basePath + id, payload.toJSONString())
+		return client.api.patch(basePath + id, payload.toJsonString())
 			.thenApplyAsync(r -> cache(r.toJsonObject()));
 	}
 

@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.ClientUser;
 import discord.structures.User;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class UserManager extends ResourceManager<User> {
 	public UserManager(DiscordClient client) {

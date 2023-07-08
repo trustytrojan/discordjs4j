@@ -6,7 +6,7 @@ import java.util.List;
 import discord.client.BotDiscordClient;
 import discord.structures.Message;
 import discord.structures.components.MessageComponent;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class MessageComponentInteraction extends Interaction {
 	public final Message message;

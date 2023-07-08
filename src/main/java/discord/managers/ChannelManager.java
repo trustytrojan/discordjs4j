@@ -6,7 +6,7 @@ import discord.client.DiscordClient;
 import discord.structures.channels.Channel;
 import discord.structures.channels.GroupDMChannel;
 import discord.structures.channels.GuildChannel;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class ChannelManager extends ResourceManager<Channel> {
 	public ChannelManager(DiscordClient client) {
@@ -19,12 +19,12 @@ public class ChannelManager extends ResourceManager<Channel> {
 	}
 
 	public CompletableFuture<GroupDMChannel> editGroupDM(String id, GroupDMChannel.Payload payload) {
-		return client.api.patch("/channels/" + id, payload.toJSONString())
+		return client.api.patch("/channels/" + id, payload.toJsonString())
 			.thenApply(r -> (GroupDMChannel) cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<GuildChannel> editGuildChannel(String id, GuildChannel.Payload payload) {
-		return client.api.patch("/channels/" + id, payload.toJSONString())
+		return client.api.patch("/channels/" + id, payload.toJsonString())
 			.thenApply(r -> (GuildChannel) cache(r.toJsonObject()));
 	}
 

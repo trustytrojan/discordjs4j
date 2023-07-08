@@ -2,7 +2,7 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class TextInput extends MessageComponent {
 	public static enum Style {
@@ -46,7 +46,7 @@ public class TextInput extends MessageComponent {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = toJSONObject();
 		obj.put("custom_id", customId);
 		obj.put("style", style.value());
@@ -61,6 +61,6 @@ public class TextInput extends MessageComponent {
 			obj.put("value", value);
 		if (placeholder != null)
 			obj.put("placeholder", placeholder);
-		return obj.toJSONString();
+		return obj.toJsonString();
 	}
 }

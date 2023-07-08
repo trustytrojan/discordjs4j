@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.structures.Guild;
 import discord.structures.GuildMember;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	private final String basePath;

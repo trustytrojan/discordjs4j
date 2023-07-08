@@ -12,7 +12,7 @@ import discord.structures.GuildMember;
 import discord.structures.Role;
 import discord.structures.User;
 import discord.structures.channels.GuildChannel;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	private final ChatInputInteraction interaction;

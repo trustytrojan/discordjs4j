@@ -3,7 +3,7 @@ package discord.structures.channels;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.User;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class DMChannel extends DMBasedChannel implements TextBasedChannel {
 	private final MessageManager messages;

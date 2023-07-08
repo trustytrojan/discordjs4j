@@ -2,11 +2,10 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import org.json.simple.JSONAware;
+import sj.SjObject;
+import sj.SjSerializable;
 
-import simple_json.SjObject;
-
-public class SelectOption implements JSONAware {
+public class SelectOption implements SjSerializable {
 	public final String label;
 	public final String value;
 	public String description;
@@ -31,7 +30,7 @@ public class SelectOption implements JSONAware {
 	}
 
 	@Override
-	public String toJSONString() {
+	public String toJsonString() {
 		final var obj = new SjObject();
 		obj.put("label", label);
 		obj.put("value", value);
@@ -41,6 +40,6 @@ public class SelectOption implements JSONAware {
 			obj.put("emoji", unicodeEmoji);
 		if (isDefault)
 			obj.put("default", Boolean.TRUE);
-		return obj.toJSONString();
+		return obj.toJsonString();
 	}
 }

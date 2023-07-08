@@ -3,7 +3,7 @@ package discord.structures;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public abstract class AbstractDiscordResource implements DiscordResource {
 	protected final DiscordClient client;

@@ -1,11 +1,10 @@
 package discord.structures;
 
-import org.json.simple.JSONAware;
-
 import discord.client.DiscordClient;
 import discord.util.CDN;
 import discord.util.CDN.URLFactory;
-import simple_json.SjObject;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public class Role extends AbstractDiscordResource implements GuildResource, Mentionable {
 	private final Guild guild;
@@ -82,7 +81,7 @@ public class Role extends AbstractDiscordResource implements GuildResource, Ment
 		return apiPath;
 	}
 
-	public static class Payload implements JSONAware {
+	public static class Payload implements SjSerializable {
 		public String name;
 		public String permissions;
 		public Long color;
@@ -91,7 +90,7 @@ public class Role extends AbstractDiscordResource implements GuildResource, Ment
 		public boolean mentionable;
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = new SjObject();
 			if (name != null)
 				obj.put("name", name);
@@ -105,7 +104,7 @@ public class Role extends AbstractDiscordResource implements GuildResource, Ment
 				obj.put("unicode_emoji", unicodeEmoji);
 			if (mentionable)
 				obj.put("mentionable", Boolean.TRUE);
-			return obj.toJSONString();
+			return obj.toJsonString();
 		}
 	}
 }

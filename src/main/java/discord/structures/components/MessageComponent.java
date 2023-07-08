@@ -2,11 +2,10 @@ package discord.structures.components;
 
 import java.util.Objects;
 
-import org.json.simple.JSONAware;
+import sj.SjObject;
+import sj.SjSerializable;
 
-import simple_json.SjObject;
-
-public abstract class MessageComponent implements JSONAware {
+public abstract class MessageComponent implements SjSerializable {
 	public static enum Type {
 		ACTION_ROW,
 		BUTTON,
@@ -46,7 +45,7 @@ public abstract class MessageComponent implements JSONAware {
 
 	public final Type type;
 
-	// When parsing SimpleJson from Discord
+	// When parsing Sj from Discord
 	protected MessageComponent(final SjObject data) {
 		type = Type.resolve(Objects.requireNonNull(data.getShort("type")));
 	}

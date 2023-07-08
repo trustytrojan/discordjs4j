@@ -1,7 +1,7 @@
 package discord.structures.channels;
 
 import discord.client.DiscordClient;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public class VoiceChannel extends AbstractGuildChannel {
 	public static class Payload extends GuildChannel.Payload {
@@ -17,7 +17,7 @@ public class VoiceChannel extends AbstractGuildChannel {
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = toSjObject();
 			obj.put("type", Channel.Type.GUILD_VOICE.value);
 			if (nsfw)

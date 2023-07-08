@@ -2,9 +2,8 @@ package discord.structures;
 
 import java.util.List;
 
-import org.json.simple.JSONAware;
-
-import simple_json.SjObject;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public final class ApplicationCommandOption {
 	public static enum Type {
@@ -34,7 +33,7 @@ public final class ApplicationCommandOption {
 		}
 	}
 
-	public static class Choice implements JSONAware {
+	public static class Choice implements SjSerializable {
 		public final String name;
 		public final Object value;
 
@@ -51,7 +50,7 @@ public final class ApplicationCommandOption {
 		}
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			return """
 					{
 						"name": "%s",
@@ -62,11 +61,11 @@ public final class ApplicationCommandOption {
 
 		@Override
 		public String toString() {
-			return toJSONString();
+			return toJsonString();
 		}
 	}
 
-	public static abstract class Payload implements JSONAware {
+	public static abstract class Payload implements SjSerializable {
 		public Type type;
 		public String name;
 		public String description;
@@ -85,13 +84,13 @@ public final class ApplicationCommandOption {
 		public List<Choice> choices;
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = toJSONObject();
 			if (required)
 				obj.put("required", Boolean.TRUE);
 			if (choices != null && choices.size() > 0)
 				obj.put("choices", choices);
-			return obj.toJSONString();
+			return obj.toJsonString();
 		}
 	}
 
@@ -99,11 +98,11 @@ public final class ApplicationCommandOption {
 		public List<Payload> options;
 
 		@Override
-		public String toJSONString() {
+		public String toJsonString() {
 			final var obj = toJSONObject();
 			if (options != null && options.size() > 0)
 				obj.put("options", options);
-			return obj.toJSONString();
+			return obj.toJsonString();
 		}
 	}
 

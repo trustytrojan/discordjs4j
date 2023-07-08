@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
 import discord.structures.DiscordResource;
-import simple_json.SjObject;
+import sj.SjObject;
 
 public interface Channel extends DiscordResource {
 	public static enum Type {
