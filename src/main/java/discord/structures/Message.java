@@ -23,15 +23,11 @@ public class Message extends AbstractDiscordResource {
 
 		public SjObject toJSONObject() {
 			final var obj = new SjObject();
-
-			if (content != null) {
+			if (content != null)
 				obj.put("content", content);
-			}
 
 			if (replyMessageId != null) {
-				final var messageReference = new SjObject();
-				messageReference.put("message_id", replyMessageId);
-				obj.put("message_reference", messageReference);
+				obj.put("message_reference", "{\"message_id\":\"" + replyMessageId + "\"}");
 			}
 
 			if (embeds != null && embeds.size() > 0) {
