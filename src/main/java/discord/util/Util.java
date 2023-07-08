@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,14 @@ public final class Util {
 				e.printStackTrace();
 				return null;
 			};
+
+	public static void repeat(Runnable r, long ms) {
+		new Timer().schedule(new TimerTask() {
+			public void run() {
+				r.run();
+			}
+		}, 0, ms);
+	}
 
 	public static String readFile(String path) {
 		try {

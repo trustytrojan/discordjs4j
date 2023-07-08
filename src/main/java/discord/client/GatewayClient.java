@@ -15,7 +15,6 @@ import discord.structures.ClientUser;
 import discord.structures.Message;
 import discord.structures.channels.TextBasedChannel;
 import discord.structures.interactions.Interaction;
-import discord.util.RunnableRepeater;
 import discord.util.Util;
 import sj.Sj;
 import sj.SjObject;
@@ -32,7 +31,6 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	private final DiscordClient client;
-	public final RunnableRepeater repeater = new RunnableRepeater();
 	private long sequenceNumber;
 	private long heartbeatSentAt;
 	private long ping;
@@ -47,52 +45,51 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	public void login(String token, GatewayIntent[] intents) {
-		try {
-			if (!connectBlocking()) {
-				System.exit(1);
-			}
-		} catch (InterruptedException e) {
+		try { if (!connectBlocking()) System.exit(1); }
+		catch (InterruptedException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 
 		send("""
-				{
-					"op": %d,
-					"d": {
-						"token": "%s",
-						"intents": %d,
-						"properties": {
-							"os": "%s",
-							"browser": "discordjs4j",
-							"device": "discordjs4j"
-						}
+			{
+				"op": %d,
+				"d": {
+					"token": "%s",
+					"intents": %d,
+					"properties": {
+						"os": "%s",
+						"browser": "discordjs4j",
+						"device": "discordjs4j"
 					}
 				}
-				""".formatted(
+			}
+			""".formatted(
 				GatewayOpcode.IDENTIFY.value,
 				token,
 				GatewayIntent.sum(intents),
-				System.getProperty("os.name")));
+				System.getProperty("os.name")
+			)
+		);
 	}
 
 	@Override
 	public void onOpen(ServerHandshake handshake) {
 		System.out.printf("""
-				[GatewayClient] Connection to Discord gateway opened
-					Status code: %d
-					Status message: %s
-					Content: %s
-				""",
-				handshake.getHttpStatus(),
-				handshake.getHttpStatusMessage(),
-				handshake.getContent());
+			[GatewayClient] Connection to Discord gateway opened
+				Status code: %d
+				Status message: %s
+				Content: %s
+			""",
+			handshake.getHttpStatus(),
+			handshake.getHttpStatusMessage(),
+			handshake.getContent());
 	}
 
 	@Override
 	public void onMessage(String message) {
 		CompletableFuture.runAsync(() -> onMessageAsync(message))
-				.exceptionallyAsync(Util.PRINT_STACK_TRACE);
+			.exceptionallyAsync(Util.PRINT_STACK_TRACE);
 	}
 
 	// Let's give the WebSocketClient's thread a break from this mess
@@ -109,9 +106,7 @@ public class GatewayClient extends WebSocketClient {
 				System.out.printf("[GatewayClient] Event received: %s\n", t);
 
 				final var event = GatewayEvent.valueOf(t);
-				if (event == null) {
-					return;
-				}
+				if (event == null) return;
 
 				switch (event) {
 					case READY -> {
@@ -133,8 +128,7 @@ public class GatewayClient extends WebSocketClient {
 					case GUILD_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
 						final var removed = client.guilds.cache.remove(id);
-						if (removed == null)
-							return;
+						if (removed == null) return;
 						client.guildDelete.emit(removed);
 					}
 
@@ -143,8 +137,7 @@ public class GatewayClient extends WebSocketClient {
 					case CHANNEL_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
 						final var removed = client.channels.cache.remove(id);
-						if (removed == null)
-							return;
+						if (removed == null) return;
 						client.channelDelete.emit(removed);
 					}
 
@@ -162,15 +155,12 @@ public class GatewayClient extends WebSocketClient {
 						final var d = obj.getObject("d");
 						final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
 						final var message = channel.messages().cache.remove(d.getString("id"));
-						if (message != null) {
-							client.messageDelete.emit(message);
-						}
+						if (message != null) client.messageDelete.emit(message);
 					}
 
 					default -> {
 						final var dataString = obj.getObject("d").toString();
-						if (dataString.length() < 1000)
-							System.out.println(dataString);
+						if (dataString.length() < 1000) System.out.println(dataString);
 					}
 				}
 			}
@@ -186,10 +176,9 @@ public class GatewayClient extends WebSocketClient {
 				// Interval in milliseconds that Discord wants us to wait before
 				// sending another heartbeat.
 				final var heartbeat_interval = d.getLong("heartbeat_interval");
-				System.out.printf("[GatewayClient] Hello event received; Heartbeat interval: %dms\n",
-						heartbeat_interval);
+				System.out.printf("[GatewayClient] Hello event received; Heartbeat interval: %dms\n", heartbeat_interval);
 
-				repeater.repeat(() -> {
+				Util.repeat(() -> {
 					System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
 					final var heartbeat = new SjObject();
 					heartbeat.put("op", GatewayOpcode.HEARTBEAT.value);
@@ -199,8 +188,7 @@ public class GatewayClient extends WebSocketClient {
 				}, heartbeat_interval);
 			}
 
-			default -> {
-			}
+			default -> {}
 		}
 	}
 

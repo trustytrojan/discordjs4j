@@ -3,7 +3,6 @@ package discord.util;
 import java.util.List;
 
 public final class CDN {
-
 	private static final String base_url = "https://cdn.discordapp.com";
 	private static final List<Integer> allowed_sizes = List.of(16, 32, 64, 128, 256, 512, 1024, 2048, 4096);
 	private static final List<String> allowed_extensions = List.of("webp", "png", "jpg", "jpeg", "gif");
@@ -87,5 +86,4 @@ public final class CDN {
 			return url(0, null);
 		}
 	}
-
 }
