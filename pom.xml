@@ -30,8 +30,8 @@
 
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
-			<artifactId>simple-json</artifactId>
-			<version>a9b80fbcfb</version>
+			<artifactId>sj</artifactId>
+			<version>648f61bdc4</version>
 		</dependency>
 
 		<dependency>
