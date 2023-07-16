@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.DiscordResource;
+import discord.resources.DiscordResource;
 import sj.SjObject;
 
 public abstract class ResourceManager<T extends DiscordResource> implements Iterable<T> {

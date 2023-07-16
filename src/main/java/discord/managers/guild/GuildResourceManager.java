@@ -2,8 +2,8 @@ package discord.managers.guild;
 
 import discord.client.DiscordClient;
 import discord.managers.ResourceManager;
-import discord.structures.Guild;
-import discord.structures.GuildResource;
+import discord.resources.GuildResource;
+import discord.resources.guilds.Guild;
 
 public abstract class GuildResourceManager<T extends GuildResource> extends ResourceManager<T> {
 	public final Guild guild;

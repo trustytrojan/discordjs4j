@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.BotDiscordClient;
-import discord.structures.ApplicationCommand;
+import discord.resources.ApplicationCommand;
 import sj.Sj;
 import sj.SjObject;
 
@@ -15,7 +15,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	public ApplicationCommandManager(BotDiscordClient client, String guildId) {
 		super(client);
 		this.client = client;
-		final var start = "/applications/" + client.application.id;
+		final var start = "/applications/" + client.application.id();
 		basePath = start + ((guildId != null)
 							? "/guilds/" + guildId + "/commands"
 							: "/commands");

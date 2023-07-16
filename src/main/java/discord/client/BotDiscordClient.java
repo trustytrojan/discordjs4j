@@ -4,8 +4,8 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.enums.GatewayIntent;
 import discord.managers.ApplicationCommandManager;
-import discord.structures.Application;
-import discord.structures.interactions.Interaction;
+import discord.resources.Application;
+import discord.resources.interactions.Interaction;
 import signals.Signal1;
 
 public class BotDiscordClient extends DiscordClient {

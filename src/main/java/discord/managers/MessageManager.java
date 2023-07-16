@@ -4,8 +4,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.Message;
-import discord.structures.channels.TextBasedChannel;
+import discord.resources.Message;
+import discord.resources.channels.TextBasedChannel;
 import discord.util.Util;
 import sj.SjObject;
 

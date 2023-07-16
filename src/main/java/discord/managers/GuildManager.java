@@ -3,7 +3,7 @@ package discord.managers;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.Guild;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class GuildManager extends ResourceManager<Guild> {

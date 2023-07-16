@@ -3,9 +3,9 @@ package discord.managers;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.channels.Channel;
-import discord.structures.channels.GroupDMChannel;
-import discord.structures.channels.GuildChannel;
+import discord.resources.channels.Channel;
+import discord.resources.channels.GroupDMChannel;
+import discord.resources.channels.GuildChannel;
 import sj.SjObject;
 
 public class ChannelManager extends ResourceManager<Channel> {

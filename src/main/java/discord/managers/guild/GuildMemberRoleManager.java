@@ -3,8 +3,8 @@ package discord.managers.guild;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.GuildMember;
-import discord.structures.Role;
+import discord.resources.GuildMember;
+import discord.resources.Role;
 import sj.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
@@ -14,7 +14,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	public GuildMemberRoleManager(final DiscordClient client, final GuildMember member) {
 		super(client, member.guild);
 		this.member = member;
-		basePath = "/guilds/" + member.guild.id + "/members/" + member.user.id + "/roles/";
+		basePath = "/guilds/" + member.guild.id() + "/members/" + member.user.id() + "/roles/";
 	}
 
 	@Override

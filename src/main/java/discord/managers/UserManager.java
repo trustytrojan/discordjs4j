@@ -3,8 +3,8 @@ package discord.managers;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.structures.ClientUser;
-import discord.structures.User;
+import discord.resources.ClientUser;
+import discord.resources.User;
 import sj.SjObject;
 
 public class UserManager extends ResourceManager<User> {
