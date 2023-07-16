@@ -5,7 +5,6 @@ import java.util.Map;
 
 import discord.client.DiscordClient;
 import discord.enums.AuditLogEvent;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class AuditLogEntry {

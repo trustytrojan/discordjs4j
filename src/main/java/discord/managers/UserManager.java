@@ -29,9 +29,4 @@ public class UserManager extends ResourceManager<User> {
 				return (ClientUser) cache(me);
 			});
 	}
-
-	@Override
-	public CompletableFuture<Void> refreshCache() {
-		throw new UnsupportedOperationException("Global users cache cannot be refreshed");
-	}
 }

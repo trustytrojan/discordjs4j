@@ -40,11 +40,10 @@ public class MessageManager extends ResourceManager<Message> {
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(basePath + id).thenRunAsync(Util.DO_NOTHING);
+		return client.api.delete(basePath + id).thenRunAsync(Util.NO_OP);
 	}
 
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath)
-				.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

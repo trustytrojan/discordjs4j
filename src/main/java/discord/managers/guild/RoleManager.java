@@ -3,8 +3,8 @@ package discord.managers.guild;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.resources.Guild;
 import discord.resources.Role;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class RoleManager extends GuildResourceManager<Role> {
@@ -43,9 +43,7 @@ public class RoleManager extends GuildResourceManager<Role> {
 		return client.api.delete(basePath + id).thenRunAsync(() -> cache.remove(id));
 	}
 
-	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath)
-			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

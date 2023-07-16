@@ -67,6 +67,4 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 
 		return client.api.get(path).thenApply(r -> cache(r.toJsonObject()));
 	}
-
-	public abstract CompletableFuture<Void> refreshCache();
 }

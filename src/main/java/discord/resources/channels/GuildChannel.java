@@ -32,7 +32,7 @@ public interface GuildChannel extends GuildResource, Channel {
 	 * @param payload The data to change in this channel
 	 */
 	default CompletableFuture<Void> edit(Payload payload) {
-		return guild().channels.edit(id(), payload).thenRun(Util.DO_NOTHING);
+		return guild().channels.edit(id(), payload).thenRun(Util.NO_OP);
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel

@@ -51,7 +51,7 @@ public class User extends AbstractDiscordResource {
 					"note": \"%s\"
 				}
 				""".formatted(note);
-		return client.api.put("/users/@me/notes" + id, body).thenRun(Util.DO_NOTHING);
+		return client.api.put("/users/@me/notes/" + id, body).thenRun(Util.NO_OP);
 	}
 
 	public String mention() {

@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 public final class Util {
-	public static final Runnable DO_NOTHING = () -> {};
+	public static final Runnable NO_OP = () -> {};
 
 	public static final Function<Throwable, ? extends Void> PRINT_STACK_TRACE =
 			(final var e) -> {

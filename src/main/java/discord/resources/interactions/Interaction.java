@@ -7,13 +7,13 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.APIClient.JsonHttpResponse;
 import discord.client.BotDiscordClient;
 import discord.resources.Embed;
+import discord.resources.Guild;
 import discord.resources.GuildMember;
 import discord.resources.Message;
 import discord.resources.Permissions;
 import discord.resources.User;
 import discord.resources.channels.TextBasedChannel;
 import discord.resources.components.ActionRow;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public abstract class Interaction {

@@ -42,14 +42,4 @@ public class ChannelManager extends ResourceManager<Channel> {
 	public CompletableFuture<Channel> fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
-
-	public CompletableFuture<Void> fetchDMs() {
-		return client.api.get("/users/@me/channels")
-				.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
-	}
-
-	@Override
-	public CompletableFuture<Void> refreshCache() {
-		throw new UnsupportedOperationException("Global channels cache cannot be refreshed");
-	}
 }

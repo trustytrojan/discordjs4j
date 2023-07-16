@@ -36,7 +36,6 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 		return client.api.delete(basePath + id).thenRunAsync(() -> cache.remove(id));
 	}
 
-	@Override
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
 		return CompletableFuture.allOf(member.fetch(), guild.roles.refreshCache())

@@ -1,4 +1,4 @@
-package discord.resources.guilds;
+package discord.resources;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -9,20 +9,118 @@ import discord.managers.ApplicationCommandManager;
 import discord.managers.guild.GuildChannelManager;
 import discord.managers.guild.GuildMemberManager;
 import discord.managers.guild.RoleManager;
-import discord.resources.AbstractDiscordResource;
-import discord.resources.User;
+import discord.resources.channels.Channel;
 import discord.resources.channels.TextChannel;
 import discord.resources.channels.VoiceChannel;
+import discord.util.BitSet;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
+import sj.SjSerializable;
 
 /**
  * https://discord.com/developers/docs/resources/guild#guild-object
  */
 public class Guild extends AbstractDiscordResource {
+	/**
+	 * https://discord.com/developers/docs/resources/guild#create-guild-json-params
+	 */
+	public static class CreatePayload implements SjSerializable {
+		public static record PartialChannel(String name, Channel.Type type) implements SjSerializable {
+			@Override
+			public String toJsonString() {
+				return """
+					{
+						"name": \"%s\",
+						"type": \"%d\"
+					}
+						""".formatted(name, type.value);
+			}
+		}
+
+		public final String name;
+		// icon
+		public VerificationLevel verificationLevel;
+		public DefaultMessageNotificationLevel defaultMessageNotifications;
+		public ExplicitContentFilterLevel explicitContentFilter;
+		public List<Role.Payload> roles;
+		public List<PartialChannel> channels;
+		public String afkChannelId;
+		public Integer afkTimeout;
+		public String systemChannelId;
+		public BitSet<SystemChannelFlag> systemChannelFlags;
+
+		public CreatePayload(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toJsonString() {
+			final var obj = new SjObject();
+			obj.put("name", name);
+			if (verificationLevel != null) obj.put("verification_level", verificationLevel.ordinal());
+			if (defaultMessageNotifications != null) obj.put("default_message_notifications", defaultMessageNotifications.ordinal());
+			if (explicitContentFilter != null) obj.put("explicit_content_filter", explicitContentFilter.ordinal());
+			if (roles != null) obj.put("roles", roles);
+			if (channels != null) obj.put("channels", channels);
+			if (afkChannelId != null) obj.put("afk_channel_id", afkChannelId);
+			if (afkTimeout != null) obj.put("afk_timeout", afkTimeout);
+			if (systemChannelId != null) obj.put("system_channel_id", systemChannelId);
+			if (systemChannelFlags != null) obj.put("system_channel_flags", systemChannelFlags.asLong());
+			return obj.toJsonString();
+		}
+	}
+
+	/**
+	 * https://discord.com/developers/docs/resources/guild#modify-guild-json-params
+	 */
+	public static class EditPayload implements SjSerializable {
+		public String name;
+		public VerificationLevel verificationLevel;
+		public DefaultMessageNotificationLevel defaultMessageNotifications;
+		public ExplicitContentFilterLevel explicitContentFilter;
+		public String afkChannelId;
+		public Integer afkTimeout;
+		// icon
+		public String ownerId;
+		// splash
+		// discovery_splash
+		// banner
+		public String systemChannelId;
+		public BitSet<SystemChannelFlag> systemChannelFlags;
+		public String rulesChannelId;
+		public String publicUpdatesChannelId;
+		public String preferredLocale;
+		public List<Feature> features;
+		public String description;
+		public Boolean premiumProgressBarEnabled;
+		public String safetyAlertsChannelId;
+
+		@Override
+		public String toJsonString() {
+			final var obj = new SjObject();
+			if (name != null) obj.put("name", name);
+			if (verificationLevel != null) obj.put("verification_level", verificationLevel.ordinal());
+			if (defaultMessageNotifications != null) obj.put("default_message_notifications", defaultMessageNotifications.ordinal());
+			if (explicitContentFilter != null) obj.put("explicit_content_filter", explicitContentFilter.ordinal());
+			if (afkChannelId != null) obj.put("afk_channel_id", afkChannelId);
+			if (afkTimeout != null) obj.put("afk_timeout", afkTimeout);
+			if (ownerId != null) obj.put("owner_id", ownerId);
+			if (systemChannelId != null) obj.put("system_channel_id", systemChannelId);
+			if (systemChannelFlags != null) obj.put("system_channel_flags", systemChannelFlags.asLong());
+			if (rulesChannelId != null) obj.put("rules_channel_id", rulesChannelId);
+			if (publicUpdatesChannelId != null) obj.put("public_updates_channel_id", publicUpdatesChannelId);
+			if (preferredLocale != null) obj.put("preferred_locale", preferredLocale);
+			if (features != null) obj.put("features", features);
+			if (description != null) obj.put("description", description);
+			if (premiumProgressBarEnabled != null) obj.put("premium_progress_bar_enabled", premiumProgressBarEnabled);
+			if (safetyAlertsChannelId != null) obj.put("safety_alerts_channel_id", safetyAlertsChannelId);
+			return obj.toJsonString();
+		}
+	}
+
 	/**
 	 * https://discord.com/developers/docs/resources/guild#guild-object-default-message-notification-level
 	 */ 
@@ -56,30 +154,58 @@ public class Guild extends AbstractDiscordResource {
 	/**
 	 * https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
 	 */
-	public static class SystemChannelFlags {
-		private final long bitset;
-
-		private SystemChannelFlags(long bitset) {
-			this.bitset = bitset;
+	public static enum SystemChannelFlag implements BitSet.Enum {
+		SUPPRESS_JOIN_NOTIFICATIONS(1 << 0),
+		SUPPRESS_PREMIUM_SUBSCRIPTIONS(1 << 1),
+		SUPPRESS_GUILD_REMINDER_NOTIFICATIONS(1 << 2),
+		SUPPRESS_JOIN_NOTIFICATION_REPLIES(1 << 3),
+		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS(1 << 4),
+		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES(1 << 5);
+	
+		private final int value;
+	
+		private SystemChannelFlag(int value) {
+			this.value = value;
 		}
 
-		public boolean has(Flag flag) {
-			return (bitset & flag.value) != 0;
+		@Override
+		public long value() {
+			return value;
 		}
+	}
 
-		public static enum Flag {
-			SUPPRESS_JOIN_NOTIFICATIONS(1 << 0),
-			SUPPRESS_PREMIUM_SUBSCRIPTIONS(1 << 1),
-			SUPPRESS_GUILD_REMINDER_NOTIFICATIONS(1 << 2),
-			SUPPRESS_JOIN_NOTIFICATION_REPLIES(1 << 3),
-			SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS(1 << 4),
-			SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES(1 << 5);
-		
-			public final int value;
-		
-			private Flag(int value) {
-				this.value = value;
-			}
+	public static enum Feature implements SjSerializable {
+		ANIMATED_BANNER,
+		ANIMATED_ICON,
+		APPLICATION_COMMAND_PERMISSIONS_V2,
+		AUTO_MODERATION,
+		BANNER,
+		COMMUNITY,
+		CREATOR_MONETIZABLE_PROVISIONAL,
+		CREATOR_STORE_PAGE,
+		DEVELOPER_SUPPORT_SERVER,
+		DISCOVERABLE,
+		FEATURABLE,
+		INVITES_DISABLED,
+		INVITE_SPLASH,
+		MEMBER_VERIFICATION_GATE_ENABLED,
+		MORE_STICKERS,
+		NEWS,
+		PARTNERED,
+		PREVIEW_ENABLED,
+		RAID_ALERTS_DISABLED,
+		ROLE_ICONS,
+		ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE,
+		ROLE_SUBSCRIPTIONS_ENABLED,
+		TICKETED_EVENTS_ENABLED,
+		VANITY_URL,
+		VERIFIED,
+		VIP_REGIONS,
+		WELCOME_SCREEN_ENABLED;
+
+		@Override
+		public String toJsonString() {
+			return '"' + name() + '"';
 		}
 	}
 
@@ -219,8 +345,8 @@ public class Guild extends AbstractDiscordResource {
 		return client.channels.fetch(systemChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
-	public SystemChannelFlags systemChannelFlags() {
-		return new SystemChannelFlags(data.getLong("system_channel_flags"));
+	public BitSet<SystemChannelFlag> systemChannelFlags() {
+		return new BitSet<>(data.getLong("system_channel_flags"));
 	}
 
 	public String rulesChannelId() {

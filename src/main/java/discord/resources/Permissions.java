@@ -7,8 +7,8 @@ public final class Permissions {
 		this.bitset = bitset;
 	}
 
-	public boolean has(Flag permission) {
-		return (bitset & permission.value) != 0;
+	public boolean has(Flag f) {
+		return (bitset & f.value) != 0;
 	}
 
 	public static enum Flag {
@@ -56,9 +56,9 @@ public final class Permissions {
 		VIEW_CREATOR_MONETIZATION_ANALYTICS(1 << 41),
 		USE_SOUNDBOARD(1 << 42);
 
-		public final int value;
+		public final long value;
 
-		private Flag(int value) {
+		private Flag(long value) {
 			this.value = value;
 		}
 	}

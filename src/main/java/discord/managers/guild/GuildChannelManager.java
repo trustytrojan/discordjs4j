@@ -3,8 +3,8 @@ package discord.managers.guild;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.resources.Guild;
 import discord.resources.channels.GuildChannel;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
@@ -35,7 +35,6 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 		return client.channels.delete(id);
 	}
 
-	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/guilds/" + guild.id() + "/channels")
 			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));

@@ -1,7 +1,6 @@
 package discord.resources;
 
 import discord.client.DiscordClient;
-import discord.resources.guilds.Guild;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;

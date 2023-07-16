@@ -1,7 +1,6 @@
 package discord.resources;
 
 import discord.client.DiscordClient;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public abstract class AbstractGuildResource extends AbstractDiscordResource implements GuildResource {

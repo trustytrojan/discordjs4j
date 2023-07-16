@@ -4,7 +4,6 @@ import java.time.Instant;
 
 import discord.client.DiscordClient;
 import discord.managers.guild.GuildMemberRoleManager;
-import discord.resources.guilds.Guild;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;

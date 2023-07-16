@@ -1,18 +1,14 @@
 package discord.client;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
 import discord.enums.GatewayIntent;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.managers.UserManager;
 import discord.resources.AuditLogEntry;
 import discord.resources.ClientUser;
+import discord.resources.Guild;
 import discord.resources.Message;
 import discord.resources.channels.Channel;
-import discord.resources.guilds.CurrentUserGuild;
-import discord.resources.guilds.Guild;
 import signals.Signal0;
 import signals.Signal1;
 
@@ -41,9 +37,5 @@ public abstract class DiscordClient {
 	public void login(String token, GatewayIntent[] intents) {
 		api.setToken(token);
 		gateway.login(token, intents);
-	}
-
-	public CompletableFuture<List<CurrentUserGuild>> getCurrentGuilds() {
-		return api.get("/users/@me/guilds").thenApply(r -> r.toJsonObjectArray().stream().map(CurrentUserGuild::new).toList());
 	}
 }

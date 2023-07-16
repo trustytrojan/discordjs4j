@@ -3,8 +3,8 @@ package discord.managers.guild;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.resources.Guild;
 import discord.resources.GuildMember;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class GuildMemberManager extends GuildResourceManager<GuildMember> {
@@ -25,7 +25,6 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 		return super.fetch(id, basePath + '/' + id, force);
 	}
 
-	@Override
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get(basePath)
 			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
