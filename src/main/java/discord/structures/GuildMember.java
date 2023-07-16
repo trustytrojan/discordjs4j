@@ -5,6 +5,8 @@ import java.time.Instant;
 import discord.client.DiscordClient;
 import discord.managers.guild.GuildMemberRoleManager;
 import discord.util.CDN;
+import discord.util.CDN.AllowedExtension;
+import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
@@ -44,7 +46,7 @@ public class GuildMember extends AbstractDiscordResource implements GuildResourc
 		}
 
 		@Override
-		public String url(final int size, final String extension) {
+		public String url(AllowedSize size, AllowedExtension extension) {
 			return CDN.guildMemberAvatar(guild.id, user.id, hash(), size, extension);
 		}
 	};

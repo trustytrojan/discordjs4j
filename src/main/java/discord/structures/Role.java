@@ -2,6 +2,8 @@ package discord.structures;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;
+import discord.util.CDN.AllowedExtension;
+import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
@@ -61,7 +63,7 @@ public class Role extends AbstractDiscordResource implements GuildResource, Ment
 		}
 
 		@Override
-		public String url(final int size, final String extension) {
+		public String url(AllowedSize size, AllowedExtension extension) {
 			return CDN.roleIcon(id, hash(), size, extension);
 		}
 	};

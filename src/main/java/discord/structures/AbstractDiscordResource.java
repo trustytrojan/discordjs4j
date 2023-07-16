@@ -1,7 +1,5 @@
 package discord.structures;
 
-import java.util.concurrent.CompletableFuture;
-
 import discord.client.DiscordClient;
 import sj.SjObject;
 
@@ -14,10 +12,6 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 		this.client = client;
 		setData(data);
 		id = data.getString("id");
-	}
-
-	public CompletableFuture<Void> fetch() {
-		return client.api.get(apiPath()).thenAcceptAsync(r -> setData(r.toJsonObject()));
 	}
 
 	@Override

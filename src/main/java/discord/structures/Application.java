@@ -2,9 +2,14 @@ package discord.structures;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;
+import discord.util.CDN.AllowedExtension;
+import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
+/**
+ * https://discord.com/developers/docs/resources/application
+ */
 public class Application extends AbstractDiscordResource {
 	public final User owner;
 
@@ -28,13 +33,11 @@ public class Application extends AbstractDiscordResource {
 		}
 
 		@Override
-		public String url(int size, String extension) {
-			return CDN.applicationIcon(id, extension, size, extension);
+		public String url(AllowedSize size, AllowedExtension extension) {
+			return CDN.applicationIcon(id, hash(), size, extension);
 		}
 	};
 	
-	// https://discord.com/developers/docs/resources/application
-
 	@Override
 	public String apiPath() {
 		return "/applications/" + id;

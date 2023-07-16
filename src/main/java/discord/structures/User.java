@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;
+import discord.util.CDN.AllowedExtension;
+import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import discord.util.Util;
 import sj.SjObject;
@@ -79,11 +81,11 @@ public class User extends AbstractDiscordResource {
 		}
 
 		@Override
-		public String url(int size, String extension) {
+		public String url(AllowedSize size, AllowedExtension extension) {
 			final var hash = hash();
-			if (hash != null)
-				return CDN.userAvatar(id, hash, size, extension);
-			return CDN.defaultUserAvatar(discriminator());
+			return (hash == null)
+				? CDN.defaultUserAvatar(discriminator())
+				: CDN.userAvatar(id, hash, size, extension);
 		}
 	};
 
@@ -94,7 +96,7 @@ public class User extends AbstractDiscordResource {
 		}
 
 		@Override
-		public String url(int size, String extension) {
+		public String url(AllowedSize size, AllowedExtension extension) {
 			return CDN.guildOrUserBanner(id, hash(), size, extension);
 		}
 	};

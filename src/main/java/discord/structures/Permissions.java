@@ -1,17 +1,17 @@
 package discord.structures;
 
-public class Permissions {
+public final class Permissions {
 	private final long bitset;
 
 	public Permissions(long bitset) {
 		this.bitset = bitset;
 	}
 
-	public boolean has(Flags permission) {
+	public boolean has(Flag permission) {
 		return (bitset & permission.value) != 0;
 	}
 
-	public static enum Flags {
+	public static enum Flag {
 		CREATE_INSTANT_INVITE(1 << 0),
 		KICK_MEMBERS(1 << 1),
 		BAN_MEMBERS(1 << 2),
@@ -58,7 +58,7 @@ public class Permissions {
 
 		public final int value;
 
-		private Flags(int value) {
+		private Flag(int value) {
 			this.value = value;
 		}
 	}

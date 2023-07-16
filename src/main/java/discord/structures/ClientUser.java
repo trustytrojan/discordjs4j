@@ -29,7 +29,7 @@ public final class ClientUser extends User {
 	}
 
 	public PremiumType premiumType() {
-		return PremiumType.values()[data.getLong("premium_type").intValue()];
+		return PremiumType.values()[data.getInteger("premium_type")];
 	}
 
 	public String email() {

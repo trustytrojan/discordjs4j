@@ -18,7 +18,5 @@ public interface DiscordResource {
 		return client().api.get(apiPath()).thenAcceptAsync(r -> setData(r.toJsonObject()));
 	}
 
-	default String id() {
-		return getData().getString("id");
-	}
+	String id();
 }

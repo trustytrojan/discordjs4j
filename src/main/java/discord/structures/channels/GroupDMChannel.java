@@ -12,6 +12,8 @@ import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.structures.User;
 import discord.util.CDN;
+import discord.util.CDN.AllowedExtension;
+import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
@@ -86,7 +88,7 @@ public class GroupDMChannel extends DMBasedChannel implements TextBasedChannel {
 		}
 
 		@Override
-		public String url(int size, String extension) {
+		public String url(AllowedSize size, AllowedExtension extension) {
 			return CDN.channelIcon(id, hash(), size, extension);
 		}
 	};
