@@ -42,4 +42,6 @@ public class ChannelManager extends ResourceManager<Channel> {
 	public CompletableFuture<Channel> fetch(String id, boolean force) {
 		return super.fetch(id, "/channels/" + id, force);
 	}
+
+	
 }

@@ -1,7 +1,9 @@
 package discord.managers;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import discord.client.DiscordClient;
 import discord.resources.Guild;
@@ -49,28 +51,32 @@ public class GuildManager extends ResourceManager<Guild> {
 
 	/**
 	 * https://discord.com/developers/docs/resources/user#get-current-user-guilds
+	 * Clear the guild cache, fetches partial guilds from {@code /users/@me/guilds},
+	 * then fetches each full guild using the ids from each partial guild.
 	 * 
-	 * @param consumer Consumers {@code Guild} objects as they are constructed from
-	 *                 fetched API data
+	 * @param consumer Consumes {@code Guild}s as they are fetched from Discord
 	 */
 	public CompletableFuture<Void> refresh(Consumer<Guild> consumer) {
-		return client.api.get("/users/@me/guilds")
-			.thenCompose(r -> {
-				final var arr = r.toJsonObjectArray().stream()
-					.map(o -> fetch(o.getString("id"), true).thenAccept(consumer::accept))
-					.toArray();
-				
-				final CompletableFuture<Guild>[] cfs = new CompletableFuture[arr.length];
-				for (int i = 0; i < arr.length; ++i) {
-					cfs[i] = (CompletableFuture<Guild>) arr[i];
-				}
-
-				return CompletableFuture.allOf(cfs);
-		});
+		return _refresh(o -> fetch(o.getString("id"), true).thenAccept(consumer::accept));
 	}
 
 	/**
-	 * ????????????????
-	 * Deal with reactore core or not??????
+	 * https://discord.com/developers/docs/resources/user#get-current-user-guilds
+	 * Clear the guild cache, fetches partial guilds from {@code /users/@me/guilds},
+	 * then fetches each full guild using the ids from each partial guild.
 	 */
+	public CompletableFuture<Void> refresh() {
+		return _refresh(o -> fetch(o.getString("id"), true));
+	}
+
+	private CompletableFuture<Void> _refresh(Function<SjObject, CompletableFuture<?>> mapper) {
+		return client.api.get("/users/@me/guilds")
+			.thenCompose(r -> {
+				cache.clear();
+				final var arr = r.toJsonObjectArray().stream()
+					.map(mapper)
+					.toArray();
+				return CompletableFuture.allOf(Arrays.copyOf(arr, arr.length, CompletableFuture[].class));
+			});
+	}
 }

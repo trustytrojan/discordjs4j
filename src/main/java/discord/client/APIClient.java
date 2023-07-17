@@ -19,11 +19,8 @@ import sj.SjObject;
  */
 public final class APIClient {
 	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {}
-
-	private static enum HttpMethod {
-		GET, POST, PUT, PATCH, DELETE
-	};
-
+	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
+	
 	private static final BodyHandler<String> BODY_HANDLER = BodyHandlers.ofString();
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 	private static final String BASE_URL = "https://discord.com/api/v10";

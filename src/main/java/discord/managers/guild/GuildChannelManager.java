@@ -19,7 +19,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	@Override
 	public CompletableFuture<GuildChannel> fetch(String id, boolean force) {
-		return super.fetch(id, "/channels/" + id, force).thenApply(this::cache);
+		return client.channels.fetch(id, force).thenApply(c -> cache((GuildChannel) c));
 	}
 
 	public CompletableFuture<GuildChannel> create(GuildChannel.Payload payload) {
