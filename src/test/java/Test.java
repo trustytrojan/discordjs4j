@@ -8,7 +8,7 @@ final class Test {
 		CLIENT.api.setToken(Util.readFile("tokens/main"));
 	}
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws Exception {
+		CLIENT.guilds.refresh(guild -> System.out.printf("id=%s,name=%s\n", guild.id(), guild.name())).join();
 	}
 }

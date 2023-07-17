@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>sj</artifactId>
-			<version>32790dfc66</version>
+			<version>2d1bcc50a0</version>
 		</dependency>
 
 		<dependency>

@@ -15,7 +15,7 @@ public interface DiscordResource {
 	String apiPath();
 
 	default CompletableFuture<Void> fetch() {
-		return client().api.get(apiPath()).thenAcceptAsync(r -> setData(r.toJsonObject()));
+		return client().api.get(apiPath()).thenAccept(r -> setData(r.toJsonObject()));
 	}
 
 	String id();

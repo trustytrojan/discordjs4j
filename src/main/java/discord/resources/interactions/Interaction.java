@@ -144,23 +144,23 @@ public abstract class Interaction {
 
 	public CompletableFuture<Void> deferResponse() {
 		return createResponse(CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE, null)
-			.thenRunAsync(() -> deferred = true);
+			.thenRun(() -> deferred = true);
 	}
 
 	public CompletableFuture<Void> respond(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenAcceptAsync(r -> System.out.println(r.body));
+			.thenAccept(r -> System.out.println(r.body));
 	}
 
 	public CompletableFuture<Message> respondThenGetResponse(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenApplyAsync(r -> (originalResponse = new Message(client, r.toJsonObject())));
+			.thenApply(r -> (originalResponse = new Message(client, r.toJsonObject())));
 	}
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
 		final var path = "/webhooks/" + client.application.id() + '/' + token;
 		return client.api.post(path, payload.toJsonString())
-			.thenApplyAsync(r -> new Message(client, r.toJsonObject()));
+			.thenApply(r -> new Message(client, r.toJsonObject()));
 	}
 
 	// Content only

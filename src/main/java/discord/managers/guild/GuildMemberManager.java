@@ -27,6 +27,6 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get(basePath)
-			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
+			.thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

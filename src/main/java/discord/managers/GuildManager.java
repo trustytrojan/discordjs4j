@@ -1,6 +1,7 @@
 package discord.managers;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 import discord.client.DiscordClient;
 import discord.resources.Guild;
@@ -48,10 +49,28 @@ public class GuildManager extends ResourceManager<Guild> {
 
 	/**
 	 * https://discord.com/developers/docs/resources/user#get-current-user-guilds
+	 * 
+	 * @param consumer Consumers {@code Guild} objects as they are constructed from
+	 *                 fetched API data
 	 */
-	public CompletableFuture<Void> refresh() {
-		return client.api.get("/users/@me/guilds").thenAccept(r -> 
-			r.toJsonObjectArray().forEach(o -> fetch(o.getString("id"), true))
-		);
+	public CompletableFuture<Void> refresh(Consumer<Guild> consumer) {
+		return client.api.get("/users/@me/guilds")
+			.thenCompose(r -> {
+				final var arr = r.toJsonObjectArray().stream()
+					.map(o -> fetch(o.getString("id"), true).thenAccept(consumer::accept))
+					.toArray();
+				
+				final CompletableFuture<Guild>[] cfs = new CompletableFuture[arr.length];
+				for (int i = 0; i < arr.length; ++i) {
+					cfs[i] = (CompletableFuture<Guild>) arr[i];
+				}
+
+				return CompletableFuture.allOf(cfs);
+		});
 	}
+
+	/**
+	 * ????????????????
+	 * Deal with reactore core or not??????
+	 */
 }

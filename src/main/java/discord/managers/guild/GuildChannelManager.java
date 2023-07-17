@@ -37,6 +37,6 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
+			.thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

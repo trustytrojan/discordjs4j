@@ -24,7 +24,7 @@ public class UserManager extends ResourceManager<User> {
 
 	public CompletableFuture<ClientUser> fetchMe() {
 		return client.api.get("/users/@me")
-			.thenApplyAsync(r -> {
+			.thenApply(r -> {
 				final var me = new ClientUser(client, r.toJsonObject());
 				return (ClientUser) cache(me);
 			});

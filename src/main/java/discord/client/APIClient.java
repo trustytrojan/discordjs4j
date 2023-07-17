@@ -52,7 +52,7 @@ public final class APIClient {
 		final var request = requestWrapper.request;
 
 		return HTTP_CLIENT.sendAsync(request, BODY_HANDLER)
-			.thenApplyAsync(response -> {
+			.thenApply(response -> {
 				final var statusCode = response.statusCode();
 				final var responseBody = response.body();
 

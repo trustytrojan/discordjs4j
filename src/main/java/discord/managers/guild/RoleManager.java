@@ -31,19 +31,19 @@ public class RoleManager extends GuildResourceManager<Role> {
 
 	public CompletableFuture<Role> create(Role.Payload payload) {
 		return client.api.post(basePath, payload.toJsonString())
-			.thenApplyAsync(r -> cache(r.toJsonObject()));
+			.thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Role> edit(String id, Role.Payload payload) {
 		return client.api.patch(basePath + id, payload.toJsonString())
-			.thenApplyAsync(r -> cache(r.toJsonObject()));
+			.thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(basePath + id).thenRunAsync(() -> cache.remove(id));
+		return client.api.delete(basePath + id).thenRun(() -> cache.remove(id));
 	}
 
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath).thenAcceptAsync(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

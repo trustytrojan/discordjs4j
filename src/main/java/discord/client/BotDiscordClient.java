@@ -20,7 +20,7 @@ public class BotDiscordClient extends DiscordClient {
 
 	public CompletableFuture<Void> fetchApplication() {
 		return api.get("/oauth2/applications/@me")
-			.thenAcceptAsync(r -> {
+			.thenAccept(r -> {
 				application = new Application(this, r.toJsonObject());
 				commands = new ApplicationCommandManager(this, null);
 			});
