@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
-import discord.resources.Guild;
+import discord.resources.guilds.Guild;
 import discord.util.Util;
 import sj.SjObject;
 

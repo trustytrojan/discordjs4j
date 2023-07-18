@@ -1,4 +1,4 @@
-package discord.resources;
+package discord.resources.guilds;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -9,6 +9,8 @@ import discord.managers.ApplicationCommandManager;
 import discord.managers.guild.GuildChannelManager;
 import discord.managers.guild.GuildMemberManager;
 import discord.managers.guild.RoleManager;
+import discord.resources.Role;
+import discord.resources.User;
 import discord.resources.channels.Channel;
 import discord.resources.channels.TextChannel;
 import discord.resources.channels.VoiceChannel;

@@ -1,4 +1,4 @@
-package discord.resources;
+package discord.resources.guilds;
 
 import discord.client.DiscordClient;
 import discord.util.CDN;

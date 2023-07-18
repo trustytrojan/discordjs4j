@@ -1,8 +1,9 @@
-package discord.resources;
+package discord.resources.guilds;
 
 import java.util.List;
 
 import discord.client.DiscordClient;
+import discord.resources.AbstractDiscordResource;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;

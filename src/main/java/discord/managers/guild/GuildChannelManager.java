@@ -3,8 +3,8 @@ package discord.managers.guild;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.resources.Guild;
 import discord.resources.channels.GuildChannel;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {

@@ -6,9 +6,9 @@ import discord.managers.GuildManager;
 import discord.managers.UserManager;
 import discord.resources.AuditLogEntry;
 import discord.resources.CurrentUser;
-import discord.resources.Guild;
 import discord.resources.Message;
 import discord.resources.channels.Channel;
+import discord.resources.guilds.Guild;
 import signals.Signal0;
 import signals.Signal1;
 

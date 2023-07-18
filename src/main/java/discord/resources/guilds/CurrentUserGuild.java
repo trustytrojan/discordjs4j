@@ -1,6 +1,7 @@
-package discord.resources;
+package discord.resources.guilds;
 
 import discord.client.DiscordClient;
+import discord.resources.Permissions;
 import sj.SjObject;
 
 public class CurrentUserGuild extends BaseGuild {
