@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.resources.channels.DMChannel;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
@@ -13,7 +14,7 @@ import discord.util.CDN.URLFactory;
 import discord.util.Util;
 import sj.SjObject;
 
-public class User extends AbstractDiscordResource {
+public class User extends AbstractDiscordResource implements Mentionable {
 	public static enum Flag {
 		STAFF(1 << 0),
 		PARTNER(1 << 1),
@@ -54,6 +55,16 @@ public class User extends AbstractDiscordResource {
 		return client.api.put("/users/@me/notes/" + id, body).thenRun(Util.NO_OP);
 	}
 
+	public CompletableFuture<DMChannel> createDM() {
+		return client.api.post("/users/@me/channels", """
+				{
+					"recipient_id": "%s"
+				}
+				""".formatted(id))
+			.thenApply(r -> new DMChannel(client, r.toJsonObject()));
+	}
+
+	@Override
 	public String mention() {
 		return mention;
 	}
