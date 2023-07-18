@@ -58,9 +58,9 @@ public class GroupDMChannel extends DMBasedChannel implements TextBasedChannel {
 	public GroupDMChannel(DiscordClient client, SjObject data) {
 		super(client, data);
 		messages = new MessageManager(client, this);
-		owner = client.users.fetch(data.getString("owner_id")).join();
+		owner = client.users.get(data.getString("owner_id")).join();
 		recipients = data.getObjectArray("recipients").parallelStream()
-				.map(o -> client.users.fetch(o.getString("id")).join())
+				.map(o -> client.users.get(o.getString("id")).join())
 				.toList();
 	}
 

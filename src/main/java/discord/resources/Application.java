@@ -15,7 +15,7 @@ public class Application extends AbstractDiscordResource {
 
 	public Application(DiscordClient client, SjObject data) {
 		super(client, data);
-		owner = client.users.fetch(data.getObject("owner").getString("id")).join();
+		owner = client.users.get(data.getObject("owner").getString("id")).join();
 	}
 
 	public String name() {

@@ -50,28 +50,28 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 		final var id = getString(optionName);
 		if (id == null)
 			return null;
-		return interaction.guild.roles.fetch(id);
+		return interaction.guild.roles.get(id);
 	}
 
 	public CompletableFuture<User> getUser(final String optionName) {
 		final var id = getString(optionName);
 		if (id == null)
 			return null;
-		return interaction.client.users.fetch(id);
+		return interaction.client.users.get(id);
 	}
 
 	public CompletableFuture<GuildMember> getMember(final String optionName) {
 		final var id = getString(optionName);
 		if (id == null)
 			return null;
-		return interaction.guild.members.fetch(id);
+		return interaction.guild.members.get(id);
 	}
 
 	public CompletableFuture<GuildChannel> getChannel(final String optionName) {
 		final var id = getString(optionName);
 		if (id == null)
 			return null;
-		return interaction.guild.channels.fetch(id);
+		return interaction.guild.channels.get(id);
 	}
 
 	/**

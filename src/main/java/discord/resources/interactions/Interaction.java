@@ -101,13 +101,13 @@ public abstract class Interaction {
 		id = data.getString("id");
 		type = Type.resolve(data.getShort("type"));
 
-		channel = (TextBasedChannel) client.channels.fetch(data.getObject("channel").getString("id")).join();
+		channel = (TextBasedChannel) client.channels.get(data.getObject("channel").getString("id")).join();
 		innerData = data.getObject("data");
 		token = data.getString("token");
 
 		final var guildId = data.getString("guild_id");
 		if (guildId == null) {
-			user = client.users.fetch(data.getObject("user").getString("id")).join();
+			user = client.users.get(data.getObject("user").getString("id")).join();
 			guild = null;
 			member = null;
 			appPermissions = null;
@@ -115,8 +115,8 @@ public abstract class Interaction {
 		} else {
 			appPermissions = new Permissions(Long.parseLong(data.getString("app_permissions")));
 			memberPermissions = new Permissions(Long.parseLong(data.getObject("member").getString("permissions")));
-			guild = client.guilds.fetch(guildId).join();
-			member = guild.members.fetch(data.getObject("member").getObject("user").getString("id")).join();
+			guild = client.guilds.get(guildId).join();
+			member = guild.members.get(data.getObject("member").getObject("user").getString("id")).join();
 			user = member.user;
 		}
 	}

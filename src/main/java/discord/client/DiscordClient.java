@@ -5,7 +5,7 @@ import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.managers.UserManager;
 import discord.resources.AuditLogEntry;
-import discord.resources.ClientUser;
+import discord.resources.CurrentUser;
 import discord.resources.Guild;
 import discord.resources.Message;
 import discord.resources.channels.Channel;
@@ -32,10 +32,10 @@ public abstract class DiscordClient {
 	public final Signal1<Message> messageUpdate = new Signal1<>();
 	public final Signal1<Message> messageDelete = new Signal1<>();
 
-	public ClientUser user;
+	public CurrentUser user;
 
-	public void login(String token, GatewayIntent[] intents) {
-		api.setToken(token);
+	protected void login(String token, boolean bot, GatewayIntent[] intents) {
+		api.setToken(token, bot);
 		gateway.login(token, intents);
 	}
 }

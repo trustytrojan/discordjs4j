@@ -18,8 +18,8 @@ public class AuditLogEntry {
 
 	public AuditLogEntry(DiscordClient client, SjObject data) {
 		id = data.getString("id");
-		guild = client.guilds.fetch(data.getString("guild_id")).join();
-		executor = client.users.fetch(data.getString("user_id")).join();
+		guild = client.guilds.get(data.getString("guild_id")).join();
+		executor = client.users.get(data.getString("user_id")).join();
 		targetId = data.getString("target_id");
 		reason = data.getString("reason");
 		actionType = AuditLogEvent.resolve(data.getLong("action_type"));

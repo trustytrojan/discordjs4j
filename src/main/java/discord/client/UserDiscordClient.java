@@ -1,9 +1,7 @@
 package discord.client;
 
-public class UserDiscordClient extends DiscordClient {
-	// public final RelationshipManager relationships = new RelationshipManager(this);
+import discord.managers.RelationshipManager;
 
-	public UserDiscordClient() {
-		api.setBot(false);
-	}
+public class UserDiscordClient extends DiscordClient {
+	public final RelationshipManager relationships = new RelationshipManager(this);
 }

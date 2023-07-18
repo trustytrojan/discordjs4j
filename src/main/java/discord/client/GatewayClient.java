@@ -11,7 +11,7 @@ import discord.enums.GatewayEvent;
 import discord.enums.GatewayIntent;
 import discord.enums.GatewayOpcode;
 import discord.resources.AuditLogEntry;
-import discord.resources.ClientUser;
+import discord.resources.CurrentUser;
 import discord.resources.Message;
 import discord.resources.channels.TextBasedChannel;
 import discord.resources.interactions.Interaction;
@@ -110,7 +110,7 @@ public class GatewayClient extends WebSocketClient {
 
 				switch (event) {
 					case READY -> {
-						client.user = new ClientUser(client, obj.getObject("d").getObject("user"));
+						client.user = new CurrentUser(client, obj.getObject("d").getObject("user"));
 						client.users.cache(client.user);
 						client.ready.emit();
 					}
@@ -153,7 +153,7 @@ public class GatewayClient extends WebSocketClient {
 					}
 					case MESSAGE_DELETE -> {
 						final var d = obj.getObject("d");
-						final var channel = (TextBasedChannel) client.channels.fetch(d.getString("channel_id"));
+						final var channel = (TextBasedChannel) client.channels.get(d.getString("channel_id"));
 						final var message = channel.messages().cache.remove(d.getString("id"));
 						if (message != null) client.messageDelete.emit(message);
 					}

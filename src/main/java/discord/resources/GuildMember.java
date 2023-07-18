@@ -31,7 +31,7 @@ public class GuildMember extends AbstractDiscordResource implements GuildResourc
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
 		super(client, data);
 		this.guild = guild;
-		user = client.users.fetch(data.getObject("user").getString("id")).join();
+		user = client.users.get(data.getObject("user").getString("id")).join();
 		roles = new GuildMemberRoleManager(client, this);
 	}
 

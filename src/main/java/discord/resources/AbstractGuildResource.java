@@ -8,7 +8,7 @@ public abstract class AbstractGuildResource extends AbstractDiscordResource impl
 
 	protected AbstractGuildResource(DiscordClient client, SjObject data) {
 		super(client, data);
-		guild = client.guilds.fetch(guildId()).join();
+		guild = client.guilds.get(guildId()).join();
 	}
 
 	@Override

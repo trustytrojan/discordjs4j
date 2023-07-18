@@ -22,7 +22,7 @@ public interface GuildChannel extends GuildResource, Channel {
 		final var parentId = parentId();
 		return (parentId == null)
 			? CompletableFuture.completedFuture(null)
-			: client().channels.fetch(parentId).thenApply(c -> (CategoryChannel) c);
+			: client().channels.get(parentId).thenApply(c -> (CategoryChannel) c);
 	}
 
 	/**

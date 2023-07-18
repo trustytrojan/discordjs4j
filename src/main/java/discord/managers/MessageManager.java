@@ -25,8 +25,8 @@ public class MessageManager extends ResourceManager<Message> {
 	}
 
 	@Override
-	public CompletableFuture<Message> fetch(String id, boolean force) {
-		return super.fetch(id, basePath + id, force);
+	public CompletableFuture<Message> get(String id, boolean force) {
+		return super.get(id, basePath + id, force);
 	}
 
 	public CompletableFuture<Message> create(Message.Payload payload) {

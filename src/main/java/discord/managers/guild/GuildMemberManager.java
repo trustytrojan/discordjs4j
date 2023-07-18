@@ -21,8 +21,8 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 	}
 
 	@Override
-	public CompletableFuture<GuildMember> fetch(String id, boolean force) {
-		return super.fetch(id, basePath + '/' + id, force);
+	public CompletableFuture<GuildMember> get(String id, boolean force) {
+		return super.get(id, basePath + '/' + id, force);
 	}
 
 	public CompletableFuture<Void> refreshCache() {

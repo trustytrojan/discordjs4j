@@ -47,13 +47,13 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 		return cached;
 	}
 
-	public CompletableFuture<T> fetch(String id) {
-		return fetch(id, false);
+	public CompletableFuture<T> get(String id) {
+		return get(id, false);
 	}
 
-	public abstract CompletableFuture<T> fetch(String id, boolean force);
+	public abstract CompletableFuture<T> get(String id, boolean force);
 
-	protected CompletableFuture<T> fetch(String id, String path, boolean force) {
+	protected CompletableFuture<T> get(String id, String path, boolean force) {
 		Objects.requireNonNull(id);
 		Objects.requireNonNull(path);
 

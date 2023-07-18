@@ -23,7 +23,7 @@ import sj.SjSerializable;
 /**
  * https://discord.com/developers/docs/resources/guild#guild-object
  */
-public class Guild extends AbstractDiscordResource {
+public class Guild extends PreviewGuild {
 	/**
 	 * https://discord.com/developers/docs/resources/guild#create-guild-json-params
 	 */
@@ -174,6 +174,9 @@ public class Guild extends AbstractDiscordResource {
 		}
 	}
 
+	/**
+	 * https://discord.com/developers/docs/resources/guild#guild-object-guild-features
+	 */
 	public static enum Feature implements SjSerializable {
 		ANIMATED_BANNER,
 		ANIMATED_ICON,
@@ -250,56 +253,16 @@ public class Guild extends AbstractDiscordResource {
 		roles = new RoleManager(client, this);
 		members = new GuildMemberManager(client, this);
 		commands = (client instanceof final BotDiscordClient bot && bot.application != null)
-				? new ApplicationCommandManager(bot, id)
-				: null;
+				 ? new ApplicationCommandManager(bot, id)
+				 : null;
 	}
-
-	public String name() {
-		return data.getString("name");
-	}
-
-	public final URLFactory icon = new URLFactory() {
-		@Override
-		public String hash() {
-			return data.getString("icon");
-		}
-
-		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildIcon(id, hash(), size, extension);
-		}
-	};
-
-	public final URLFactory splash = new CDN.URLFactory() {
-		@Override
-		public String hash() {
-			return data.getString("splash");
-		}
-
-		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildSplash(id, hash(), size, extension);
-		}
-	};
-
-	public final URLFactory discoverySplash = new CDN.URLFactory() {
-		@Override
-		public String hash() {
-			return data.getString("discovery_splash");
-		}
-
-		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildDiscoverySplash(id, hash(), size, extension);
-		}
-	};
 
 	public String ownerId() {
 		return data.getString("owner_id");
 	}
 
 	public CompletableFuture<User> getOwner() {
-		return client.users.fetch(ownerId());
+		return client.users.get(ownerId());
 	}
 
 	public String afkChannelId() {
@@ -307,7 +270,7 @@ public class Guild extends AbstractDiscordResource {
 	}
 
 	public CompletableFuture<VoiceChannel> getAfkChannel() {
-		return client.channels.fetch(afkChannelId()).thenApply(c -> (VoiceChannel) c);
+		return client.channels.get(afkChannelId()).thenApply(c -> (VoiceChannel) c);
 	}
 
 	public VerificationLevel verificationLevel() {
@@ -320,13 +283,6 @@ public class Guild extends AbstractDiscordResource {
 
 	public ExplicitContentFilterLevel explicitContentFilter() {
 		return ExplicitContentFilterLevel.values()[data.getInteger("explicit_content_filter")];
-	}
-
-	/**
-	 * https://discord.com/developers/docs/resources/guild#guild-object-guild-features
-	 */
-	public List<String> features() {
-		return data.getArray("features").stream().map(o -> (String) o).toList();
 	}
 
 	public MFALevel mfaLevel() {
@@ -342,7 +298,7 @@ public class Guild extends AbstractDiscordResource {
 	}
 
 	public CompletableFuture<TextChannel> getSystemChannel() {
-		return client.channels.fetch(systemChannelId()).thenApply(c -> (TextChannel) c);
+		return client.channels.get(systemChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
 	public BitSet<SystemChannelFlag> systemChannelFlags() {
@@ -363,10 +319,6 @@ public class Guild extends AbstractDiscordResource {
 
 	public String vanityUrlCode() {
 		return data.getString("vanity_url_code");
-	}
-
-	public String description() {
-		return data.getString("description");
 	}
 
 	public final URLFactory banner = new URLFactory() {
@@ -398,7 +350,7 @@ public class Guild extends AbstractDiscordResource {
 	}
 
 	public CompletableFuture<TextChannel> getPublicUpdatesChannel() {
-		return client.channels.fetch(publicUpdatesChannelId()).thenApply(c -> (TextChannel) c);
+		return client.channels.get(publicUpdatesChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
 	public Integer maxVideoChannelUsers() {
@@ -407,14 +359,6 @@ public class Guild extends AbstractDiscordResource {
 
 	public Integer maxStageVideoChannelUsers() {
 		return data.getInteger("max_stage_video_channel_users");
-	}
-
-	public Integer approximateMemberCount() {
-		return data.getInteger("approximate_member_count");
-	}
-
-	public Integer approximatePresenceCount() {
-		return data.getInteger("approximate_presence_count");
 	}
 
 	public WelcomeScreen welcomeScreen() {
@@ -435,7 +379,7 @@ public class Guild extends AbstractDiscordResource {
 	}
 
 	public CompletableFuture<TextChannel> getSafetyAlertsChannel() {
-		return client.channels.fetch(safetyAlertsChannelId()).thenApply(c -> (TextChannel) c);
+		return client.channels.get(safetyAlertsChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	}
 
 	@Override
-	public CompletableFuture<Role> fetch(String id, boolean force) {
+	public CompletableFuture<Role> get(String id, boolean force) {
 		throw new UnsupportedOperationException("Member roles cannot be fetched individually");
 	}
 

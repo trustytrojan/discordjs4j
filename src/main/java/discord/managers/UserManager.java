@@ -3,7 +3,7 @@ package discord.managers;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.resources.ClientUser;
+import discord.resources.CurrentUser;
 import discord.resources.User;
 import sj.SjObject;
 
@@ -18,15 +18,15 @@ public class UserManager extends ResourceManager<User> {
 	}
 
 	@Override
-	public CompletableFuture<User> fetch(String id, boolean force) {
-		return super.fetch(id, "/users/" + id, force);
+	public CompletableFuture<User> get(String id, boolean force) {
+		return super.get(id, "/users/" + id, force);
 	}
 
-	public CompletableFuture<ClientUser> fetchMe() {
+	public CompletableFuture<CurrentUser> fetchMe() {
 		return client.api.get("/users/@me")
 			.thenApply(r -> {
-				final var me = new ClientUser(client, r.toJsonObject());
-				return (ClientUser) cache(me);
+				final var me = new CurrentUser(client, r.toJsonObject());
+				return (CurrentUser) cache(me);
 			});
 	}
 }

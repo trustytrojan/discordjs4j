@@ -61,8 +61,8 @@ public class Message extends AbstractDiscordResource {
 
 	public Message(DiscordClient client, SjObject data) {
 		super(client, data);
-		final var authorFuture = client.users.fetch(data.getObject("author").getString("id"));
-		final var channelFuture = client.channels.fetch(data.getString("channel_id"));
+		final var authorFuture = client.users.get(data.getObject("author").getString("id"));
+		final var channelFuture = client.channels.get(data.getString("channel_id"));
 		CompletableFuture.allOf(authorFuture, channelFuture).join();
 		author = authorFuture.join();
 		channel = (TextBasedChannel) channelFuture.join();

@@ -1,7 +1,5 @@
 package discord.client;
 
-import java.util.concurrent.CompletableFuture;
-
 import discord.enums.GatewayIntent;
 import discord.managers.ApplicationCommandManager;
 import discord.resources.Application;
@@ -14,21 +12,10 @@ public class BotDiscordClient extends DiscordClient {
 
 	public final Signal1<Interaction> interactionCreate = new Signal1<>();
 
-	public BotDiscordClient() {
-		api.setBot(true);
-	}
-
-	public CompletableFuture<Void> fetchApplication() {
-		return api.get("/oauth2/applications/@me")
-			.thenAccept(r -> {
-				application = new Application(this, r.toJsonObject());
-				commands = new ApplicationCommandManager(this, null);
-			});
-	}
-
-	@Override
 	public void login(String token, GatewayIntent[] intents) {
-		super.login(token, intents);
-		fetchApplication().join();
+		api.setToken(token, true);
+		final var r = api.get("/oauth2/applications/@me").join();
+		application = new Application(this, r.toJsonObject());
+		commands = new ApplicationCommandManager(this, null);
 	}
 }

@@ -1,7 +1,6 @@
 package discord.client;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
@@ -9,6 +8,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandler;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import sj.Sj;
@@ -74,36 +74,21 @@ public final class APIClient {
 
 		log("Being rate limited for " + retryAfter + "ms");
 
-		try {
-			Thread.sleep(retryAfter);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		try { Thread.sleep(retryAfter); }
+		catch (InterruptedException e) { e.printStackTrace(); }
 
 		return sendRequest(requestWrapper);
 	}
 
-	// Instance fields and methods:
-
-	private boolean bot;
 	private String token;
 
-	public void setBot(boolean bot) {
-		this.bot = bot;
-	}
-
-	public void setToken(String token) {
+	public void setToken(String token, boolean bot) {
+		Objects.requireNonNull(token);
 		this.token = bot ? ("Bot " + token) : token;
 	}
 
 	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String requestBody) {
-		HttpRequest.Builder requestBuilder;
-
-		try {
-			requestBuilder = HttpRequest.newBuilder(new URI(BASE_URL + path));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
+		final var requestBuilder = HttpRequest.newBuilder(URI.create(BASE_URL + path));
 
 		BodyPublisher bp = null;
 
@@ -120,9 +105,7 @@ public final class APIClient {
 			case DELETE -> requestBuilder.DELETE();
 		}
 
-		if (token != null) {
-			requestBuilder.header("authorization", token);
-		}
+		requestBuilder.header("authorization", token);
 
 		return new HttpRequestWithBody(requestBuilder.build(), path, requestBody);
 	}

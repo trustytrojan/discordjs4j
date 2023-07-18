@@ -12,7 +12,7 @@ public class DMChannel extends DMBasedChannel implements TextBasedChannel {
 	public DMChannel(DiscordClient client, SjObject data) {
 		super(client, data);
 		messages = new MessageManager(client, this);
-		recipient = client.users.fetch(data.getObjectArray("recipients").get(0).getString("id")).join();
+		recipient = client.users.get(data.getObjectArray("recipients").get(0).getString("id")).join();
 	}
 
 	@Override

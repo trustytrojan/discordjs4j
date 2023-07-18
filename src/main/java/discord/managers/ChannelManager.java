@@ -33,14 +33,14 @@ public class ChannelManager extends ResourceManager<Channel> {
 			cache.remove(id);
 			final var guildId = r.toJsonObject().getString("guild_id");
 			if (guildId != null) {
-				client.guilds.fetch(guildId).thenAccept(g -> g.channels.cache.remove(id));
+				client.guilds.get(guildId).thenAccept(g -> g.channels.cache.remove(id));
 			}
 		});
 	}
 
 	@Override
-	public CompletableFuture<Channel> fetch(String id, boolean force) {
-		return super.fetch(id, "/channels/" + id, force);
+	public CompletableFuture<Channel> get(String id, boolean force) {
+		return super.get(id, "/channels/" + id, force);
 	}
 
 	

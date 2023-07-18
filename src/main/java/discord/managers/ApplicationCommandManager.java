@@ -27,8 +27,8 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	}
 
 	@Override
-	public CompletableFuture<ApplicationCommand> fetch(String id, boolean force) {
-		return super.fetch(id, basePath + '/' + id, force);
+	public CompletableFuture<ApplicationCommand> get(String id, boolean force) {
+		return super.get(id, basePath + '/' + id, force);
 	}
 
 	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {
