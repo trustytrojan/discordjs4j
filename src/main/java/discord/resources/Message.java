@@ -3,7 +3,6 @@ package discord.resources;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.resources.channels.GuildChannel;
@@ -56,18 +55,13 @@ public class Message extends AbstractDiscordResource {
 	public final TextBasedChannel channel;
 
 	private final boolean inGuild;
-	private final String apiPath;
 	private final String url;
 
-	public Message(DiscordClient client, SjObject data) {
-		super(client, data);
-		final var authorFuture = client.users.get(data.getObject("author").getString("id"));
-		final var channelFuture = client.channels.get(data.getString("channel_id"));
-		CompletableFuture.allOf(authorFuture, channelFuture).join();
-		author = authorFuture.join();
-		channel = (TextBasedChannel) channelFuture.join();
+	public Message(DiscordClient client, TextBasedChannel channel, SjObject data) {
+		super(client, data, "/channels/" + channel.id() + "/messages");
+		this.channel = channel;
+		author = client.users.get(data.getObject("author").getString("id")).join();
 		inGuild = (channel instanceof GuildChannel);
-		apiPath = "/channels/" + channel.id() + "/messages/" + id;
 		final var guildId = (inGuild)
 				? ((GuildChannel) channel).guildId()
 				: "@me";
@@ -80,11 +74,6 @@ public class Message extends AbstractDiscordResource {
 
 	public Boolean isPinned() {
 		return data.getBoolean("pinned");
-	}
-
-	@Override
-	public String apiPath() {
-		return apiPath;
 	}
 
 	public String url() {

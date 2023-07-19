@@ -142,8 +142,9 @@ public class GatewayClient extends WebSocketClient {
 					}
 
 					case MESSAGE_CREATE -> {
-						final var message = new Message(client, obj.getObject("d"));
-						message.channel.messages().cache(message);
+						final var rawObj = obj.getObject("d");
+						final var channel = client.channels.get(rawObj.getString("channel_id")).join();
+						final var message = new Message(client, channel, obj.getObject("d"));
 						client.messageCreate.emit(message);
 					}
 					case MESSAGE_UPDATE -> {

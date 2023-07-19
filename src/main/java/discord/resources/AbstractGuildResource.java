@@ -7,8 +7,8 @@ import sj.SjObject;
 public abstract class AbstractGuildResource extends AbstractDiscordResource implements GuildResource {
 	protected final Guild guild;
 
-	protected AbstractGuildResource(DiscordClient client, SjObject data) {
-		super(client, data);
+	protected AbstractGuildResource(DiscordClient client, SjObject data, String guildApiPath) {
+		super(client, data, "/guilds/" + guildApiPath);
 		guild = client.guilds.get(guildId()).join();
 	}
 

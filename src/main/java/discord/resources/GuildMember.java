@@ -11,7 +11,7 @@ import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
-public class GuildMember extends AbstractDiscordResource implements GuildResource {
+public class GuildMember extends AbstractGuildResource {
 	public static enum Flags {
 		DID_REJOIN(1 << 0),
 		COMPLETED_ONBOARDING(1 << 1),
@@ -27,11 +27,9 @@ public class GuildMember extends AbstractDiscordResource implements GuildResourc
 
 	public final GuildMemberRoleManager roles;
 	public final User user;
-	public final Guild guild;
 
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, data);
-		this.guild = guild;
+		super(client, data, "/guilds/" + guild.id + "/members");
 		user = client.users.get(data.getObject("user").getString("id")).join();
 		roles = new GuildMemberRoleManager(client, this);
 	}
@@ -76,11 +74,6 @@ public class GuildMember extends AbstractDiscordResource implements GuildResourc
 
 	public Instant communicationDisabledUntil() {
 		return Instant.parse(data.getString("communication_disabled_until"));
-	}
-
-	@Override
-	public String apiPath() {
-		return "/guilds/" + guild.id + "/members/" + user.id;
 	}
 
 	@Override

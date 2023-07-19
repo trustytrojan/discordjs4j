@@ -2,6 +2,7 @@ package discord.resources;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import discord.client.BotDiscordClient;
@@ -32,8 +33,16 @@ public class ApplicationCommand extends AbstractDiscordResource {
 	private List<ApplicationCommandOption> options;
 
 	public ApplicationCommand(BotDiscordClient client, SjObject data) {
-		super(client, data);
+		super(client, data, "/applications/" + client.application.id + "/commands");
 		this.client = client;
+	}
+
+	public CompletableFuture<ApplicationCommand> edit(Payload payload) {
+		return client.commands.edit(id, payload);
+	}
+
+	public CompletableFuture<Void> delete() {
+		return client.commands.delete(id);
 	}
 
 	public List<ApplicationCommandOption> options() {
@@ -59,11 +68,6 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		options = (rawOptions == null)
 				? Collections.emptyList()
 				: rawOptions.stream().map(ApplicationCommandOption::new).toList();
-	}
-
-	@Override
-	public String apiPath() {
-		return "/applications/" + client.application.id + '/' + id;
 	}
 
 	public static class Payload implements SjSerializable {

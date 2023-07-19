@@ -104,12 +104,12 @@ public final class APIClient {
 		switch (method) {
 			case GET -> requestBuilder.GET();
 			case POST -> requestBuilder.POST(bp);
-			case PUT -> requestBuilder.PUT(bp);
 			case PATCH -> requestBuilder.method("PATCH", bp);
+			case PUT -> requestBuilder.PUT(bp);
 			case DELETE -> requestBuilder.DELETE();
 		}
 
-		requestBuilder.header("authorization", token);
+		requestBuilder.header("Authorization", token);
 
 		return new HttpRequestWithBody(requestBuilder.build(), path, requestBody);
 	}

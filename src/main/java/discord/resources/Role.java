@@ -12,12 +12,10 @@ import sj.SjSerializable;
 public class Role extends AbstractDiscordResource implements GuildResource, Mentionable {
 	private final Guild guild;
 	private final String mention = "<@&" + id + '>';
-	private final String apiPath;
 
 	public Role(DiscordClient client, Guild guild, SjObject data) {
-		super(client, data);
+		super(client, data, "/roles");
 		this.guild = guild;
-		apiPath = "/guild/" + guild.id + "/roles/" + id;
 	}
 
 	@Override
@@ -77,11 +75,6 @@ public class Role extends AbstractDiscordResource implements GuildResource, Ment
 	@Override
 	public Guild guild() {
 		return guild;
-	}
-
-	@Override
-	public String apiPath() {
-		return apiPath;
 	}
 
 	public static class Payload implements SjSerializable {

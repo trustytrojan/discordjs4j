@@ -9,12 +9,10 @@ import sj.Sj;
 import sj.SjObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
-	private final BotDiscordClient client;
 	private final String basePath;
 
 	public ApplicationCommandManager(BotDiscordClient client, String guildId) {
 		super(client);
-		this.client = client;
 		final var start = "/applications/" + client.application.id();
 		basePath = start + ((guildId != null)
 							? "/guilds/" + guildId + "/commands"
@@ -23,7 +21,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 
 	@Override
 	public ApplicationCommand construct(SjObject data) {
-		return new ApplicationCommand(client, data);
+		return new ApplicationCommand((BotDiscordClient) client, data);
 	}
 
 	@Override

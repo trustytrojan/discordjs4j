@@ -8,7 +8,7 @@ public abstract class AbstractGuildChannel extends AbstractGuildResource impleme
 	private final String url = "https://discord.com/channels/" + guild.id() + '/' + id;
 
 	protected AbstractGuildChannel(DiscordClient client, SjObject data) {
-		super(client, data);
+		super(client, data, "/channels");
 	}
 
 	@Override
