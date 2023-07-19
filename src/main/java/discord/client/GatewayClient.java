@@ -12,7 +12,6 @@ import discord.enums.GatewayIntent;
 import discord.enums.GatewayOpcode;
 import discord.resources.AuditLogEntry;
 import discord.resources.CurrentUser;
-import discord.resources.Message;
 import discord.resources.channels.TextBasedChannel;
 import discord.resources.interactions.Interaction;
 import discord.util.Util;
@@ -142,21 +141,33 @@ public class GatewayClient extends WebSocketClient {
 					}
 
 					case MESSAGE_CREATE -> {
-						final var rawObj = obj.getObject("d");
-						final var channel = client.channels.get(rawObj.getString("channel_id")).join();
-						final var message = new Message(client, channel, obj.getObject("d"));
-						client.messageCreate.emit(message);
+						final var messageObj = obj.getObject("d");
+						client.channels.get(messageObj.getString("channel_id"))
+							.thenAccept(c -> {
+								final var channel = (TextBasedChannel) c;
+								final var message = channel.messages().cache(messageObj);
+								client.messageCreate.emit(message);
+							});
 					}
+
 					case MESSAGE_UPDATE -> {
-						final var message = new Message(client, obj.getObject("d"));
-						message.channel.messages().cache(message);
-						client.messageUpdate.emit(message);
+						final var messageObj = obj.getObject("d");
+						client.channels.get(messageObj.getString("channel_id"))
+							.thenAccept(c -> {
+								final var channel = (TextBasedChannel) c;
+								final var message = channel.messages().cache(messageObj);
+								client.messageUpdate.emit(message);
+							});
 					}
+
 					case MESSAGE_DELETE -> {
 						final var d = obj.getObject("d");
-						final var channel = (TextBasedChannel) client.channels.get(d.getString("channel_id"));
-						final var message = channel.messages().cache.remove(d.getString("id"));
-						if (message != null) client.messageDelete.emit(message);
+						client.channels.get(d.getString("channel_id"))
+							.thenAccept(c -> {
+								final var channel = (TextBasedChannel) c;
+								final var message = channel.messages().cache.remove(d.getString("id"));
+								client.messageDelete.emit(message);
+							});
 					}
 
 					default -> {

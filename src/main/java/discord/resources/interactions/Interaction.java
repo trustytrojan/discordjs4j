@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import discord.client.APIClient.JsonHttpResponse;
+import discord.client.APIClient.JsonResponse;
 import discord.client.BotDiscordClient;
 import discord.resources.Embed;
 import discord.resources.GuildMember;
@@ -133,7 +133,7 @@ public abstract class Interaction {
 		return deferred;
 	}
 
-	private CompletableFuture<JsonHttpResponse> createResponse(CallbackType type, Response payload) {
+	private CompletableFuture<JsonResponse> createResponse(CallbackType type, Response payload) {
 		final var path = "/interactions/" + id + '/' + token + "/callback";
 		final var data = new SjObject();
 		data.put("type", type.value);
@@ -149,7 +149,7 @@ public abstract class Interaction {
 
 	public CompletableFuture<Void> respond(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenAccept(r -> System.out.println(r.body));
+			.thenAccept(r -> System.out.println(r.text));
 	}
 
 	public CompletableFuture<Message> respondThenGetResponse(Response payload) {

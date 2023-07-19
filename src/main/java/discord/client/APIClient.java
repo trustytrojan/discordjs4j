@@ -35,23 +35,23 @@ public final class APIClient {
 		System.out.println("[APIClient] " + message);
 	}
 
-	public static class JsonHttpResponse {
-		public final String body;
+	public static class JsonResponse {
+		public final String text;
 
-		private JsonHttpResponse(String body) {
-			this.body = body;
+		private JsonResponse(String text) {
+			this.text = text;
 		}
 
 		public SjObject toJsonObject() {
-			return Sj.parseObject(body);
+			return Sj.parseObject(text);
 		}
 
 		public List<SjObject> toJsonObjectArray() {
-			return Sj.parseObjectArray(body);
+			return Sj.parseObjectArray(text);
 		}
 	}
 
-	private static CompletableFuture<JsonHttpResponse> sendRequest(HttpRequestWithBody requestWrapper) {
+	private static CompletableFuture<JsonResponse> sendRequest(HttpRequestWithBody requestWrapper) {
 		final var request = requestWrapper.request;
 
 		return HTTP_CLIENT.sendAsync(request, BODY_HANDLER)
@@ -69,11 +69,11 @@ public final class APIClient {
 
 				log(request.method() + ' ' + request.uri().getPath().replace("/api/v10", "") + " -> " + statusCode);
 
-				return new JsonHttpResponse(response.body());
+				return new JsonResponse(response.body());
 			});
 	}
 
-	private static CompletableFuture<JsonHttpResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
+	private static CompletableFuture<JsonResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
 		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
 
 		log("Being rate limited for " + retryAfter + "ms");
@@ -114,27 +114,27 @@ public final class APIClient {
 		return new HttpRequestWithBody(requestBuilder.build(), path, requestBody);
 	}
 
-	private CompletableFuture<JsonHttpResponse> buildAndSend(HttpMethod method, String path, String body) {
+	private CompletableFuture<JsonResponse> buildAndSend(HttpMethod method, String path, String body) {
 		return sendRequest(buildRequest(method, path, body));
 	}
 
-	public CompletableFuture<JsonHttpResponse> get(String path) {
+	public CompletableFuture<JsonResponse> get(String path) {
 		return buildAndSend(HttpMethod.GET, path, null);
 	}
 
-	public CompletableFuture<JsonHttpResponse> post(String path, String body) {
+	public CompletableFuture<JsonResponse> post(String path, String body) {
 		return buildAndSend(HttpMethod.POST, path, body);
 	}
 
-	public CompletableFuture<JsonHttpResponse> put(String path, String body) {
+	public CompletableFuture<JsonResponse> put(String path, String body) {
 		return buildAndSend(HttpMethod.PUT, path, body);
 	}
 
-	public CompletableFuture<JsonHttpResponse> patch(String path, String body) {
+	public CompletableFuture<JsonResponse> patch(String path, String body) {
 		return buildAndSend(HttpMethod.PATCH, path, body);
 	}
 
-	public CompletableFuture<JsonHttpResponse> delete(String path) {
+	public CompletableFuture<JsonResponse> delete(String path) {
 		return buildAndSend(HttpMethod.DELETE, path, null);
 	}
 }
