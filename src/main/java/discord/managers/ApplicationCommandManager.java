@@ -9,24 +9,13 @@ import sj.Sj;
 import sj.SjObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
-	private final String basePath;
-
 	public ApplicationCommandManager(BotDiscordClient client, String guildId) {
-		super(client);
-		final var start = "/applications/" + client.application.id();
-		basePath = start + ((guildId != null)
-							? "/guilds/" + guildId + "/commands"
-							: "/commands");
+		super(client, "/applications/" + client.application.id() + ((guildId != null) ? ("/guilds/" + guildId) : "") + "/commands");
 	}
 
 	@Override
 	public ApplicationCommand construct(SjObject data) {
 		return new ApplicationCommand((BotDiscordClient) client, data);
-	}
-
-	@Override
-	public CompletableFuture<ApplicationCommand> get(String id, boolean force) {
-		return super.get(id, basePath + '/' + id, force);
 	}
 
 	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {

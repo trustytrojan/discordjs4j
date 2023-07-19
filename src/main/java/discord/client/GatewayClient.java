@@ -12,7 +12,7 @@ import discord.enums.GatewayIntent;
 import discord.enums.GatewayOpcode;
 import discord.resources.AuditLogEntry;
 import discord.resources.CurrentUser;
-import discord.resources.channels.TextBasedChannel;
+import discord.resources.channels.MessageChannel;
 import discord.resources.interactions.Interaction;
 import discord.util.Util;
 import sj.Sj;
@@ -87,8 +87,7 @@ public class GatewayClient extends WebSocketClient {
 
 	@Override
 	public void onMessage(String message) {
-		CompletableFuture.runAsync(() -> onMessageAsync(message))
-			.exceptionallyAsync(Util.PRINT_STACK_TRACE);
+		CompletableFuture.runAsync(() -> onMessageAsync(message)).exceptionallyAsync(Util.PRINT_STACK_TRACE);
 	}
 
 	// Let's give the WebSocketClient's thread a break from this mess
@@ -119,8 +118,7 @@ public class GatewayClient extends WebSocketClient {
 						bot.interactionCreate.emit(Interaction.fromJSON(bot, obj.getObject("d")));
 					}
 
-					case GUILD_AUDIT_LOG_ENTRY_CREATE ->
-						client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
+					case GUILD_AUDIT_LOG_ENTRY_CREATE -> client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
 
 					case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
 					case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
@@ -144,7 +142,7 @@ public class GatewayClient extends WebSocketClient {
 						final var messageObj = obj.getObject("d");
 						client.channels.get(messageObj.getString("channel_id"))
 							.thenAccept(c -> {
-								final var channel = (TextBasedChannel) c;
+								final var channel = (MessageChannel) c;
 								final var message = channel.messages().cache(messageObj);
 								client.messageCreate.emit(message);
 							});
@@ -154,7 +152,7 @@ public class GatewayClient extends WebSocketClient {
 						final var messageObj = obj.getObject("d");
 						client.channels.get(messageObj.getString("channel_id"))
 							.thenAccept(c -> {
-								final var channel = (TextBasedChannel) c;
+								final var channel = (MessageChannel) c;
 								final var message = channel.messages().cache(messageObj);
 								client.messageUpdate.emit(message);
 							});
@@ -164,7 +162,7 @@ public class GatewayClient extends WebSocketClient {
 						final var d = obj.getObject("d");
 						client.channels.get(d.getString("channel_id"))
 							.thenAccept(c -> {
-								final var channel = (TextBasedChannel) c;
+								final var channel = (MessageChannel) c;
 								final var message = channel.messages().cache.remove(d.getString("id"));
 								client.messageDelete.emit(message);
 							});

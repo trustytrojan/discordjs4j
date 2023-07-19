@@ -15,10 +15,6 @@ public class Relationship extends AbstractDiscordResource {
 		this.client = client;
 	}
 
-	public CompletableFuture<Void> setType(Type type) {
-		return client.relationships.setRelationshipType(id, type);
-	}
-
 	public CompletableFuture<Void> delete() {
 		return client.relationships.delete(id);
 	}
@@ -27,7 +23,7 @@ public class Relationship extends AbstractDiscordResource {
 		return Type.values()[data.getInteger("type")];
 	}
 
-	public User user() {
-		return new User(client, data.getObject("user"));
+	public CompletableFuture<User> getUser() {
+		return client.users.get(id);
 	}
 }

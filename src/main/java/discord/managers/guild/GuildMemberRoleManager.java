@@ -8,13 +8,11 @@ import discord.resources.Role;
 import sj.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
-	public final GuildMember member;
-	private final String basePath;
+	private final GuildMember member;
 
 	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
-		super(client, member.guild());
+		super(client, member.guild(), "/members" + member.id() + "/roles");
 		this.member = member;
-		basePath = "/guilds/" + member.guild().id() + "/members/" + member.user.id() + "/roles/";
 	}
 
 	@Override
@@ -22,28 +20,23 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 		return new Role(client, member.guild(), data);
 	}
 
+	/**
+	 * This method always throws an {@code UnsupportedOperationException}. The Discord API
+	 * does not have an endpoint for getting all roles of an individual user. They must be
+	 * acquired from guild member objects from the "Get Guild Member" endpoint.
+	 */
 	@Override
-	public CompletableFuture<Role> get(String id, boolean force) {
-		throw new UnsupportedOperationException("Member roles cannot be fetched individually");
+	public CompletableFuture<Role> get(String id, boolean force) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException("Member roles can only be fetched all at once");
 	}
 
 	public CompletableFuture<Void> add(String id) {
-		return client.api.put(basePath + "/roles/" + id, null)
-			.thenAccept(r -> cache(r.toJsonObject()));
+		return client.api.put(pathWithId(id), null).thenAccept(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> remove(String id) {
-		return client.api.delete(basePath + id).thenRun(() -> cache.remove(id));
+		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<Void> refreshCache() {
-		cache.clear();
-		return CompletableFuture.allOf(member.fetch(), guild.roles.refreshCache())
-			.thenRun(() -> {
-				for (final var roleId : member.getData().getStringArray("roles")) {
-					final var role = guild.roles.cache.get(roleId);
-					if (role != null) cache(role);
-				}
-			});
-	}
+	// TODO: implement getAll()
 }

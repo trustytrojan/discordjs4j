@@ -6,7 +6,7 @@ import java.util.List;
 
 import discord.client.DiscordClient;
 import discord.resources.channels.GuildChannel;
-import discord.resources.channels.TextBasedChannel;
+import discord.resources.channels.MessageChannel;
 import discord.resources.components.ActionRow;
 import discord.resources.components.MessageComponent;
 import sj.SjObject;
@@ -52,12 +52,12 @@ public class Message extends AbstractDiscordResource {
 
 	public List<MessageComponent> components;
 	public final User author;
-	public final TextBasedChannel channel;
+	public final MessageChannel channel;
 
 	private final boolean inGuild;
 	private final String url;
 
-	public Message(DiscordClient client, TextBasedChannel channel, SjObject data) {
+	public Message(DiscordClient client, MessageChannel channel, SjObject data) {
 		super(client, data, "/channels/" + channel.id() + "/messages");
 		this.channel = channel;
 		author = client.users.get(data.getObject("author").getString("id")).join();

@@ -1,6 +1,5 @@
 package discord.managers;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -10,14 +9,8 @@ import discord.util.Util;
 import sj.SjObject;
 
 public class RelationshipManager extends ResourceManager<Relationship> {
-	private static final String basePath = "/users/@me/relationships";
-
-	private static String pathWithId(String id) {
-		return basePath + '/' + id;
-	}
-
 	public RelationshipManager(DiscordClient client) {
-		super(client);
+		super(client, "/users/@me/relationships");
 	}
 
 	@Override
@@ -25,24 +18,23 @@ public class RelationshipManager extends ResourceManager<Relationship> {
 		return new Relationship((UserDiscordClient) client, data);
 	}
 
-	public CompletableFuture<Void> setRelationshipType(String id, Relationship.Type type) {
-		return client.api.patch(pathWithId(id), """
-				{
-					"type": %s
-				}
-				""".formatted(type.ordinal())).thenRun(Util.NO_OP);
+	public CompletableFuture<Void> block(String id) {
+		return client.api.put(pathWithId(id), "{\"type\":2}").thenRun(Util.NO_OP);
+	}
+
+	public CompletableFuture<Void> addFriendWithId(String id) {
+		return client.api.put(pathWithId(id), "{}").thenRun(Util.NO_OP);
+	}
+
+	public CompletableFuture<Void> addFriendWithUsername(String username) {
+		return client.api.put(basePath, "{}").thenRun(Util.NO_OP);
 	}
 
 	public CompletableFuture<Void> delete(String id) {
 		return client.api.delete(pathWithId(id)).thenRun(Util.NO_OP);
 	}
 
-	@Override
-	public CompletableFuture<Relationship> get(String id, boolean force) {
-		return super.get(id, pathWithId(id), force);
-	}
-
-	public CompletableFuture<List<Relationship>> fetch() {
-		return client.api.get(basePath).thenApply(r -> r.toJsonObjectArray().stream().map(this::cache).toList());
+	public CompletableFuture<Void> fetch() {
+		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().stream().forEach(this::cache));
 	}
 }

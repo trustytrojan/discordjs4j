@@ -11,7 +11,7 @@ import discord.resources.Embed;
 import discord.resources.GuildMember;
 import discord.resources.Message;
 import discord.resources.User;
-import discord.resources.channels.TextBasedChannel;
+import discord.resources.channels.MessageChannel;
 import discord.resources.components.ActionRow;
 import discord.resources.guilds.Guild;
 import discord.util.BitFlagSet;
@@ -86,7 +86,7 @@ public abstract class Interaction {
 	public final Guild guild;
 	public final GuildMember member;
 	public final User user;
-	public final TextBasedChannel channel;
+	public final MessageChannel channel;
 	public final BitFlagSet<Permission> appPermissions;
 	public final BitFlagSet<Permission> memberPermissions;
 
@@ -102,7 +102,7 @@ public abstract class Interaction {
 		id = data.getString("id");
 		type = Type.resolve(data.getShort("type"));
 
-		channel = (TextBasedChannel) client.channels.get(data.getObject("channel").getString("id")).join();
+		channel = (MessageChannel) client.channels.get(data.getObject("channel").getString("id")).join();
 		innerData = data.getObject("data");
 		token = data.getString("token");
 

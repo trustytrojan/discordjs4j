@@ -7,7 +7,7 @@ import discord.managers.MessageManager;
 import discord.resources.Embed;
 import discord.resources.Message;
 
-public interface TextBasedChannel extends Channel {
+public interface MessageChannel extends Channel {
 	MessageManager messages();
 
 	default CompletableFuture<Message> send(final Message.Payload payload) {

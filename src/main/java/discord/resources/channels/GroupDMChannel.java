@@ -18,7 +18,7 @@ import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
 
-public class GroupDMChannel extends DMBasedChannel implements TextBasedChannel {
+public class GroupDMChannel extends DMBasedChannel implements MessageChannel {
 	public static class Payload implements SjSerializable {
 		public String name;
 		private String iconBase64;

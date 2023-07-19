@@ -1,5 +1,6 @@
 package discord.managers.guild;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -8,15 +9,8 @@ import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class RoleManager extends GuildResourceManager<Role> {
-	public final String basePath;
-
 	public RoleManager(final DiscordClient client, final Guild guild) {
-		super(client, guild);
-		basePath = "/guilds/" + guild.id() + "/roles";
-	}
-
-	public String rolesPath(String id) {
-		return basePath + '/' + id;
+		super(client, guild, "/roles");
 	}
 
 	@Override
@@ -30,20 +24,18 @@ public class RoleManager extends GuildResourceManager<Role> {
 	}
 
 	public CompletableFuture<Role> create(Role.Payload payload) {
-		return client.api.post(basePath, payload.toJsonString())
-			.thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Role> edit(String id, Role.Payload payload) {
-		return client.api.patch(basePath + id, payload.toJsonString())
-			.thenApply(r -> cache(r.toJsonObject()));
+		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(basePath + id).thenRun(() -> cache.remove(id));
+		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+	public CompletableFuture<List<Role>> getAll() {
+		return client.api.get(basePath).thenApply(r -> r.toJsonObjectArray().stream().map(this::cache).toList());
 	}
 }

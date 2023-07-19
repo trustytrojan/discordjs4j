@@ -12,9 +12,15 @@ import sj.SjObject;
 public abstract class ResourceManager<T extends DiscordResource> implements Iterable<T> {
 	public final TreeMap<String, T> cache = new TreeMap<>();
 	protected final DiscordClient client;
+	protected final String basePath;
 
-	protected ResourceManager(DiscordClient client) {
+	protected ResourceManager(DiscordClient client, String basePath) {
 		this.client = Objects.requireNonNull(client);
+		this.basePath = basePath;
+	}
+
+	protected String pathWithId(String id) {
+		return basePath + '/' + id;
 	}
 
 	@Override
@@ -22,7 +28,7 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 		return cache.values().iterator();
 	}
 
-	public abstract T construct(SjObject data);
+	protected abstract T construct(SjObject data);
 
 	// cache an already constructed object
 	public T cache(T resource) {
@@ -32,17 +38,10 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 
 	// if this is called we know the cache WILL be modified
 	public T cache(SjObject data) {
-		if (data.getString("id") == null)
-			System.out.println(data);
-
-		final var cached = cache.get(data.getString("id"));
-		
-		// if not already cached, construct new object
-		if (cached == null) {
-			return cache(construct(data));
-		}
-
-		// if an object is cached, just set its data
+		final var id = data.getString("id");
+		if (id == null) throw new RuntimeException("JSON object has no \"id\" key! " + data);
+		final var cached = cache.get(id);
+		if (cached == null) return cache(construct(data));
 		cached.setData(data);
 		return cached;
 	}
@@ -51,20 +50,21 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 		return get(id, false);
 	}
 
-	public abstract CompletableFuture<T> get(String id, boolean force);
-
-	protected CompletableFuture<T> get(String id, String path, boolean force) {
+	/**
+	 * Gets the resource identified by {@code id} from the Discord API, or the cache
+	 * if available. If {@code force} is true, the cache check will be ignored.
+	 * 
+	 * @param id    Resource identifier
+	 * @param force Whether to skip the cache check
+	 * @return A {@code CompletableFuture} of the resource
+	 */
+	public CompletableFuture<T> get(String id, boolean force) {
 		Objects.requireNonNull(id);
-		Objects.requireNonNull(path);
-
 		if (!force) {
 			final var cached = cache.get(id);
-			
-			if (cached != null) {
+			if (cached != null)
 				return CompletableFuture.completedFuture(cached);
-			}
 		}
-
-		return client.api.get(path).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.get(pathWithId(id)).thenApply(r -> cache(r.toJsonObject()));
 	}
 }

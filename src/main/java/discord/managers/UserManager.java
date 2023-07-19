@@ -9,7 +9,7 @@ import sj.SjObject;
 
 public class UserManager extends ResourceManager<User> {
 	public UserManager(DiscordClient client) {
-		super(client);
+		super(client, "/users");
 	}
 
 	@Override
@@ -17,16 +17,7 @@ public class UserManager extends ResourceManager<User> {
 		return new User(client, data);
 	}
 
-	@Override
-	public CompletableFuture<User> get(String id, boolean force) {
-		return super.get(id, "/users/" + id, force);
-	}
-
-	public CompletableFuture<CurrentUser> fetchMe() {
-		return client.api.get("/users/@me")
-			.thenApply(r -> {
-				final var me = new CurrentUser(client, r.toJsonObject());
-				return (CurrentUser) cache(me);
-			});
+	public CompletableFuture<CurrentUser> getCurrentUser() {
+		return client.api.get("/users/@me").thenApply(r -> (CurrentUser) cache(new CurrentUser(client, r.toJsonObject())));
 	}
 }

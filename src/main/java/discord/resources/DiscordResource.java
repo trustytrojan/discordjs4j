@@ -5,10 +5,7 @@ import sj.SjObject;
 
 public interface DiscordResource {
 	DiscordClient client();
-
 	SjObject getData();
-
 	void setData(SjObject data);
-
 	String id();
 }

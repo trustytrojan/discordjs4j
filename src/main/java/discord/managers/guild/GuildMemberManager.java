@@ -8,21 +8,13 @@ import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class GuildMemberManager extends GuildResourceManager<GuildMember> {
-	private final String basePath;
-
 	public GuildMemberManager(DiscordClient client, Guild guild) {
-		super(client, guild);
-		basePath = "/guilds/" + guild.id() + "/members";
+		super(client, guild, "/members");
 	}
 
 	@Override
 	public GuildMember construct(SjObject data) {
 		return new GuildMember(client, guild, data);
-	}
-
-	@Override
-	public CompletableFuture<GuildMember> get(String id, boolean force) {
-		return super.get(id, basePath + '/' + id, force);
 	}
 
 	public CompletableFuture<Void> refreshCache() {

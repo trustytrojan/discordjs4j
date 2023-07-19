@@ -10,7 +10,7 @@ import sj.SjObject;
 
 public class GuildManager extends ResourceManager<Guild> {
 	public GuildManager(DiscordClient client) {
-		super(client);
+		super(client, "/guilds");
 	}
 
 	@Override
@@ -18,31 +18,14 @@ public class GuildManager extends ResourceManager<Guild> {
 		return new Guild(client, data);
 	}
 
-	/**
-	 * https://discord.com/developers/docs/resources/user#get-current-user-guilds
-	 */
-	@Override
-	public CompletableFuture<Guild> get(String id, boolean force) {
-		return super.get(id, "/guilds/" + id, force);
-	}
-
-	/**
-	 * https://discord.com/developers/docs/resources/guild#create-guild
-	 */
 	public CompletableFuture<Guild> create(Guild.CreatePayload payload) {
 		return client.api.post("/guilds", payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
-	/**
-	 * https://discord.com/developers/docs/resources/guild#modify-guild
-	 */
 	public CompletableFuture<Guild> edit(String id, Guild.EditPayload payload) {
 		return client.api.patch("/guilds/" + id, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
-	/**
-	 * https://discord.com/developers/docs/resources/guild#delete-guild
-	 */
 	public CompletableFuture<Void> delete(String id) {
 		return client.api.delete("/guilds/" + id).thenRun(Util.NO_OP);
 	}

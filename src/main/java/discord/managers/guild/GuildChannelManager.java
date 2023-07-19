@@ -1,5 +1,6 @@
 package discord.managers.guild;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -7,9 +8,12 @@ import discord.resources.channels.GuildChannel;
 import discord.resources.guilds.Guild;
 import sj.SjObject;
 
+/**
+ * This class relies mostly on ChannelManager for API calls, except for getAll().
+ */
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(DiscordClient client, Guild guild) {
-		super(client, guild);
+		super(client, guild, "/channels");
 	}
 
 	@Override
@@ -23,8 +27,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	}
 
 	public CompletableFuture<GuildChannel> create(GuildChannel.Payload payload) {
-		return client.api.post("/guilds/" + guild.id() + "/channels", payload.toJsonString())
-			.thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {
@@ -35,8 +38,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 		return client.channels.delete(id);
 	}
 
-	public CompletableFuture<Void> refreshCache() {
-		return client.api.get("/guilds/" + guild.id() + "/channels")
-			.thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+	public CompletableFuture<List<GuildChannel>> getAll() {
+		return client.api.get(basePath).thenApply(r -> r.toJsonObjectArray().stream().map(this::cache).toList());
 	}
 }

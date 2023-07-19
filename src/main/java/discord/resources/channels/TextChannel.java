@@ -4,7 +4,7 @@ import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import sj.SjObject;
 
-public class TextChannel extends AbstractGuildChannel implements TextBasedChannel {
+public class TextChannel extends AbstractGuildChannel implements MessageChannel {
 	public static class Payload extends GuildChannel.Payload {
 		public Channel.Type type;
 		public String topic;
