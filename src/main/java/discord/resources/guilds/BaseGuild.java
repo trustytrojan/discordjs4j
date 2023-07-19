@@ -11,10 +11,8 @@ import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
 public abstract class BaseGuild extends AbstractDiscordResource {
-	private final String apiPath = "/guilds/" + id;
-
 	protected BaseGuild(DiscordClient client, SjObject data) {
-		super(client, data);
+		super(client, data, "/guilds");
 	}
 
 	public boolean unavailable() {
@@ -47,10 +45,5 @@ public abstract class BaseGuild extends AbstractDiscordResource {
 
 	public Integer approximatePresenceCount() {
 		return data.getInteger("approximate_presence_count");
-	}
-
-	@Override
-	public String apiPath() {
-		return apiPath;
 	}
 }

@@ -11,15 +11,15 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	public final GuildMember member;
 	private final String basePath;
 
-	public GuildMemberRoleManager(final DiscordClient client, final GuildMember member) {
-		super(client, member.guild);
+	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
+		super(client, member.guild());
 		this.member = member;
-		basePath = "/guilds/" + member.guild.id() + "/members/" + member.user.id() + "/roles/";
+		basePath = "/guilds/" + member.guild().id() + "/members/" + member.user.id() + "/roles/";
 	}
 
 	@Override
-	public Role construct(final SjObject data) {
-		return new Role(client, member.guild, data);
+	public Role construct(SjObject data) {
+		return new Role(client, member.guild(), data);
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 			.thenAccept(r -> cache(r.toJsonObject()));
 	}
 
-	public CompletableFuture<Void> remove(final String id) {
+	public CompletableFuture<Void> remove(String id) {
 		return client.api.delete(basePath + id).thenRun(() -> cache.remove(id));
 	}
 

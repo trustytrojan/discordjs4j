@@ -1,7 +1,8 @@
 package discord.resources.guilds;
 
 import discord.client.DiscordClient;
-import discord.resources.Permissions;
+import discord.enums.Permission;
+import discord.util.BitFlagSet;
 import sj.SjObject;
 
 public class CurrentUserGuild extends BaseGuild {
@@ -13,7 +14,7 @@ public class CurrentUserGuild extends BaseGuild {
 		return data.getBoolean("owner");
 	}
 
-	public Permissions permissions() {
-		return new Permissions(Long.parseLong(data.getString("permissions")));
+	public BitFlagSet<Permission> permissions() {
+		return new BitFlagSet<>(Long.parseLong(data.getString("permissions")));
 	}
 }

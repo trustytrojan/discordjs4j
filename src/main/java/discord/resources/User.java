@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.resources.channels.DMChannel;
+import discord.util.BitFlagSet.BitFlag;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
@@ -15,7 +16,7 @@ import discord.util.Util;
 import sj.SjObject;
 
 public class User extends AbstractDiscordResource implements Mentionable {
-	public static enum Flag {
+	public static enum Flag implements BitFlag {
 		STAFF(1 << 0),
 		PARTNER(1 << 1),
 		HYPESQUAD(1 << 2),
@@ -32,18 +33,22 @@ public class User extends AbstractDiscordResource implements Mentionable {
 		BOT_HTTP_INTERACTIONS(1 << 19),
 		ACTIVE_DEVELOPER(1 << 22);
 
-		public final int value;
+		private final int value;
 
-		private Flag(final int value) {
+		private Flag(int value) {
 			this.value = value;
+		}
+
+		@Override
+		public long value() {
+			return value;
 		}
 	}
 
 	private final String mention = "<@" + id + '>';
-	private final String apiPath = "/users/" + id;
 
 	public User(DiscordClient client, SjObject data) {
-		super(client, data);
+		super(client, data, "/users");
 	}
 
 	public CompletableFuture<Void> setNote(String note) {
@@ -111,11 +116,6 @@ public class User extends AbstractDiscordResource implements Mentionable {
 			return CDN.guildOrUserBanner(id, hash(), size, extension);
 		}
 	};
-
-	@Override
-	public String apiPath() {
-		return apiPath;
-	}
 
 	public List<Flag> publicFlags() {
 		return computeFlags(data.getLong("public_flags").intValue());

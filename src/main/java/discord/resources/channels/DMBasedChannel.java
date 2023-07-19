@@ -8,7 +8,7 @@ public class DMBasedChannel extends AbstractDiscordResource implements Channel {
 	private final String url = "https://discord.com/channels/@me/" + id;
 
 	protected DMBasedChannel(DiscordClient client, SjObject data) {
-		super(client, data);
+		super(client, data, "/channels");
 	}
 
 	@Override

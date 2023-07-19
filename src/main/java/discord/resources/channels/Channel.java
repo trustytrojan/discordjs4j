@@ -74,9 +74,4 @@ public interface Channel extends DiscordResource {
 	default CompletableFuture<Void> delete() {
 		return client().channels.delete(id());
 	}
-
-	@Override
-	default String apiPath() {
-		return "/channels/" + id();
-	}
 }

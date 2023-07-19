@@ -14,7 +14,7 @@ import discord.resources.User;
 import discord.resources.channels.Channel;
 import discord.resources.channels.TextChannel;
 import discord.resources.channels.VoiceChannel;
-import discord.util.BitSet;
+import discord.util.BitFlagSet;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
@@ -52,7 +52,7 @@ public class Guild extends PreviewGuild {
 		public String afkChannelId;
 		public Integer afkTimeout;
 		public String systemChannelId;
-		public BitSet<SystemChannelFlag> systemChannelFlags;
+		public BitFlagSet<SystemChannelFlag> systemChannelFlags;
 
 		public CreatePayload(String name) {
 			this.name = name;
@@ -91,7 +91,7 @@ public class Guild extends PreviewGuild {
 		// discovery_splash
 		// banner
 		public String systemChannelId;
-		public BitSet<SystemChannelFlag> systemChannelFlags;
+		public BitFlagSet<SystemChannelFlag> systemChannelFlags;
 		public String rulesChannelId;
 		public String publicUpdatesChannelId;
 		public String preferredLocale;
@@ -156,7 +156,7 @@ public class Guild extends PreviewGuild {
 	/**
 	 * https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
 	 */
-	public static enum SystemChannelFlag implements BitSet.Enum {
+	public static enum SystemChannelFlag implements BitFlagSet.BitFlag {
 		SUPPRESS_JOIN_NOTIFICATIONS(1 << 0),
 		SUPPRESS_PREMIUM_SUBSCRIPTIONS(1 << 1),
 		SUPPRESS_GUILD_REMINDER_NOTIFICATIONS(1 << 2),
@@ -303,8 +303,8 @@ public class Guild extends PreviewGuild {
 		return client.channels.get(systemChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
-	public BitSet<SystemChannelFlag> systemChannelFlags() {
-		return new BitSet<>(data.getLong("system_channel_flags"));
+	public BitFlagSet<SystemChannelFlag> systemChannelFlags() {
+		return new BitFlagSet<>(data.getLong("system_channel_flags"));
 	}
 
 	public String rulesChannelId() {
@@ -382,10 +382,5 @@ public class Guild extends PreviewGuild {
 
 	public CompletableFuture<TextChannel> getSafetyAlertsChannel() {
 		return client.channels.get(safetyAlertsChannelId()).thenApply(c -> (TextChannel) c);
-	}
-
-	@Override
-	public String apiPath() {
-		return "/guilds/" + id;
 	}
 }

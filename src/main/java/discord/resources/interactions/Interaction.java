@@ -6,14 +6,15 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.APIClient.JsonResponse;
 import discord.client.BotDiscordClient;
+import discord.enums.Permission;
 import discord.resources.Embed;
 import discord.resources.GuildMember;
 import discord.resources.Message;
-import discord.resources.Permissions;
 import discord.resources.User;
 import discord.resources.channels.TextBasedChannel;
 import discord.resources.components.ActionRow;
 import discord.resources.guilds.Guild;
+import discord.util.BitFlagSet;
 import sj.SjObject;
 
 public abstract class Interaction {
@@ -86,8 +87,8 @@ public abstract class Interaction {
 	public final GuildMember member;
 	public final User user;
 	public final TextBasedChannel channel;
-	public final Permissions appPermissions;
-	public final Permissions memberPermissions;
+	public final BitFlagSet<Permission> appPermissions;
+	public final BitFlagSet<Permission> memberPermissions;
 
 	protected final SjObject innerData;
 	private final String token;
@@ -113,8 +114,8 @@ public abstract class Interaction {
 			appPermissions = null;
 			memberPermissions = null;
 		} else {
-			appPermissions = new Permissions(Long.parseLong(data.getString("app_permissions")));
-			memberPermissions = new Permissions(Long.parseLong(data.getObject("member").getString("permissions")));
+			appPermissions = new BitFlagSet<>(Long.parseLong(data.getString("app_permissions")));
+			memberPermissions = new BitFlagSet<>(Long.parseLong(data.getObject("member").getString("permissions")));
 			guild = client.guilds.get(guildId).join();
 			member = guild.members.get(data.getObject("member").getObject("user").getString("id")).join();
 			user = member.user;
@@ -154,13 +155,13 @@ public abstract class Interaction {
 
 	public CompletableFuture<Message> respondThenGetResponse(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenApply(r -> (originalResponse = new Message(client, r.toJsonObject())));
+			.thenApply(r -> (originalResponse = new Message(client, channel, r.toJsonObject())));
 	}
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
 		final var path = "/webhooks/" + client.application.id() + '/' + token;
 		return client.api.post(path, payload.toJsonString())
-			.thenApply(r -> new Message(client, r.toJsonObject()));
+			.thenApply(r -> new Message(client, channel, r.toJsonObject()));
 	}
 
 	// Content only

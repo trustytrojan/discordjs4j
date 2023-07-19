@@ -1,7 +1,9 @@
 package discord.resources;
 
 import discord.client.DiscordClient;
+import discord.enums.Permission;
 import discord.resources.guilds.Guild;
+import discord.util.BitFlagSet;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
@@ -31,8 +33,8 @@ public class Role extends AbstractDiscordResource implements GuildResource, Ment
 		return data.getString("description");
 	}
 
-	public Permissions permissions() {
-		return new Permissions(data.getLong("permissions"));
+	public BitFlagSet<Permission> permissions() {
+		return new BitFlagSet<>(data.getLong("permissions"));
 	}
 
 	public Long color() {
