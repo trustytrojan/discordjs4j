@@ -45,10 +45,22 @@ public enum Permission implements BitFlag {
 	USE_EMBEDDED_ACTIVITIES,
 	MODERATE_MEMBERS,
 	VIEW_CREATOR_MONETIZATION_ANALYTICS,
-	USE_SOUNDBOARD;
+	USE_SOUNDBOARD,
+	USE_EXTERNAL_SOUNDS(45),
+	SEND_VOICE_MESSAGES(46);
+
+	private final int value;
+
+	private Permission() {
+		value = (1 << ordinal());
+	}
+
+	private Permission(int bitshift) {
+		value = (1 << bitshift);
+	}
 
 	@Override
 	public long value() {
-		return 1 << ordinal();
+		return value;
 	}
 }

@@ -42,14 +42,30 @@ public class VoiceChannel extends AbstractGuildChannel {
 
 		public static final VideoQualityMode[] LOOKUP_TABLE = { null, AUTO, FULL };
 
-		public final short value;
+		public final int value;
 
 		private VideoQualityMode(int value) {
-			this.value = (short) value;
+			this.value = value;
 		}
 	}
 
 	public VoiceChannel(DiscordClient client, SjObject data) {
 		super(client, data);
+	}
+
+	public VideoQualityMode videoQualityMode() {
+		return VideoQualityMode.LOOKUP_TABLE[data.getInteger("video_quality_mode")];
+	}
+
+	public int bitrate() {
+		return data.getInteger("bitrate");
+	}
+
+	public int userLimit() {
+		return data.getInteger("user_limit");
+	}
+
+	public String rtcRegion() {
+		return data.getString("rtc_region");
 	}
 }

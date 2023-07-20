@@ -8,7 +8,7 @@ import sj.SjObject;
 import sj.SjSerializable;
 
 public interface GuildChannel extends GuildResource, Channel {
-	// public PermissionOverwrites permission_overwrites;
+	// TODO: PermissionOverwrites
 
 	default Integer position() {
 		return getData().getInteger("position");

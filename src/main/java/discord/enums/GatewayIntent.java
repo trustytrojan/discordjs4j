@@ -23,8 +23,7 @@ public enum GatewayIntent {
 
 	public static int sum(GatewayIntent... intents) {
 		var sum = 0;
-		for (final var i : intents)
-			sum += i.value;
+		for (final var intent : intents) sum += intent.value;
 		return sum;
 	}
 
