@@ -1,12 +1,11 @@
 package discord.resources;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.client.UserDiscordClient;
 import discord.resources.channels.DMChannel;
+import discord.util.BitFlagSet;
 import discord.util.BitFlagSet.BitFlag;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
@@ -15,7 +14,7 @@ import discord.util.CDN.URLFactory;
 import discord.util.Util;
 import sj.SjObject;
 
-public class User extends AbstractDiscordResource implements Mentionable {
+public class User extends AbstractDiscordResource {
 	public static enum Flag implements BitFlag {
 		STAFF(1 << 0),
 		PARTNER(1 << 1),
@@ -45,33 +44,40 @@ public class User extends AbstractDiscordResource implements Mentionable {
 		}
 	}
 
-	private final String mention = "<@" + id + '>';
-
 	public User(DiscordClient client, SjObject data) {
 		super(client, data, "/users");
 	}
 
+	/**
+	 * USER-ONLY METHOD: If {@code this.client} is not an instance of
+	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
+	 * WARNING: This API method is heavily monitored by Discord. It is very likely
+	 * that this will throw a {@code DiscordAPIException} with the response body
+	 * containing captcha-related data. It is advised not to use this endpoint as a
+	 * user.
+	 */
+	public CompletableFuture<Void> addFriend() {
+		return ((UserDiscordClient) client).relationships.addFriendWithId(id);
+	}
+
+	public CompletableFuture<Void> block() {
+		return ((UserDiscordClient) client).relationships.blockUser(id);
+	}
+
+	/**
+	 * Either removes this user as a friend or unblocks them.
+	 */
+	public CompletableFuture<Void> deleteRelationship() {
+		return ((UserDiscordClient) client).relationships.delete(id);
+	}
+
 	public CompletableFuture<Void> setNote(String note) {
-		final var body = """
-				{
-					"note": \"%s\"
-				}
-				""".formatted(note);
-		return client.api.put("/users/@me/notes/" + id, body).thenRun(Util.NO_OP);
+		return client.api.put("/users/@me/notes/" + id, "{\"note\":\"" + note + "\"}").thenRun(Util.NO_OP);
 	}
 
 	public CompletableFuture<DMChannel> createDM() {
-		return client.api.post("/users/@me/channels", """
-				{
-					"recipient_id": "%s"
-				}
-				""".formatted(id))
-			.thenApply(r -> new DMChannel(client, r.toJsonObject()));
-	}
-
-	@Override
-	public String mention() {
-		return mention;
+		return client.api.post("/users/@me/channels", "{\"recipient_id\":\"" + id + "\"}")
+				.thenApply(r -> new DMChannel(client, r.toJsonObject()));
 	}
 
 	public String username() {
@@ -100,8 +106,8 @@ public class User extends AbstractDiscordResource implements Mentionable {
 		public String url(AllowedSize size, AllowedExtension extension) {
 			final var hash = hash();
 			return (hash == null)
-				? CDN.defaultUserAvatar(discriminator())
-				: CDN.userAvatar(id, hash, size, extension);
+					? CDN.defaultUserAvatar(discriminator())
+					: CDN.userAvatar(id, hash, size, extension);
 		}
 	};
 
@@ -117,17 +123,7 @@ public class User extends AbstractDiscordResource implements Mentionable {
 		}
 	};
 
-	public List<Flag> publicFlags() {
-		return computeFlags(data.getLong("public_flags").intValue());
-	}
-
-	protected static List<Flag> computeFlags(int bitset) {
-		final var flags = new ArrayList<Flag>();
-		for (final var flag : Flag.values()) {
-			if ((bitset & flag.value) != 0) {
-				flags.add(flag);
-			}
-		}
-		return Collections.unmodifiableList(flags);
+	public BitFlagSet<Flag> publicFlags() {
+		return new BitFlagSet<>(data.getInteger("public_flags"));
 	}
 }

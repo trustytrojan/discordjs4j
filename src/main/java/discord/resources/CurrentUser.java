@@ -1,9 +1,9 @@
 package discord.resources;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.util.BitFlagSet;
 import discord.util.Util;
 import sj.SjObject;
 import sj.SjSerializable;
@@ -66,7 +66,7 @@ public final class CurrentUser extends User {
 		return data.getString("phone");
 	}
 
-	public List<Flag> flags() {
-		return computeFlags(data.getLong("flags").intValue());
+	public BitFlagSet<Flag> flags() {
+		return new BitFlagSet<>(data.getInteger("flags"));
 	}
 }

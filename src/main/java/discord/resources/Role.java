@@ -11,18 +11,12 @@ import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
 
-public class Role extends AbstractDiscordResource implements GuildResource, Mentionable {
+public class Role extends AbstractDiscordResource implements GuildResource {
 	private final Guild guild;
-	private final String mention = "<@&" + id + '>';
 
 	public Role(DiscordClient client, Guild guild, SjObject data) {
 		super(client, data, "/roles");
 		this.guild = guild;
-	}
-
-	@Override
-	public String mention() {
-		return mention;
 	}
 
 	public String name() {
