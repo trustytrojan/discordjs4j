@@ -60,11 +60,17 @@ public class User extends AbstractDiscordResource {
 		return ((UserDiscordClient) client).relationships.addFriendWithId(id);
 	}
 
+	/**
+	 * USER-ONLY METHOD: If {@code this.client} is not an instance of
+	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
+	 */
 	public CompletableFuture<Void> block() {
 		return ((UserDiscordClient) client).relationships.blockUser(id);
 	}
 
 	/**
+	 * USER-ONLY METHOD: If {@code this.client} is not an instance of
+	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
 	 * Either removes this user as a friend or unblocks them.
 	 */
 	public CompletableFuture<Void> deleteRelationship() {
