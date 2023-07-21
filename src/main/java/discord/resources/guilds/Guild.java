@@ -171,7 +171,7 @@ public class Guild extends PreviewGuild {
 		}
 
 		@Override
-		public long value() {
+		public long bit() {
 			return value;
 		}
 	}

@@ -15,7 +15,7 @@ public class RoleManager extends GuildResourceManager<Role> {
 
 	@Override
 	public Role construct(SjObject data) {
-		return new Role(client, guild, data);
+		return new Role(client, data);
 	}
 
 	@Override

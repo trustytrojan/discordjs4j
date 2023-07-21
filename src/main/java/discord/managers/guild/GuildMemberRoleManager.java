@@ -8,16 +8,13 @@ import discord.resources.Role;
 import sj.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
-	private final GuildMember member;
-
 	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
 		super(client, member.guild(), "/members" + member.id() + "/roles");
-		this.member = member;
 	}
 
 	@Override
 	public Role construct(SjObject data) {
-		return new Role(client, member.guild(), data);
+		return new Role(client, data);
 	}
 
 	/**

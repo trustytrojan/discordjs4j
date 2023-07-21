@@ -2,7 +2,6 @@ package discord.resources;
 
 import discord.client.DiscordClient;
 import discord.enums.Permission;
-import discord.resources.guilds.Guild;
 import discord.util.BitFlagSet;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
@@ -11,12 +10,36 @@ import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
 
-public class Role extends AbstractDiscordResource implements GuildResource {
-	private final Guild guild;
+public class Role extends AbstractGuildResource {
+	public static class Payload implements SjSerializable {
+		public String name;
+		public BitFlagSet<Permission> permissions;
+		public Long color;
+		public boolean hoist;
+		public String unicodeEmoji;
+		public boolean mentionable;
 
-	public Role(DiscordClient client, Guild guild, SjObject data) {
+		@Override
+		public String toJsonString() {
+			final var obj = new SjObject();
+			if (name != null)
+				obj.put("name", name);
+			if (permissions != null)
+				obj.put("permissions", permissions.toString());
+			if (color != null)
+				obj.put("color", color);
+			if (hoist)
+				obj.put("hoist", hoist);
+			if (unicodeEmoji != null)
+				obj.put("unicode_emoji", unicodeEmoji);
+			if (mentionable)
+				obj.put("mentionable", Boolean.TRUE);
+			return obj.toJsonString();
+		}
+	}
+
+	public Role(DiscordClient client, SjObject data) {
 		super(client, data, "/roles");
-		this.guild = guild;
 	}
 
 	public String name() {
@@ -65,38 +88,5 @@ public class Role extends AbstractDiscordResource implements GuildResource {
 
 	public String unicodeEmoji() {
 		return data.getString("unicode_emoji");
-	}
-
-
-	@Override
-	public Guild guild() {
-		return guild;
-	}
-
-	public static class Payload implements SjSerializable {
-		public String name;
-		public String permissions;
-		public Long color;
-		public boolean hoist;
-		public String unicodeEmoji;
-		public boolean mentionable;
-
-		@Override
-		public String toJsonString() {
-			final var obj = new SjObject();
-			if (name != null)
-				obj.put("name", name);
-			if (permissions != null)
-				obj.put("permissions", Boolean.TRUE);
-			if (color != null)
-				obj.put("color", color);
-			if (hoist)
-				obj.put("hoist", hoist);
-			if (unicodeEmoji != null)
-				obj.put("unicode_emoji", unicodeEmoji);
-			if (mentionable)
-				obj.put("mentionable", Boolean.TRUE);
-			return obj.toJsonString();
-		}
 	}
 }

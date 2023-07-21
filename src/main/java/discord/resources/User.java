@@ -39,7 +39,7 @@ public class User extends AbstractDiscordResource {
 		}
 
 		@Override
-		public long value() {
+		public long bit() {
 			return value;
 		}
 	}
