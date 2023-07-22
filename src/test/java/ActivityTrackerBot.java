@@ -67,7 +67,6 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		final Function<Guild, CompletableFuture<Void>> setGuildCommands = g -> g.commands.set(commands);
 
 		return CompletableFuture.allOf(
-			application.commands.set(List.of()),
 			guilds.get("1122369288758628464").thenCompose(setGuildCommands),
 			guilds.get("1131342149301055488").thenCompose(setGuildCommands)
 		);

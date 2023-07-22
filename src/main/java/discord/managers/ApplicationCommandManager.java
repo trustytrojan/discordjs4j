@@ -40,7 +40,6 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		cache.clear();
-		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAccept(this::cacheNewDeleteOld);
 	}
 }

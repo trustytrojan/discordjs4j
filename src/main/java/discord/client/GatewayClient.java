@@ -99,14 +99,11 @@ public class GatewayClient extends WebSocketClient {
 				final var t = obj.getString("t");
 				System.out.printf("[GatewayClient] Event received: %s\n", t);
 
-				final var event = GatewayEvent.valueOf(t);
-				if (event == null) return;
-
-				switch (event) {
+				switch (GatewayEvent.valueOf(t)) {
 					case READY -> {
-						final var d = obj.getObject("d");
-						System.out.println(d.getObjectArray("guilds").stream().map(o -> o.toPrettyJsonString()).toList());
-						client.users.cache(client.user);
+						// this is really only useful for user accounts
+						// TODO: get more initial data from the ready event
+						//final var d = obj.getObject("d");
 						client.ready.emit();
 					}
 
