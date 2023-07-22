@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+import discord.util.Util;
 import sj.Sj;
 import sj.SjObject;
 
@@ -65,7 +66,7 @@ public final class APIClient {
 				else if (statusCode >= 400)
 					throw new DiscordAPIException(requestWrapper, response);
 				return new JsonResponse(response.body());
-			});
+			}).exceptionally(Util::printStackTrace);
 	}
 
 	private static CompletableFuture<JsonResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
@@ -76,14 +77,17 @@ public final class APIClient {
 		return sendRequest(requestWrapper);
 	}
 
-	private String token;
+	private final String token;
 
-	APIClient() {}
-
-	public void setToken(String token, boolean bot) {
+	APIClient(String token, boolean bot) {
 		Objects.requireNonNull(token);
 		this.token = bot ? ("Bot " + token) : token;
 	}
+
+	// public void setToken(String token, boolean bot) {
+	// 	Objects.requireNonNull(token);
+	// 	this.token = bot ? ("Bot " + token) : token;
+	// }
 
 	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String body) {
 		final var requestBuilder = HttpRequest.newBuilder(URI.create(BASE_URL + path));

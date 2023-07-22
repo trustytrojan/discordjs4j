@@ -1,7 +1,6 @@
 package discord.managers;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
 import discord.resources.guilds.Guild;
@@ -19,18 +18,22 @@ public class GuildManager extends ResourceManager<Guild> {
 	}
 
 	public CompletableFuture<Guild> create(Guild.CreatePayload payload) {
-		return client.api.post("/guilds", payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Guild> edit(String id, Guild.EditPayload payload) {
-		return client.api.patch("/guilds/" + id, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete("/guilds/" + id).thenRun(Util.NO_OP);
+		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<Stream<Guild>> fetch() {
-		return client.api.get("/users/@me/guilds").thenApply(r -> r.toJsonObjectArray().stream().map(this::cache));
+	public CompletableFuture<Void> refreshCache() {
+		return client.api.get("/users/@me/guilds").thenAccept(r -> {
+			final var freshIds = r.toJsonObjectArray().stream().map(this::cache).map(Guild::id).toList();
+			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
+			deletedIds.forEach(cache::remove);
+		});
 	}
 }

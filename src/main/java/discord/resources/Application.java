@@ -2,7 +2,9 @@ package discord.resources;
 
 import java.util.concurrent.CompletableFuture;
 
+import discord.client.BotDiscordClient;
 import discord.client.DiscordClient;
+import discord.managers.ApplicationCommandManager;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
@@ -13,8 +15,11 @@ import sj.SjObject;
  * https://discord.com/developers/docs/resources/application
  */
 public class Application extends AbstractDiscordResource {
+	public final ApplicationCommandManager commands;
+
 	public Application(DiscordClient client, SjObject data) {
 		super(client, data, "/applications");
+		commands = new ApplicationCommandManager((BotDiscordClient) client, null);
 	}
 
 	public CompletableFuture<User> getOwner() {

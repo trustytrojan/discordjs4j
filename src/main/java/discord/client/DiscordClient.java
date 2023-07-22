@@ -1,6 +1,5 @@
 package discord.client;
 
-import discord.enums.GatewayIntent;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.managers.UserManager;
@@ -13,8 +12,8 @@ import signals.Signal0;
 import signals.Signal1;
 
 public abstract class DiscordClient {
-	public final APIClient api = new APIClient();
-	public final GatewayClient gateway = new GatewayClient(this);
+	public final APIClient api;
+	public final GatewayClient gateway;
 
 	public final UserManager users = new UserManager(this);
 	public final ChannelManager channels = new ChannelManager(this);
@@ -32,10 +31,11 @@ public abstract class DiscordClient {
 	public final Signal1<Message> messageUpdate = new Signal1<>();
 	public final Signal1<Message> messageDelete = new Signal1<>();
 
-	public CurrentUser user;
+	public final CurrentUser user;
 
-	protected void login(String token, boolean bot, GatewayIntent[] intents) {
-		api.setToken(token, bot);
-		gateway.login(token, intents);
+	protected DiscordClient(String token, boolean bot) {
+		api = new APIClient(token, bot);
+		gateway = new GatewayClient(this, token);
+		user = users.getCurrentUser().join();
 	}
 }

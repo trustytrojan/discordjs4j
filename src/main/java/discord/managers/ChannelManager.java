@@ -36,4 +36,9 @@ public class ChannelManager extends ResourceManager<Channel> {
 			if (guildId != null) client.guilds.get(guildId).thenAccept(g -> g.channels.cache.remove(id));
 		});
 	}
+
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		throw new UnsupportedOperationException("Unimplemented method 'refreshCache'");
+	}
 }

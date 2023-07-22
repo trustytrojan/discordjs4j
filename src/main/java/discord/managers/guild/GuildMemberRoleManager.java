@@ -35,5 +35,9 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
-	// TODO: implement getAll()
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'refreshCache'");
+	}
 }

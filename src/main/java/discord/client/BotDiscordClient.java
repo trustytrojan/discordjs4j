@@ -1,21 +1,21 @@
 package discord.client;
 
-import discord.enums.GatewayIntent;
-import discord.managers.ApplicationCommandManager;
+import java.util.concurrent.CompletableFuture;
+
 import discord.resources.Application;
 import discord.resources.interactions.Interaction;
 import signals.Signal1;
 
 public class BotDiscordClient extends DiscordClient {
-	public Application application;
-	public ApplicationCommandManager commands;
-
 	public final Signal1<Interaction> interactionCreate = new Signal1<>();
+	public final Application application;
 
-	public void login(String token, GatewayIntent[] intents) {
-		api.setToken(token, true);
-		final var r = api.get("/oauth2/applications/@me").join();
-		application = new Application(this, r.toJsonObject());
-		commands = new ApplicationCommandManager(this, null);
+	public BotDiscordClient(String token) {
+		super(token, true);
+		application = getApplication().join();
+	}
+
+	public CompletableFuture<Application> getApplication() {
+		return api.get("/oauth2/applications/@me").thenApply(r -> new Application(this, r.toJsonObject()));
 	}
 }

@@ -11,12 +11,10 @@ import discord.enums.GatewayEvent;
 import discord.enums.GatewayIntent;
 import discord.enums.GatewayOpcode;
 import discord.resources.AuditLogEntry;
-import discord.resources.CurrentUser;
 import discord.resources.channels.MessageChannel;
 import discord.resources.interactions.Interaction;
 import discord.util.Util;
 import sj.Sj;
-import sj.SjObject;
 
 public class GatewayClient extends WebSocketClient {
 	private static final URI DISCORD_GATEWAY_URI;
@@ -30,20 +28,20 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	private final DiscordClient client;
-	private long sequenceNumber;
-	private long heartbeatSentAt;
-	private long ping;
+	private final String token;
+	private long sequenceNumber, heartbeatSentAt, ping;
 
-	public GatewayClient(DiscordClient client) {
+	public GatewayClient(DiscordClient client, String token) {
 		super(DISCORD_GATEWAY_URI);
 		this.client = client;
+		this.token = token;
 	}
 
 	public long ping() {
 		return ping;
 	}
 
-	public void login(String token, GatewayIntent[] intents) {
+	public void login(GatewayIntent... intents) {
 		try { if (!connectBlocking()) System.exit(1); }
 		catch (InterruptedException e) {
 			e.printStackTrace();
@@ -87,10 +85,8 @@ public class GatewayClient extends WebSocketClient {
 
 	@Override
 	public void onMessage(String message) {
-		CompletableFuture.runAsync(() -> onMessageAsync(message)).exceptionallyAsync(Util.PRINT_STACK_TRACE);
+		CompletableFuture.runAsync(() -> onMessageAsync(message)).exceptionally(Util::printStackTrace);
 	}
-
-	// Let's give the WebSocketClient's thread a break from this mess
 
 	public void onMessageAsync(String rawJson) {
 		final var obj = Sj.parseObject(rawJson);
@@ -108,7 +104,8 @@ public class GatewayClient extends WebSocketClient {
 
 				switch (event) {
 					case READY -> {
-						client.user = new CurrentUser(client, obj.getObject("d").getObject("user"));
+						final var d = obj.getObject("d");
+						System.out.println(d.getObjectArray("guilds").stream().map(o -> o.toPrettyJsonString()).toList());
 						client.users.cache(client.user);
 						client.ready.emit();
 					}
@@ -190,10 +187,12 @@ public class GatewayClient extends WebSocketClient {
 
 				Util.repeat(() -> {
 					System.out.printf("[GatewayClient] Sending heartbeat; Sequence number: %d\n", sequenceNumber);
-					final var heartbeat = new SjObject();
-					heartbeat.put("op", GatewayOpcode.HEARTBEAT.value);
-					heartbeat.put("d", sequenceNumber);
-					send(heartbeat.toString());
+					send("""
+							{
+								"op": %d,
+								"d": %d
+							}
+						""".formatted(GatewayOpcode.HEARTBEAT.value, sequenceNumber));
 					heartbeatSentAt = System.currentTimeMillis();
 				}, heartbeat_interval);
 			}

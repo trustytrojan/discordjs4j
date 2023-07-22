@@ -1,6 +1,5 @@
 package discord.managers;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.UserDiscordClient;
@@ -53,7 +52,7 @@ public class RelationshipManager extends ResourceManager<Relationship> {
 		return client.api.delete(pathWithId(id)).thenRun(Util.NO_OP);
 	}
 
-	public CompletableFuture<List<Relationship>> getAll() {
-		return client.api.get(basePath).thenApply(r -> r.toJsonObjectArray().stream().map(this::cache).toList());
+	public CompletableFuture<Void> refreshCache() {
+		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

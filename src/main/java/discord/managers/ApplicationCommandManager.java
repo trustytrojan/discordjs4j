@@ -10,7 +10,7 @@ import sj.SjObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
 	public ApplicationCommandManager(BotDiscordClient client, String guildId) {
-		super(client, "/applications/" + client.application.id() + ((guildId != null) ? ("/guilds/" + guildId) : "") + "/commands");
+		super(client, "/applications/" + client.user.id() + ((guildId != null) ? ("/guilds/" + guildId) : "") + "/commands");
 	}
 
 	@Override
@@ -24,12 +24,12 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	}
 
 	public CompletableFuture<ApplicationCommand> edit(String id, ApplicationCommand.Payload payload) {
-		return client.api.patch(basePath + '/' + id, payload.toJsonString())
+		return client.api.patch(pathWithId(id), payload.toJsonString())
 			.thenApply(r -> cache(r.toJsonObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(basePath + '/' + id).thenRun(() -> cache.remove(id));
+		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
 	public CompletableFuture<Void> set(List<ApplicationCommand.Payload> commandPayloads) {
@@ -38,9 +38,9 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 			.thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 
+	@Override
 	public CompletableFuture<Void> refreshCache() {
 		cache.clear();
-		return client.api.get(basePath)
-			.thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

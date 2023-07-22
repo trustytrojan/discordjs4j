@@ -1,6 +1,5 @@
 package discord.managers.guild;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -35,7 +34,8 @@ public class RoleManager extends GuildResourceManager<Role> {
 		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
-	public CompletableFuture<List<Role>> getAll() {
-		return client.api.get(basePath).thenApply(r -> r.toJsonObjectArray().stream().map(this::cache).toList());
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
 	}
 }

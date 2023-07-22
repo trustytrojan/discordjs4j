@@ -38,11 +38,11 @@ public class ApplicationCommand extends AbstractDiscordResource {
 	}
 
 	public CompletableFuture<ApplicationCommand> edit(Payload payload) {
-		return client.commands.edit(id, payload);
+		return client.application.commands.edit(id, payload);
 	}
 
 	public CompletableFuture<Void> delete() {
-		return client.commands.delete(id);
+		return client.application.commands.delete(id);
 	}
 
 	public List<ApplicationCommandOption> options() {

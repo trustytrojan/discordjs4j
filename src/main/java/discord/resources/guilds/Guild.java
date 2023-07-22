@@ -62,15 +62,24 @@ public class Guild extends PreviewGuild {
 		public String toJsonString() {
 			final var obj = new SjObject();
 			obj.put("name", name);
-			if (verificationLevel != null) obj.put("verification_level", verificationLevel.ordinal());
-			if (defaultMessageNotifications != null) obj.put("default_message_notifications", defaultMessageNotifications.ordinal());
-			if (explicitContentFilter != null) obj.put("explicit_content_filter", explicitContentFilter.ordinal());
-			if (roles != null) obj.put("roles", roles);
-			if (channels != null) obj.put("channels", channels);
-			if (afkChannelId != null) obj.put("afk_channel_id", afkChannelId);
-			if (afkTimeout != null) obj.put("afk_timeout", afkTimeout);
-			if (systemChannelId != null) obj.put("system_channel_id", systemChannelId);
-			if (systemChannelFlags != null) obj.put("system_channel_flags", systemChannelFlags.asLong());
+			if (verificationLevel != null)
+				obj.put("verification_level", verificationLevel.ordinal());
+			if (defaultMessageNotifications != null)
+				obj.put("default_message_notifications", defaultMessageNotifications.ordinal());
+			if (explicitContentFilter != null)
+				obj.put("explicit_content_filter", explicitContentFilter.ordinal());
+			if (roles != null)
+				obj.put("roles", roles);
+			if (channels != null)
+				obj.put("channels", channels);
+			if (afkChannelId != null)
+				obj.put("afk_channel_id", afkChannelId);
+			if (afkTimeout != null)
+				obj.put("afk_timeout", afkTimeout);
+			if (systemChannelId != null)
+				obj.put("system_channel_id", systemChannelId);
+			if (systemChannelFlags != null)
+				obj.put("system_channel_flags", systemChannelFlags.asLong());
 			return obj.toJsonString();
 		}
 	}
@@ -103,22 +112,38 @@ public class Guild extends PreviewGuild {
 		@Override
 		public String toJsonString() {
 			final var obj = new SjObject();
-			if (name != null) obj.put("name", name);
-			if (verificationLevel != null) obj.put("verification_level", verificationLevel.ordinal());
-			if (defaultMessageNotifications != null) obj.put("default_message_notifications", defaultMessageNotifications.ordinal());
-			if (explicitContentFilter != null) obj.put("explicit_content_filter", explicitContentFilter.ordinal());
-			if (afkChannelId != null) obj.put("afk_channel_id", afkChannelId);
-			if (afkTimeout != null) obj.put("afk_timeout", afkTimeout);
-			if (ownerId != null) obj.put("owner_id", ownerId);
-			if (systemChannelId != null) obj.put("system_channel_id", systemChannelId);
-			if (systemChannelFlags != null) obj.put("system_channel_flags", systemChannelFlags.asLong());
-			if (rulesChannelId != null) obj.put("rules_channel_id", rulesChannelId);
-			if (publicUpdatesChannelId != null) obj.put("public_updates_channel_id", publicUpdatesChannelId);
-			if (preferredLocale != null) obj.put("preferred_locale", preferredLocale);
-			if (features != null) obj.put("features", features);
-			if (description != null) obj.put("description", description);
-			if (premiumProgressBarEnabled != null) obj.put("premium_progress_bar_enabled", premiumProgressBarEnabled);
-			if (safetyAlertsChannelId != null) obj.put("safety_alerts_channel_id", safetyAlertsChannelId);
+			if (name != null)
+				obj.put("name", name);
+			if (verificationLevel != null)
+				obj.put("verification_level", verificationLevel.ordinal());
+			if (defaultMessageNotifications != null)
+				obj.put("default_message_notifications", defaultMessageNotifications.ordinal());
+			if (explicitContentFilter != null)
+				obj.put("explicit_content_filter", explicitContentFilter.ordinal());
+			if (afkChannelId != null)
+				obj.put("afk_channel_id", afkChannelId);
+			if (afkTimeout != null)
+				obj.put("afk_timeout", afkTimeout);
+			if (ownerId != null)
+				obj.put("owner_id", ownerId);
+			if (systemChannelId != null)
+				obj.put("system_channel_id", systemChannelId);
+			if (systemChannelFlags != null)
+				obj.put("system_channel_flags", systemChannelFlags.asLong());
+			if (rulesChannelId != null)
+				obj.put("rules_channel_id", rulesChannelId);
+			if (publicUpdatesChannelId != null)
+				obj.put("public_updates_channel_id", publicUpdatesChannelId);
+			if (preferredLocale != null)
+				obj.put("preferred_locale", preferredLocale);
+			if (features != null)
+				obj.put("features", features);
+			if (description != null)
+				obj.put("description", description);
+			if (premiumProgressBarEnabled != null)
+				obj.put("premium_progress_bar_enabled", premiumProgressBarEnabled);
+			if (safetyAlertsChannelId != null)
+				obj.put("safety_alerts_channel_id", safetyAlertsChannelId);
 			return obj.toJsonString();
 		}
 	}
@@ -157,22 +182,16 @@ public class Guild extends PreviewGuild {
 	 * https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
 	 */
 	public static enum SystemChannelFlag implements BitFlagSet.BitFlag {
-		SUPPRESS_JOIN_NOTIFICATIONS(1 << 0),
-		SUPPRESS_PREMIUM_SUBSCRIPTIONS(1 << 1),
-		SUPPRESS_GUILD_REMINDER_NOTIFICATIONS(1 << 2),
-		SUPPRESS_JOIN_NOTIFICATION_REPLIES(1 << 3),
-		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS(1 << 4),
-		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES(1 << 5);
+		SUPPRESS_JOIN_NOTIFICATIONS,
+		SUPPRESS_PREMIUM_SUBSCRIPTIONS,
+		SUPPRESS_GUILD_REMINDER_NOTIFICATIONS,
+		SUPPRESS_JOIN_NOTIFICATION_REPLIES,
+		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS,
+		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES;
 	
-		private final int value;
-	
-		private SystemChannelFlag(int value) {
-			this.value = value;
-		}
-
 		@Override
 		public long bit() {
-			return value;
+			return 1 << ordinal();
 		}
 	}
 
@@ -364,7 +383,7 @@ public class Guild extends PreviewGuild {
 	}
 
 	public WelcomeScreen welcomeScreen() {
-		final var o = data.getObject("id");
+		final var o = data.getObject("welcome_screen");
 		return (o == null) ? null : new WelcomeScreen(o);
 	}
 

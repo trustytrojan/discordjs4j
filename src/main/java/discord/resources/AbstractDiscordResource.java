@@ -19,7 +19,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 	}
 
 	public CompletableFuture<Void> fetch() {
-		return client().api.get(apiPath).thenAccept(r -> setData(r.toJsonObject()));
+		return client.api.get(apiPath).thenAccept(r -> setData(r.toJsonObject()));
 	}
 
 	@Override

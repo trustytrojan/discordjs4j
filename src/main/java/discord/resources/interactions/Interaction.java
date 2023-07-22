@@ -148,12 +148,12 @@ public abstract class Interaction {
 			.thenRun(() -> deferred = true);
 	}
 
-	public CompletableFuture<Void> respond(Response payload) {
+	public CompletableFuture<Void> reply(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
 			.thenAccept(r -> System.out.println(r.text));
 	}
 
-	public CompletableFuture<Message> respondThenGetResponse(Response payload) {
+	public CompletableFuture<Message> replyThenGetResponse(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
 			.thenApply(r -> (originalResponse = new Message(client, channel, r.toJsonObject())));
 	}
@@ -172,12 +172,12 @@ public abstract class Interaction {
 		return payload;
 	}
 
-	public CompletableFuture<Void> respond(String content) {
-		return respond(onlyContent(false, content));
+	public CompletableFuture<Void> reply(String content) {
+		return reply(onlyContent(false, content));
 	}
 
-	public CompletableFuture<Void> respondEphemeral(String content) {
-		return respond(onlyContent(true, content));
+	public CompletableFuture<Void> replyEphemeral(String content) {
+		return reply(onlyContent(true, content));
 	}
 
 	public CompletableFuture<Message> followUp(String content) {
@@ -199,12 +199,12 @@ public abstract class Interaction {
 		return payload;
 	}
 
-	public CompletableFuture<Void> respond(Embed... embeds) {
-		return respond(onlyEmbeds(false, embeds));
+	public CompletableFuture<Void> reply(Embed... embeds) {
+		return reply(onlyEmbeds(false, embeds));
 	}
 
-	public CompletableFuture<Void> respondEphemeral(Embed... embeds) {
-		return respond(onlyEmbeds(true, embeds));
+	public CompletableFuture<Void> replyEphemeral(Embed... embeds) {
+		return reply(onlyEmbeds(true, embeds));
 	}
 
 	// Content and embeds
@@ -216,12 +216,12 @@ public abstract class Interaction {
 		return payload;
 	}
 
-	public CompletableFuture<Void> respond(String content, Embed... embeds) {
-		return respond(contentAndEmbeds(false, content, embeds));
+	public CompletableFuture<Void> reply(String content, Embed... embeds) {
+		return reply(contentAndEmbeds(false, content, embeds));
 	}
 
-	public CompletableFuture<Void> respondEphemeral(String content, Embed... embeds) {
-		return respond(contentAndEmbeds(true, content, embeds));
+	public CompletableFuture<Void> replyEphemeral(String content, Embed... embeds) {
+		return reply(contentAndEmbeds(true, content, embeds));
 	}
 
 	// Content and action rows
@@ -233,11 +233,11 @@ public abstract class Interaction {
 		return payload;
 	}
 
-	public CompletableFuture<Void> respond(String content, ActionRow... rows) {
-		return respond(contentAndActionRows(false, content, rows));
+	public CompletableFuture<Void> reply(String content, ActionRow... rows) {
+		return reply(contentAndActionRows(false, content, rows));
 	}
 
-	public CompletableFuture<Void> respondEphemeral(String content, ActionRow... rows) {
-		return respond(contentAndActionRows(true, content, rows));
+	public CompletableFuture<Void> replyEphemeral(String content, ActionRow... rows) {
+		return reply(contentAndActionRows(true, content, rows));
 	}
 }

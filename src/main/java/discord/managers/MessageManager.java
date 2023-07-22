@@ -36,7 +36,6 @@ public class MessageManager extends ResourceManager<Message> {
 	}
 
 	/*
-	 * Read this to understand the below code
 	 * https://discord.com/developers/docs/resources/channel#get-channel-messages
 	 */
 
@@ -91,5 +90,10 @@ public class MessageManager extends ResourceManager<Message> {
 
 	public CompletableFuture<List<Message>> getManyAfter(String id) {
 		return getMany(GetManyFilter.AFTER, id, 0);
+	}
+
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		throw new UnsupportedOperationException();
 	}
 }
