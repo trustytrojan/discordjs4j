@@ -31,9 +31,12 @@ public class GuildManager extends ResourceManager<Guild> {
 
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/users/@me/guilds").thenAccept(r -> {
-			final var freshIds = r.toJsonObjectArray().stream().map(this::cache).map(Guild::id).toList();
+			// don't cache the partial guilds, just delete old ids
+			final var freshIds = r.toJsonObjectArray().stream().map(o -> o.getString("id")).toList();
 			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
 			deletedIds.forEach(cache::remove);
+			// using the fresh ids, get and cache the full guilds
+			freshIds.forEach(this::get);
 		});
 	}
 }

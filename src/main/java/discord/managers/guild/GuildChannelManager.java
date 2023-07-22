@@ -5,7 +5,6 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.resources.channels.GuildChannel;
 import discord.resources.guilds.Guild;
-import discord.util.Util;
 import sj.SjObject;
 
 /**
@@ -40,11 +39,6 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath).thenAccept(r -> {
-			final var freshObjs = r.toJsonObjectArray().stream().map(this::cache).toList();
-			final var freshIds = freshObjs.stream().map(o -> o.id()).toList();
-			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
-			deletedIds.forEach(id -> cache.remove(id));
-		});
+		return client.api.get(basePath).thenAccept(this::cacheNewDeleteOld);
 	}
 }

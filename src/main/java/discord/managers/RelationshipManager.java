@@ -53,6 +53,6 @@ public class RelationshipManager extends ResourceManager<Relationship> {
 	}
 
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAccept(this::cacheNewDeleteOld);
 	}
 }

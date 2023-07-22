@@ -18,7 +18,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 		apiPath = baseApiPath + '/' + id;
 	}
 
-	public CompletableFuture<Void> fetch() {
+	public CompletableFuture<Void> refreshData() {
 		return client.api.get(apiPath).thenAccept(r -> setData(r.toJsonObject()));
 	}
 

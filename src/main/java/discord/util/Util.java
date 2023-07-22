@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +71,29 @@ public final class Util {
 		return difference;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(setDifference(Set.of(1, 3, 5), Set.of(5, 2, 6, 3)));
+	/*
+	private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
+
+	private static String urlEncode(String s) {
+		return URLEncoder.encode(s, DEFAULT_CHARSET);
+	}
+	*/
+
+	public static String encodeUrlParams(Map<String, String> params) {
+		final var size = params.size();
+		if (size == 0) return "";
+		if (size == 1) {
+			final var entry = params.entrySet().iterator().next();
+			return '?' + entry.getKey() + '=' + entry.getValue();
+		}
+		final var sb = new StringBuilder("?");
+		final var itr = params.entrySet().iterator();
+		boolean hasNext;
+		while (hasNext = itr.hasNext()) {
+			final var entry = itr.next();
+			sb.append(entry.getKey()).append('=').append(entry.getValue());
+			if (hasNext) sb.append('&');
+		}
+		return sb.toString();
 	}
 }

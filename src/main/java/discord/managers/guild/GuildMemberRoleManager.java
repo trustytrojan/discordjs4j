@@ -5,11 +5,15 @@ import java.util.concurrent.CompletableFuture;
 import discord.client.DiscordClient;
 import discord.resources.GuildMember;
 import discord.resources.Role;
+import discord.util.Util;
 import sj.SjObject;
 
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
+	private final GuildMember member;
+
 	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
 		super(client, member.guild(), "/members" + member.id() + "/roles");
+		this.member = member;
 	}
 
 	@Override
@@ -37,7 +41,11 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'refreshCache'");
+		return CompletableFuture.allOf(member.refreshData(), guild.roles.refreshCache()).thenRun(() -> {
+			final var freshIds = member.getData().getStringArray("roles");
+			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
+			deletedIds.forEach(cache::remove);
+			freshIds.forEach(id -> guild.roles.get(id).thenAccept(this::cache));
+		});
 	}
 }

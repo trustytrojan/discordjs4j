@@ -5,8 +5,10 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
+import discord.client.APIClient.JsonResponse;
 import discord.client.DiscordClient;
 import discord.resources.DiscordResource;
+import discord.util.Util;
 import sj.SjObject;
 
 public abstract class ResourceManager<T extends DiscordResource> implements Iterable<T> {
@@ -44,6 +46,12 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 		if (cached == null) return cache(construct(data));
 		cached.setData(data);
 		return cached;
+	}
+
+	public void cacheNewDeleteOld(JsonResponse r) {
+		final var freshIds = r.toJsonObjectArray().stream().map(this::cache).map(DiscordResource::id).toList();
+		final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
+		deletedIds.forEach(cache::remove);
 	}
 
 	public CompletableFuture<T> get(String id) {

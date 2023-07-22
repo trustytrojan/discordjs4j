@@ -47,8 +47,8 @@ public class MessageManager extends ResourceManager<Message> {
 					  limitProvided = (limit > 0);
 		if (filterProvided || limitProvided) {
 			sb.append('?');
-			final Runnable appendFilterParam = () -> sb.append(filter.name().toLowerCase() + '=').append(id);
-			final Runnable appendLimitParam = () -> sb.append("limit=").append(limit);
+			final Runnable appendFilterParam = () -> sb.append(filter.name().toLowerCase() + '=').append(id),
+						   appendLimitParam = () -> sb.append("limit=").append(limit);
 			if (filterProvided && limitProvided) {
 				appendFilterParam.run();
 				sb.append('&');

@@ -39,6 +39,6 @@ public class ChannelManager extends ResourceManager<Channel> {
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		throw new UnsupportedOperationException("Unimplemented method 'refreshCache'");
+		throw new UnsupportedOperationException();
 	}
 }

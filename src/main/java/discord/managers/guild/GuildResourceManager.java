@@ -6,7 +6,7 @@ import discord.resources.GuildResource;
 import discord.resources.guilds.Guild;
 
 public abstract class GuildResourceManager<T extends GuildResource> extends ResourceManager<T> {
-	public final Guild guild;
+	protected final Guild guild;
 
 	protected GuildResourceManager(DiscordClient client, Guild guild, String guildPath) {
 		super(client, "/guilds/" + guild.id() + guildPath);

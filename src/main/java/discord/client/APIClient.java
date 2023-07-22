@@ -111,23 +111,23 @@ public final class APIClient {
 		return sendRequest(buildRequest(method, path, body));
 	}
 
-	public CompletableFuture<JsonResponse> get(String path) {
+	public CompletableFuture<JsonResponse> get(String path) throws DiscordAPIException {
 		return buildAndSend(HttpMethod.GET, path, null);
 	}
 
-	public CompletableFuture<JsonResponse> post(String path, String body) {
+	public CompletableFuture<JsonResponse> post(String path, String body) throws DiscordAPIException {
 		return buildAndSend(HttpMethod.POST, path, body);
 	}
 
-	public CompletableFuture<JsonResponse> put(String path, String body) {
+	public CompletableFuture<JsonResponse> put(String path, String body) throws DiscordAPIException {
 		return buildAndSend(HttpMethod.PUT, path, body);
 	}
 
-	public CompletableFuture<JsonResponse> patch(String path, String body) {
+	public CompletableFuture<JsonResponse> patch(String path, String body) throws DiscordAPIException {
 		return buildAndSend(HttpMethod.PATCH, path, body);
 	}
 
-	public CompletableFuture<JsonResponse> delete(String path) {
+	public CompletableFuture<JsonResponse> delete(String path) throws DiscordAPIException {
 		return buildAndSend(HttpMethod.DELETE, path, null);
 	}
 }

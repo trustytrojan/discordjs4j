@@ -20,4 +20,9 @@ public class UserManager extends ResourceManager<User> {
 	public CompletableFuture<CurrentUser> getCurrentUser() {
 		return client.api.get("/users/@me").thenApply(r -> (CurrentUser) cache(new CurrentUser(client, r.toJsonObject())));
 	}
+
+	@Override
+	public CompletableFuture<Void> refreshCache() {
+		throw new UnsupportedOperationException();
+	}
 }

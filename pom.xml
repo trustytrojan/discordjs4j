@@ -28,16 +28,10 @@
 			<version>1.5.3</version>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>com.github.trustytrojan</groupId>
 			<artifactId>sj</artifactId>
-			<version>88f861ed65</version>
-		</dependency> -->
-
-		<dependency>
-			<groupId>trustytrojan</groupId>
-			<artifactId>sj</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1c2176d87f</version>
 		</dependency>
 
 		<dependency>
