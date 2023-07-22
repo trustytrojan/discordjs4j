@@ -27,11 +27,18 @@ public class GuildMember extends AbstractGuildResource {
 
 	public final GuildMemberRoleManager roles;
 	public final User user;
+	private final String id;
 
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, data, "/guilds/" + guild.id + "/members");
-		user = client.users.get(data.getObject("user").getString("id")).join();
+		super(client, guild, data, "/guilds/" + guild.id + "/members");
+		id = data.getObject("user").getString("id");
+		user = client.users.get(id).join();
 		roles = new GuildMemberRoleManager(client, this);
+	}
+
+	@Override
+	public String id() {
+		return id;
 	}
 
 	public String nickname() {
@@ -74,10 +81,5 @@ public class GuildMember extends AbstractGuildResource {
 
 	public Instant communicationDisabledUntil() {
 		return Instant.parse(data.getString("communication_disabled_until"));
-	}
-
-	@Override
-	public Guild guild() {
-		return guild;
 	}
 }

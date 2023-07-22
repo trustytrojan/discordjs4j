@@ -2,6 +2,7 @@ package discord.resources;
 
 import discord.client.DiscordClient;
 import discord.enums.Permission;
+import discord.resources.guilds.Guild;
 import discord.util.BitFlagSet;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
@@ -38,8 +39,8 @@ public class Role extends AbstractGuildResource {
 		}
 	}
 
-	public Role(DiscordClient client, SjObject data) {
-		super(client, data, "/roles");
+	public Role(DiscordClient client, Guild guild, SjObject data) {
+		super(client, guild, data, "/roles");
 	}
 
 	public String name() {

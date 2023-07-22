@@ -8,4 +8,6 @@ public interface DiscordResource {
 	SjObject getData();
 	void setData(SjObject data);
 	String id();
+	boolean wasDeleted();
+	void setDeleted();
 }

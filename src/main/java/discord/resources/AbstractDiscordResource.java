@@ -9,6 +9,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 	protected final DiscordClient client;
 	protected SjObject data;
 	protected final String id;
+	protected boolean deleted;
 	private final String apiPath;
 
 	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath) {
@@ -20,6 +21,16 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	public CompletableFuture<Void> refreshData() {
 		return client.api.get(apiPath).thenAccept(r -> setData(r.toJsonObject()));
+	}
+
+	@Override
+	public boolean wasDeleted() {
+		return deleted;
+	}
+
+	@Override
+	public void setDeleted() {
+		deleted = true;
 	}
 
 	@Override

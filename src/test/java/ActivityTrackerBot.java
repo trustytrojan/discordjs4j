@@ -7,14 +7,18 @@ import discord.client.BotDiscordClient;
 import discord.enums.GatewayIntent;
 import discord.resources.ApplicationCommand;
 import discord.resources.ApplicationCommandOption;
+import discord.resources.Message;
 import discord.resources.guilds.Guild;
 import discord.resources.interactions.ChatInputInteraction;
+import discord.resources.interactions.Interaction;
 import discord.util.Util;
 import sj.Sj;
 
 public class ActivityTrackerBot extends BotDiscordClient {
 	private final HashMap<String, HashMap<String, Long>> activityPerMemberPerGuild = new HashMap<>();
+	private final HashMap<String, String> previousMessageContentPerUser = new HashMap<>();
 
+	@SuppressWarnings("unchecked")
 	private ActivityTrackerBot() {
 		super(Util.readFile("tokens/activity-tracker"));
 
@@ -24,31 +28,45 @@ public class ActivityTrackerBot extends BotDiscordClient {
 			);
 		}
 
-		setCommands().thenRun(() -> System.out.println("Commands set!")).exceptionally(Util::printStackTrace);
-
-		ready.connect(() -> {
-			System.out.println("Logged in as " + user.tag() + '!');
-			guilds.forEach(g -> {
-				final var id = g.id();
-				if (!activityPerMemberPerGuild.containsKey(id)) {
-					activityPerMemberPerGuild.put(id, new HashMap<>());
-				}
-			});
-		});
-
-		interactionCreate.connect(i -> {
-			if (!(i instanceof final ChatInputInteraction interaction)) return;
-			switch (interaction.commandName) {
-				case "view_activity" -> {
-					interaction.reply("n");
-				}
-			}
-		});
-
+		//setCommands().thenRun(() -> System.out.println("Commands set!")).exceptionally(Util::printStackTrace);
+		
 		final var shutdownHook = new Thread(() -> Util.writeFile("atguilds.json", Sj.writePretty(activityPerMemberPerGuild)));
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
 		gateway.login(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS);
+	}
+
+	@Override
+	protected void onReady() {
+		System.out.println("Logged in as " + user.tag() + '!');
+		guilds.forEach(g -> {
+			final var id = g.id();
+			if (!activityPerMemberPerGuild.containsKey(id)) {
+				activityPerMemberPerGuild.put(id, new HashMap<>());
+			}
+		});
+	}
+
+	@Override
+	protected void onInteractionCreate(Interaction i) {
+		if (!(i instanceof final ChatInputInteraction interaction)) return;
+		switch (interaction.commandName) {
+			case "view_activity" -> {
+				interaction.reply("n");
+			}
+		}
+	}
+
+	@Override
+	protected void onMessageCreate(Message message) {
+		if (!message.inGuild) return;
+		final var authorId = message.author.id();
+		final var content = message.content();
+		final var previousMessageContent = previousMessageContentPerUser.get(authorId);
+		if (content.equals(previousMessageContent)) return;
+		previousMessageContentPerUser.put(authorId, content);
+		final var activityPerMember = activityPerMemberPerGuild.get(message.guild.id());
+		activityPerMember.put(authorId, activityPerMember.get(authorId) + 1);
 	}
 
 	private CompletableFuture<Void> setCommands() {
@@ -66,10 +84,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		final var commands = List.of(viewActivity);
 		final Function<Guild, CompletableFuture<Void>> setGuildCommands = g -> g.commands.set(commands);
 
-		return CompletableFuture.allOf(
-			guilds.get("1122369288758628464").thenCompose(setGuildCommands),
-			guilds.get("1131342149301055488").thenCompose(setGuildCommands)
-		);
+		return guilds.get("1131342149301055488").thenCompose(setGuildCommands);
 	}
 
 	public static void main(String[] args) {

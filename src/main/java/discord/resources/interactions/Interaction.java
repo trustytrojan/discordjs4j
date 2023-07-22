@@ -71,7 +71,7 @@ public abstract class Interaction {
 		}
 	}
 
-	public static Interaction fromJSON(BotDiscordClient client, SjObject data) {
+	public static Interaction construct(BotDiscordClient client, SjObject data) {
 		return switch (Type.resolve(data.getShort("type"))) {
 			case APPLICATION_COMMAND -> new ChatInputInteraction(client, data);
 			case MESSAGE_COMPONENT -> new MessageComponentInteraction(client, data);

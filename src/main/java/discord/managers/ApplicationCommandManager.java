@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.BotDiscordClient;
 import discord.resources.ApplicationCommand;
+import discord.util.Util;
 import sj.Sj;
 import sj.SjObject;
 
@@ -29,7 +30,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
+		return client.api.delete(pathWithId(id)).thenRun(Util.NO_OP);
 	}
 
 	public CompletableFuture<Void> set(List<ApplicationCommand.Payload> commandPayloads) {

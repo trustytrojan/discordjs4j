@@ -23,11 +23,10 @@ public interface Channel extends DiscordResource {
 		GUILD_DIRECTORY(14),
 		GUILD_FORUM(15);
 
-		public static final Type[] LOOKUP_TABLE = new Type[16];
+		private static final Type[] LOOKUP_TABLE = new Type[16];
 
 		static {
-			Stream.of(Type.values())
-				.forEach(t -> LOOKUP_TABLE[t.value] = t);
+			Stream.of(Type.values()).forEach(t -> LOOKUP_TABLE[t.value] = t);
 		}
 
 		public final short value;
@@ -37,7 +36,7 @@ public interface Channel extends DiscordResource {
 		}
 	}
 
-	public static Channel fromJSON(DiscordClient client, SjObject data) {
+	public static Channel construct(DiscordClient client, SjObject data) {
 		Objects.requireNonNull(client);
 		return switch (Type.LOOKUP_TABLE[data.getInteger("type")]) {
 			case GUILD_TEXT -> new TextChannel(client, data);
@@ -50,10 +49,6 @@ public interface Channel extends DiscordResource {
 	}
 
 	String url();
-
-	default String mention() {
-		return "<#" + id() + '>';
-	}
 
 	default String name() {
 		return getData().getString("name");

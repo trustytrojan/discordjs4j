@@ -21,7 +21,8 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 
 	@Override
 	public GuildMember cache(SjObject data) {
-		final var cached = cache.get(data.getObject("user").getString("id"));
+		final var id = data.getObject("user").getString("id");
+		final var cached = cache.get(id);
 		if (cached == null) return cache(construct(data));
 		cached.setData(data);
 		return cached;

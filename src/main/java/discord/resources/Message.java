@@ -9,6 +9,7 @@ import discord.resources.channels.GuildChannel;
 import discord.resources.channels.MessageChannel;
 import discord.resources.components.ActionRow;
 import discord.resources.components.MessageComponent;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 import sj.SjSerializable;
 
@@ -53,19 +54,22 @@ public class Message extends AbstractDiscordResource {
 	public List<MessageComponent> components;
 	public final User author;
 	public final MessageChannel channel;
-
-	private final boolean inGuild;
-	private final String url;
+	public final Guild guild;
+	public final boolean inGuild;
+	public final String url;
 
 	public Message(DiscordClient client, MessageChannel channel, SjObject data) {
 		super(client, data, "/channels/" + channel.id() + "/messages");
 		this.channel = channel;
 		author = client.users.get(data.getObject("author").getString("id")).join();
-		inGuild = (channel instanceof GuildChannel);
-		final var guildId = (inGuild)
-				? ((GuildChannel) channel).guildId()
-				: "@me";
-		url = "https://discord.com/channels/" + guildId + "/" + channel.id() + "/" + id;
+		final var urlFormat = "https://discord.com/channels/%s/" + channel.id() + '/' + id;
+		if (inGuild = channel instanceof GuildChannel) {
+			guild = ((GuildChannel) channel).guild();
+			url = urlFormat.formatted(guild.id);
+		} else {
+			guild = null;
+			url = urlFormat.formatted("@me");
+		}
 	}
 
 	public String content() {

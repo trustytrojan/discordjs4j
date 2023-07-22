@@ -18,11 +18,11 @@ public interface GuildChannel extends GuildResource, Channel {
 		return getData().getString("parent_id");
 	}
 
-	default CompletableFuture<CategoryChannel> parent() {
-		final var parentId = parentId();
-		return (parentId == null)
+	default CompletableFuture<CategoryChannel> getParent() {
+		final var id = parentId();
+		return (id == null)
 			? CompletableFuture.completedFuture(null)
-			: client().channels.get(parentId).thenApply(c -> (CategoryChannel) c);
+			: client().channels.get(id).thenApply(c -> (CategoryChannel) c);
 	}
 
 	/**

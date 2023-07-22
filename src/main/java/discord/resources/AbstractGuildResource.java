@@ -9,22 +9,15 @@ import sj.SjObject;
  * exist on one guild.
  */
 public class AbstractGuildResource extends AbstractDiscordResource implements GuildResource {
-	protected final String guildId;
 	protected final Guild guild;
 
-	protected AbstractGuildResource(DiscordClient client, SjObject data, String guildApiPath) {
+	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String guildApiPath) {
 		super(client, data, "/guilds/" + guildApiPath);
-		guildId = data.getString("guild_id");
-		guild = client.guilds.get(guildId).join();
+		this.guild = guild;
 	}
 
 	@Override
 	public Guild guild() {
 		return guild;
-	}
-
-	@Override
-	public String guildId() {
-		return guildId;
 	}
 }

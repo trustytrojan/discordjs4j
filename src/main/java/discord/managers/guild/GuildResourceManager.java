@@ -1,5 +1,7 @@
 package discord.managers.guild;
 
+import java.util.Objects;
+
 import discord.client.DiscordClient;
 import discord.managers.ResourceManager;
 import discord.resources.GuildResource;
@@ -10,6 +12,6 @@ public abstract class GuildResourceManager<T extends GuildResource> extends Reso
 
 	protected GuildResourceManager(DiscordClient client, Guild guild, String guildPath) {
 		super(client, "/guilds/" + guild.id() + guildPath);
-		this.guild = guild;
+		this.guild = Objects.requireNonNull(guild);
 	}
 }

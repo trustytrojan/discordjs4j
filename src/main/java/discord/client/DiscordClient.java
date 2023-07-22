@@ -8,8 +8,6 @@ import discord.resources.CurrentUser;
 import discord.resources.Message;
 import discord.resources.channels.Channel;
 import discord.resources.guilds.Guild;
-import signals.Signal0;
-import signals.Signal1;
 
 public abstract class DiscordClient {
 	public final APIClient api;
@@ -19,18 +17,6 @@ public abstract class DiscordClient {
 	public final ChannelManager channels = new ChannelManager(this);
 	public final GuildManager guilds = new GuildManager(this);
 
-	public final Signal0 ready = new Signal0();
-	public final Signal1<Guild> guildCreate = new Signal1<>();
-	public final Signal1<Guild> guildUpdate = new Signal1<>();
-	public final Signal1<Guild> guildDelete = new Signal1<>();
-	public final Signal1<AuditLogEntry> auditLogEntryCreate = new Signal1<>();
-	public final Signal1<Channel> channelCreate = new Signal1<>();
-	public final Signal1<Channel> channelUpdate = new Signal1<>();
-	public final Signal1<Channel> channelDelete = new Signal1<>();
-	public final Signal1<Message> messageCreate = new Signal1<>();
-	public final Signal1<Message> messageUpdate = new Signal1<>();
-	public final Signal1<Message> messageDelete = new Signal1<>();
-
 	public final CurrentUser user;
 
 	protected DiscordClient(String token, boolean bot) {
@@ -38,4 +24,21 @@ public abstract class DiscordClient {
 		gateway = new GatewayClient(this, token);
 		user = users.getCurrentUser().join();
 	}
+
+	/*
+	 * Subclasses should override the below methods as necessary
+	 * if they want to use old-style signal handling.
+	 */
+
+	protected void onReady() {}
+	protected void onChannelCreate(Channel channel) {}
+	protected void onChannelUpdate(Channel channel) {}
+	protected void onChannelDelete(Channel channel) {}
+	protected void onGuildCreate(Guild guild) {}
+	protected void onGuildUpdate(Guild guild) {}
+	protected void onGuildDelete(Guild guild) {}
+	protected void onGuildAuditLogEntryCreate(AuditLogEntry auditLogEntry) {}
+	protected void onMessageCreate(Message message) {}
+	protected void onMessageUpdate(Message message) {}
+	protected void onMessageDelete(Message message) {}
 }

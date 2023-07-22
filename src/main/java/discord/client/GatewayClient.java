@@ -101,35 +101,35 @@ public class GatewayClient extends WebSocketClient {
 
 				switch (GatewayEvent.valueOf(t)) {
 					case READY -> {
-						// this is really only useful for user accounts
-						// TODO: get more initial data from the ready event
+						// this is really only useful for users
+						// TODO: get more initial data from the ready event for USER clients
 						//final var d = obj.getObject("d");
-						client.ready.emit();
+						client.onReady();
 					}
 
 					case INTERACTION_CREATE -> {
 						final var bot = (BotDiscordClient) client;
-						bot.interactionCreate.emit(Interaction.fromJSON(bot, obj.getObject("d")));
+						bot.onInteractionCreate(Interaction.construct(bot, obj.getObject("d")));
 					}
 
-					case GUILD_AUDIT_LOG_ENTRY_CREATE -> client.auditLogEntryCreate.emit(new AuditLogEntry(client, obj.getObject("d")));
+					case GUILD_AUDIT_LOG_ENTRY_CREATE -> client.onGuildAuditLogEntryCreate(new AuditLogEntry(client, obj.getObject("d")));
 
-					case GUILD_CREATE -> client.guildCreate.emit(client.guilds.cache(obj.getObject("d")));
-					case GUILD_UPDATE -> client.guildUpdate.emit(client.guilds.cache(obj.getObject("d")));
+					case GUILD_CREATE -> client.onGuildCreate(client.guilds.cache(obj.getObject("d")));
+					case GUILD_UPDATE -> client.onGuildUpdate(client.guilds.cache(obj.getObject("d")));
 					case GUILD_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
-						final var removed = client.guilds.cache.remove(id);
-						if (removed == null) return;
-						client.guildDelete.emit(removed);
+						final var deletedGuild = client.guilds.cache.get(id);
+						deletedGuild.setDeleted();
+						client.onGuildDelete(deletedGuild);
 					}
 
-					case CHANNEL_CREATE -> client.channelCreate.emit(client.channels.cache(obj.getObject("d")));
-					case CHANNEL_UPDATE -> client.channelUpdate.emit(client.channels.cache(obj.getObject("d")));
+					case CHANNEL_CREATE -> client.onChannelCreate(client.channels.cache(obj.getObject("d")));
+					case CHANNEL_UPDATE -> client.onChannelUpdate(client.channels.cache(obj.getObject("d")));
 					case CHANNEL_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
-						final var removed = client.channels.cache.remove(id);
-						if (removed == null) return;
-						client.channelDelete.emit(removed);
+						final var deletedChannel = client.channels.cache.get(id);
+						deletedChannel.setDeleted();
+						client.onChannelDelete(deletedChannel);
 					}
 
 					case MESSAGE_CREATE -> {
@@ -138,7 +138,7 @@ public class GatewayClient extends WebSocketClient {
 							.thenAccept(c -> {
 								final var channel = (MessageChannel) c;
 								final var message = channel.messages().cache(messageObj);
-								client.messageCreate.emit(message);
+								client.onMessageCreate(message);
 							});
 					}
 
@@ -148,7 +148,7 @@ public class GatewayClient extends WebSocketClient {
 							.thenAccept(c -> {
 								final var channel = (MessageChannel) c;
 								final var message = channel.messages().cache(messageObj);
-								client.messageUpdate.emit(message);
+								client.onMessageUpdate(message);
 							});
 					}
 
@@ -157,15 +157,13 @@ public class GatewayClient extends WebSocketClient {
 						client.channels.get(d.getString("channel_id"))
 							.thenAccept(c -> {
 								final var channel = (MessageChannel) c;
-								final var message = channel.messages().cache.remove(d.getString("id"));
-								client.messageDelete.emit(message);
+								final var deletedMessage = channel.messages().cache.get(d.getString("id"));
+								deletedMessage.setDeleted();
+								client.onMessageDelete(deletedMessage);
 							});
 					}
 
-					default -> {
-						final var dataString = obj.getObject("d").toString();
-						if (dataString.length() < 1000) System.out.println(dataString);
-					}
+					default -> {}
 				}
 			}
 

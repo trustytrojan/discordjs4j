@@ -6,6 +6,7 @@ import discord.client.DiscordClient;
 import discord.resources.channels.Channel;
 import discord.resources.channels.GroupDMChannel;
 import discord.resources.channels.GuildChannel;
+import discord.util.Util;
 import sj.SjObject;
 
 public class ChannelManager extends ResourceManager<Channel> {
@@ -15,7 +16,7 @@ public class ChannelManager extends ResourceManager<Channel> {
 
 	@Override
 	public Channel construct(SjObject data) {
-		return Channel.fromJSON(client, data);
+		return Channel.construct(client, data);
 	}
 
 	public CompletableFuture<GroupDMChannel> editGroupDM(String id, GroupDMChannel.Payload payload) {
@@ -29,12 +30,7 @@ public class ChannelManager extends ResourceManager<Channel> {
 	}
 
 	public CompletableFuture<Void> delete(String id) {
-		return client.api.delete(pathWithId(id)).thenAccept(r -> {
-			cache.remove(id);
-			// also delete from associated GuildChannelManager if necessary
-			final var guildId = r.toJsonObject().getString("guild_id");
-			if (guildId != null) client.guilds.get(guildId).thenAccept(g -> g.channels.cache.remove(id));
-		});
+		return client.api.delete(pathWithId(id)).thenRun(Util.NO_OP);
 	}
 
 	@Override
