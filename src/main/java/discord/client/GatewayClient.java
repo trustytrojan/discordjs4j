@@ -1,7 +1,9 @@
 package discord.client;
 
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import org.java_websocket.client.WebSocketClient;
@@ -10,22 +12,16 @@ import org.java_websocket.handshake.ServerHandshake;
 import discord.enums.GatewayEvent;
 import discord.enums.GatewayIntent;
 import discord.enums.GatewayOpcode;
-import discord.resources.AuditLogEntry;
 import discord.resources.channels.MessageChannel;
 import discord.resources.interactions.Interaction;
+import discord.structures.AuditLogEntry;
+import discord.structures.IdentifyParams;
 import discord.util.Util;
 import sj.Sj;
+import sj.SjObject;
 
 public class GatewayClient extends WebSocketClient {
-	private static final URI DISCORD_GATEWAY_URI;
-
-	static {
-		try {
-			DISCORD_GATEWAY_URI = new URI("wss://gateway.discord.gg/");
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	private static final URI DISCORD_GATEWAY_URI = URI.create("wss://gateway.discord.gg");
 
 	private final DiscordClient client;
 	private final String token;
@@ -41,33 +37,59 @@ public class GatewayClient extends WebSocketClient {
 		return ping;
 	}
 
-	public void login(GatewayIntent... intents) {
-		try { if (!connectBlocking()) System.exit(1); }
-		catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
 
-		send("""
-			{
-				"op": %d,
-				"d": {
-					"token": "%s",
-					"intents": %d,
-					"properties": {
-						"os": "%s",
-						"browser": "discordjs4j",
-						"device": "discordjs4j"
-					}
-				}
-			}
-			""".formatted(
-				GatewayOpcode.IDENTIFY.value,
-				token,
-				GatewayIntent.sum(intents),
-				System.getProperty("os.name")
-			)
+
+	public void connectAndIdentify(GatewayIntent... intents) {
+		tryConnecting();
+		sendIdentify(intents);
+	}
+
+	public void connectAndIdentify(IdentifyParams params) {
+		tryConnecting();
+		sendIdentify(params);
+	}
+
+	private void tryConnecting() {
+		try {
+			if (!connectBlocking())
+				throw new RuntimeException("Could not connect websocket to Discord gateway!");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void sendIdentify(GatewayIntent... intents) {
+		final var d = Map.of(
+			"token", token,
+			"properties", IdentifyParams.DEFAULT_CONNECTION_PROPERTIES,
+			"intents", GatewayIntent.sum(intents)
 		);
+		send("{\"op\":2,\"d\":%s}".formatted(Sj.write(d)));
+	}
+
+	private void sendIdentify(IdentifyParams params) {
+		send("{\"op\":2,\"d\":%s}".formatted(params.toJsonString()));
+	}
+
+	public void sendRequestGuildMembers(String guildId, String query, int limit, boolean presences, List<String> userIds, String nonce) {
+		final var obj = new SjObject();
+		obj.put("guild_id", Objects.requireNonNull(guildId));
+		if (query != null) {
+			obj.put("query", query);
+			obj.put("limit", limit);
+		}
+		if (presences)
+			obj.put("presences", Boolean.TRUE);
+		if (userIds != null && userIds.size() > 0)
+			obj.put("user_ids", userIds);
+		if (nonce != null)
+			obj.put("nonce", nonce);
+		send("""
+				{
+					"op": 8,
+					"d": %s
+				}
+				""".formatted(obj.toJsonString()));
 	}
 
 	@Override
@@ -88,7 +110,24 @@ public class GatewayClient extends WebSocketClient {
 		CompletableFuture.runAsync(() -> onMessageAsync(message)).exceptionally(Util::printStackTrace);
 	}
 
-	public void onMessageAsync(String rawJson) {
+	@Override
+	public void onClose(int code, String reason, boolean remote) {
+		System.out.printf("""
+				[GatewayClient] Connection closed!
+					Code: %d
+					Reason: %s
+					Remote: %b
+				""", code, reason, remote);
+		System.exit(1);
+	}
+
+	@Override
+	public void onError(Exception e) {
+		System.err.println("[GatewayClient] WebSocket error!");
+		e.printStackTrace();
+	}
+
+	private void onMessageAsync(String rawJson) {
 		final var obj = Sj.parseObject(rawJson);
 		final var opcode = GatewayOpcode.resolve(obj.getShort("op"));
 
@@ -194,22 +233,5 @@ public class GatewayClient extends WebSocketClient {
 
 			default -> {}
 		}
-	}
-
-	@Override
-	public void onClose(int code, String reason, boolean remote) {
-		System.out.printf("""
-				[GatewayClient] Connection closed!
-					Code: %d
-					Reason: %s
-					Remote: %b
-				""", code, reason, remote);
-		System.exit(1);
-	}
-
-	@Override
-	public void onError(Exception e) {
-		System.err.println("[GatewayClient] WebSocket error!");
-		e.printStackTrace();
 	}
 }

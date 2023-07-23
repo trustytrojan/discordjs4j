@@ -3,11 +3,11 @@ package discord.client;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.managers.UserManager;
-import discord.resources.AuditLogEntry;
 import discord.resources.CurrentUser;
 import discord.resources.Message;
 import discord.resources.channels.Channel;
 import discord.resources.guilds.Guild;
+import discord.structures.AuditLogEntry;
 
 public abstract class DiscordClient {
 	public final APIClient api;

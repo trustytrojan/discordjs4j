@@ -33,17 +33,15 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		final var shutdownHook = new Thread(() -> Util.writeFile("atguilds.json", Sj.writePretty(activityPerMemberPerGuild)));
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
-		gateway.login(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS);
+		gateway.connectAndIdentify(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS);
 	}
 
 	@Override
 	protected void onReady() {
 		System.out.println("Logged in as " + user.tag() + '!');
-		guilds.forEach(g -> {
-			final var id = g.id();
-			if (!activityPerMemberPerGuild.containsKey(id)) {
+		guilds.cache.keySet().forEach(id -> {
+			if (!activityPerMemberPerGuild.containsKey(id))
 				activityPerMemberPerGuild.put(id, new HashMap<>());
-			}
 		});
 	}
 

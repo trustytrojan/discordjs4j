@@ -33,12 +33,6 @@
 			<artifactId>sj</artifactId>
 			<version>1c2176d87f</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.github.trustytrojan</groupId>
-			<artifactId>java-signals</artifactId>
-			<version>a588941e55</version>
-		</dependency>
 	</dependencies>
 
 </project>
