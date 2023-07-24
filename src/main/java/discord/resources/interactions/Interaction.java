@@ -64,7 +64,7 @@ public abstract class Interaction {
 
 		@Override
 		public String toJsonString() {
-			final var obj = toJSONObject();
+			final var obj = toJsonObject();
 			if (ephemeral)
 				obj.put("ephemeral", Boolean.TRUE);
 			return obj.toString();
@@ -150,18 +150,18 @@ public abstract class Interaction {
 
 	public CompletableFuture<Void> reply(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenAccept(r -> System.out.println(r.text));
+			.thenAccept(r -> System.out.println(r.rawText));
 	}
 
 	public CompletableFuture<Message> replyThenGetResponse(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenApply(r -> (originalResponse = new Message(client, channel, r.toJsonObject())));
+			.thenApply(r -> (originalResponse = new Message(client, channel, r.asObject())));
 	}
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
 		final var path = "/webhooks/" + client.application.getId() + '/' + token;
 		return client.api.post(path, payload.toJsonString())
-			.thenApply(r -> new Message(client, channel, r.toJsonObject()));
+			.thenApply(r -> new Message(client, channel, r.asObject()));
 	}
 
 	// Content only

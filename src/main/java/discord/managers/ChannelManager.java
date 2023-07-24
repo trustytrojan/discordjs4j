@@ -21,12 +21,12 @@ public class ChannelManager extends ResourceManager<Channel> {
 
 	public CompletableFuture<GroupDMChannel> editGroupDM(String id, GroupDMChannel.Payload payload) {
 		return client.api.patch(pathWithId(id), payload.toJsonString())
-			.thenApply(r -> (GroupDMChannel) cache(r.toJsonObject()));
+			.thenApply(r -> (GroupDMChannel) cache(r.asObject()));
 	}
 
 	public CompletableFuture<GuildChannel> editGuildChannel(String id, GuildChannel.Payload payload) {
 		return client.api.patch(pathWithId(id), payload.toJsonString())
-			.thenApply(r -> (GuildChannel) cache(r.toJsonObject()));
+			.thenApply(r -> (GuildChannel) cache(r.asObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {

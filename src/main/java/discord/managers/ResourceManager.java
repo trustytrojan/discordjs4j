@@ -49,7 +49,7 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 	}
 
 	public void cacheNewDeleteOld(JsonResponse r) {
-		final var freshIds = r.toJsonObjectArray().stream().map(this::cache).map(DiscordResource::getId).toList();
+		final var freshIds = r.asObjectArray().stream().map(this::cache).map(DiscordResource::getId).toList();
 		final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
 		deletedIds.forEach(cache::remove);
 	}
@@ -73,7 +73,7 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 			if (cached != null)
 				return CompletableFuture.completedFuture(cached);
 		}
-		return client.api.get(pathWithId(id)).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.get(pathWithId(id)).thenApply(r -> cache(r.asObject()));
 	}
 
 	public abstract CompletableFuture<Void> refreshCache();

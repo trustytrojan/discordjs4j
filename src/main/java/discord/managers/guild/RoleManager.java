@@ -23,11 +23,11 @@ public class RoleManager extends GuildResourceManager<Role> {
 	}
 
 	public CompletableFuture<Role> create(Role.Payload payload) {
-		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Role> edit(String id, Role.Payload payload) {
-		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
@@ -36,6 +36,6 @@ public class RoleManager extends GuildResourceManager<Role> {
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath).thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAccept(r -> r.asObjectArray().forEach(this::cache));
 	}
 }

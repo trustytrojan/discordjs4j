@@ -37,8 +37,6 @@ public class GatewayClient extends WebSocketClient {
 		return ping;
 	}
 
-
-
 	public void connectAndIdentify(GatewayIntent... intents) {
 		tryConnecting();
 		sendIdentify(intents);

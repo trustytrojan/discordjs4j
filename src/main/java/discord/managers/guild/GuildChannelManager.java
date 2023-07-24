@@ -26,7 +26,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	}
 
 	public CompletableFuture<GuildChannel> create(GuildChannel.Payload payload) {
-		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<GuildChannel> edit(String id, GuildChannel.Payload payload) {

@@ -40,18 +40,18 @@ public final class APIClient {
 	}
 
 	public static class JsonResponse {
-		public final String text;
+		public final String rawText;
 
 		private JsonResponse(String text) {
-			this.text = text;
+			this.rawText = text;
 		}
 
-		public SjObject toJsonObject() {
-			return Sj.parseObject(text);
+		public SjObject asObject() {
+			return Sj.parseObject(rawText);
 		}
 
-		public List<SjObject> toJsonObjectArray() {
-			return Sj.parseObjectArray(text);
+		public List<SjObject> asObjectArray() {
+			return Sj.parseObjectArray(rawText);
 		}
 	}
 

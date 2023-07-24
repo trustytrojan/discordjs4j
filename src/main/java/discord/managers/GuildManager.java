@@ -18,11 +18,11 @@ public class GuildManager extends ResourceManager<Guild> {
 	}
 
 	public CompletableFuture<Guild> create(Guild.CreatePayload payload) {
-		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Guild> edit(String id, Guild.EditPayload payload) {
-		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
@@ -32,7 +32,7 @@ public class GuildManager extends ResourceManager<Guild> {
 	public CompletableFuture<Void> refreshCache() {
 		return client.api.get("/users/@me/guilds").thenAccept(r -> {
 			// don't cache the partial guilds, just delete old ids
-			final var freshIds = r.toJsonObjectArray().stream().map(o -> o.getString("id")).toList();
+			final var freshIds = r.asObjectArray().stream().map(o -> o.getString("id")).toList();
 			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
 			deletedIds.forEach(cache::remove);
 			// using the fresh ids, get and cache the full guilds

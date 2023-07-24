@@ -24,11 +24,11 @@ public class MessageManager extends ResourceManager<Message> {
 	}
 
 	public CompletableFuture<Message> create(Message.Payload payload) {
-		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Message> edit(String id, Message.Payload payload) {
-		return client.api.patch(basePath + id, payload.toJsonString()).thenApply(r -> cache(r.toJsonObject()));
+		return client.api.patch(basePath + id, payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
@@ -57,7 +57,7 @@ public class MessageManager extends ResourceManager<Message> {
 			else if (filterProvided) appendFilterParam.run();
 			else if (limitProvided) appendLimitParam.run();
 		}
-		return client.api.get(sb.toString()).thenApply(r -> r.toJsonObjectArray().stream().map(this::cache).toList());
+		return client.api.get(sb.toString()).thenApply(r -> r.asObjectArray().stream().map(this::cache).toList());
 	}
 
 	public CompletableFuture<List<Message>> getMany() {

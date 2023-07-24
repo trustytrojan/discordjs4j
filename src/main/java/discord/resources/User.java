@@ -92,7 +92,7 @@ public class User extends AbstractDiscordResource {
 
 	public CompletableFuture<DMChannel> createDM() {
 		return client.api.post("/users/@me/channels", "{\"recipient_id\":\"" + id + "\"}")
-				.thenApply(r -> new DMChannel(client, r.toJsonObject()));
+				.thenApply(r -> new DMChannel(client, r.asObject()));
 	}
 
 	public String getUsername() {

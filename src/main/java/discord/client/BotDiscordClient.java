@@ -14,7 +14,7 @@ public class BotDiscordClient extends DiscordClient {
 	}
 
 	public CompletableFuture<Application> getApplication() {
-		return api.get("/oauth2/applications/@me").thenApply(r -> new Application(this, r.toJsonObject()));
+		return api.get("/oauth2/applications/@me").thenApply(r -> new Application(this, r.asObject()));
 	}
 
 	/*

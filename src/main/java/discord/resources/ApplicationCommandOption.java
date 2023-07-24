@@ -70,7 +70,7 @@ public final class ApplicationCommandOption {
 		public String name;
 		public String description;
 
-		public SjObject toJSONObject() {
+		public SjObject toSjObject() {
 			final var obj = new SjObject();
 			obj.put("type", type.value);
 			obj.put("name", name);
@@ -85,7 +85,7 @@ public final class ApplicationCommandOption {
 
 		@Override
 		public String toJsonString() {
-			final var obj = toJSONObject();
+			final var obj = toSjObject();
 			if (required)
 				obj.put("required", Boolean.TRUE);
 			if (choices != null && choices.size() > 0)
@@ -99,7 +99,7 @@ public final class ApplicationCommandOption {
 
 		@Override
 		public String toJsonString() {
-			final var obj = toJSONObject();
+			final var obj = toSjObject();
 			if (options != null && options.size() > 0)
 				obj.put("options", options);
 			return obj.toJsonString();

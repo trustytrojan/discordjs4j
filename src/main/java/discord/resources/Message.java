@@ -21,7 +21,7 @@ public class Message extends AbstractDiscordResource {
 		public List<ActionRow> components;
 		//public List<Attachment> attachments;
 
-		public SjObject toJSONObject() {
+		public SjObject toJsonObject() {
 			final var obj = new SjObject();
 			if (content != null)
 				obj.put("content", content);
@@ -47,7 +47,7 @@ public class Message extends AbstractDiscordResource {
 
 		@Override
 		public String toJsonString() {
-			return toJSONObject().toString();
+			return toJsonObject().toString();
 		}
 	}
 

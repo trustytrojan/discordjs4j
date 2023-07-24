@@ -32,7 +32,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	}
 
 	public CompletableFuture<Void> add(String id) {
-		return client.api.put(pathWithId(id), null).thenAccept(r -> cache(r.toJsonObject()));
+		return client.api.put(pathWithId(id), null).thenAccept(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Void> remove(String id) {

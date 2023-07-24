@@ -34,17 +34,21 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		public String name;
 		public String description;
 		public List<ApplicationCommandOption.Payload> options;
+		public boolean dmPermission;
 
 		@Override
 		public String toJsonString() {
 			final var obj = new SjObject();
-			obj.put("name", name);
+			if (name != null)
+				obj.put("name", name);
 			if (type != null)
 				obj.put("type", type.value);
 			if (description != null)
 				obj.put("description", description);
 			if (options != null && options.size() > 0)
 				obj.put("options", options);
+			if (dmPermission)
+				obj.put("dm_permission", Boolean.TRUE);
 			return obj.toJsonString();
 		}
 	}

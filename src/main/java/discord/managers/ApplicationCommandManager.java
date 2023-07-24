@@ -21,12 +21,12 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 
 	public CompletableFuture<ApplicationCommand> create(ApplicationCommand.Payload payload) {
 		return client.api.post(basePath, payload.toJsonString())
-			.thenApply(r -> cache(r.toJsonObject()));
+			.thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<ApplicationCommand> edit(String id, ApplicationCommand.Payload payload) {
 		return client.api.patch(pathWithId(id), payload.toJsonString())
-			.thenApply(r -> cache(r.toJsonObject()));
+			.thenApply(r -> cache(r.asObject()));
 	}
 
 	public CompletableFuture<Void> delete(String id) {
@@ -36,7 +36,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 	public CompletableFuture<Void> set(List<ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
 		return client.api.put(basePath, Sj.write(commandPayloads))
-			.thenAccept(r -> r.toJsonObjectArray().forEach(this::cache));
+			.thenAccept(r -> r.asObjectArray().forEach(this::cache));
 	}
 
 	@Override

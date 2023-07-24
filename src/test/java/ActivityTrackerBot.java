@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -16,20 +17,22 @@ import discord.util.Util;
 import sj.Sj;
 
 public class ActivityTrackerBot extends BotDiscordClient {
-	private final HashMap<String, HashMap<String, Long>> activityPerMemberPerGuild = new HashMap<>();
-	private final HashMap<String, String> previousMessageContentPerUser = new HashMap<>();
+	private final Map<String, Map<String, Long>> activityPerMemberPerGuild = new HashMap<>();
+	private final Map<String, String> previousMessageContentPerUser = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
-	private ActivityTrackerBot() {
-		super(Util.readFile("tokens/activity-tracker"));
+	private void readData() {
+		try {
+			Sj.parseObject(Util.readFile("atguilds.json")).entrySet().forEach(
+				entry -> activityPerMemberPerGuild.put(entry.getKey(), (HashMap<String, Long>) entry.getValue())
+			);
+		} catch (Exception e) {}
+	}
 
-		if (Util.fileExists("atguilds.json")) {
-			try {
-				Sj.parseObject(Util.readFile("atguilds.json")).entrySet().forEach(
-					entry -> activityPerMemberPerGuild.put(entry.getKey(), (HashMap<String, Long>) entry.getValue())
-				);
-			} catch (Exception e) {}
-		}
+	private ActivityTrackerBot(String token) {
+		super(token);
+
+		if (Util.fileExists("atguilds.json")) readData();
 
 		//setCommands().thenRun(() -> System.out.println("Commands set!")).exceptionally(Util::printStackTrace);
 		
@@ -140,6 +143,6 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	}
 
 	public static void main(String[] args) {
-		new ActivityTrackerBot();
+		new ActivityTrackerBot(Util.readFile("tokens/activity-tracker"));
 	}
 }
