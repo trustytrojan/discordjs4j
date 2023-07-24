@@ -7,6 +7,7 @@ import discord.client.BotDiscordClient;
 import discord.enums.GatewayIntent;
 import discord.resources.ApplicationCommand;
 import discord.resources.ApplicationCommandOption;
+import discord.resources.Embed;
 import discord.resources.Message;
 import discord.resources.guilds.Guild;
 import discord.resources.interactions.ChatInputInteraction;
@@ -38,7 +39,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 
 	@Override
 	protected void onReady() {
-		System.out.println("Logged in as " + user.tag() + '!');
+		System.out.println("Logged in as " + user.getTag() + '!');
 		guilds.cache.keySet().forEach(id -> {
 			if (!activityPerMemberPerGuild.containsKey(id))
 				activityPerMemberPerGuild.put(id, new HashMap<>());
@@ -50,7 +51,21 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		if (!(i instanceof final ChatInputInteraction interaction)) return;
 		switch (interaction.commandName) {
 			case "view_activity" -> {
-				interaction.reply("n");
+				final var member = interaction.options.getMember("member").join();
+				final var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.getId());
+				final var embed = new Embed();
+				if (member == null) {
+					final var membersStr = new StringBuilder();
+					final var activityNumsStr = new StringBuilder();
+					for (final var entry : activityPerMember.entrySet()) {
+						membersStr.append(entry.getKey());
+						activityNumsStr.append(entry.getValue());
+					}
+				} else {
+					embed.title = "Activity for <@" + member.getId() + '>';
+					embed.description = activityPerMember.get(member.getId()) + " messages sent";
+				}
+				interaction.reply(embed);
 			}
 		}
 	}
@@ -58,12 +73,12 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	@Override
 	protected void onMessageCreate(Message message) {
 		if (!message.inGuild) return;
-		final var authorId = message.author.id();
-		final var content = message.content();
+		final var authorId = message.author.getId();
+		final var content = message.getContent();
 		final var previousMessageContent = previousMessageContentPerUser.get(authorId);
 		if (content.equals(previousMessageContent)) return;
 		previousMessageContentPerUser.put(authorId, content);
-		final var activityPerMember = activityPerMemberPerGuild.get(message.guild.id());
+		final var activityPerMember = activityPerMemberPerGuild.get(message.guild.getId());
 		activityPerMember.put(authorId, activityPerMember.get(authorId) + 1);
 	}
 

@@ -22,7 +22,7 @@ public class DMChannel extends DMBasedChannel implements MessageChannel {
 
 	@Override
 	public String name() {
-		return "DM with " + recipient.tag();
+		return "DM with " + recipient.getTag();
 	}
 
 	public String lastMessageId() {

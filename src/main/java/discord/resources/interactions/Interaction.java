@@ -159,7 +159,7 @@ public abstract class Interaction {
 	}
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
-		final var path = "/webhooks/" + client.application.id() + '/' + token;
+		final var path = "/webhooks/" + client.application.getId() + '/' + token;
 		return client.api.post(path, payload.toJsonString())
 			.thenApply(r -> new Message(client, channel, r.toJsonObject()));
 	}

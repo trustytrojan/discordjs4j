@@ -28,69 +28,69 @@ public final class CDN {
 	}
 
 	private static String dynamicMakeURL(String path, String hash, AllowedSize size, AllowedExtension extension) {
-		if (hash.startsWith("a_"))
-			return makeURL(path, size, AllowedExtension.GIF);
-		return makeURL(path, size, extension);
+		return hash.startsWith("a_")
+			? makeURL(path, size, AllowedExtension.GIF)
+			: makeURL(path, size, extension);
 	}
 
-	public static String customEmoji(String emojiId, AllowedSize size, AllowedExtension extension) {
-		return makeURL("/emojis/"+emojiId, size, extension);
+	public static String makeCustomEmojiURL(String emojiId, AllowedSize size, AllowedExtension extension) {
+		return makeURL("/emojis/" + emojiId, size, extension);
 	}
 
-	public static String guildIcon(String guildId, String hash, AllowedSize size, AllowedExtension extension) {
-		return dynamicMakeURL("/icons/"+guildId+'/'+hash, hash, size, extension);
+	public static String makeGuildIconURL(String guildId, String hash, AllowedSize size, AllowedExtension extension) {
+		return dynamicMakeURL("/icons/" + guildId + '/' + hash, hash, size, extension);
 	}
 
-	public static String guildSplash(String guildId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeGuildSplashURL(String guildId, String hash, AllowedSize size, AllowedExtension extension) {
 		return makeURL("/splashes/" + guildId + '/' + hash, size, extension);
 	}
 
-	public static String guildDiscoverySplash(String guildId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeGuildDiscoverySplashURL(String guildId, String hash, AllowedSize size, AllowedExtension extension) {
 		return makeURL("/discovery-splashes/" + guildId + '/' + hash, size, extension);
 	}
 
-	public static String guildOrUserBanner(String guildOrUserId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeGuildOrUserBannerURL(String guildOrUserId, String hash, AllowedSize size, AllowedExtension extension) {
 		return makeURL("/banners/" + guildOrUserId + '/' + hash, size, extension);
 	}
 
-	public static String defaultUserAvatar(short userDiscriminator) {
+	public static String makeDefaultUserAvatarURL(short userDiscriminator) {
 		return makeURL("/embed/avatars/" + (userDiscriminator % 5), null, AllowedExtension.PNG);
 	}
 
-	public static String userAvatar(String userId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeUserAvatarURL(String userId, String hash, AllowedSize size, AllowedExtension extension) {
 		return dynamicMakeURL("/avatars/" + userId + '/' + hash, hash, size, extension);
 	}
 
-	public static String guildMemberAvatar(String guildId, String userId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeGuildMemberAvatarURL(String guildId, String userId, String hash, AllowedSize size, AllowedExtension extension) {
 		return dynamicMakeURL("/guilds/" + guildId + "/users/" + userId + '/' + hash, hash, size, extension);
 	}
 
-	public static String applicationIcon(String applicationId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeApplicationIconURL(String applicationId, String hash, AllowedSize size, AllowedExtension extension) {
 		return makeURL("/app-icons/" + applicationId + '/' + hash, size, extension);
 	}
 
-	public static String roleIcon(String roleId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeRoleIconURL(String roleId, String hash, AllowedSize size, AllowedExtension extension) {
 		return makeURL("/role-icons/" + roleId + '/' + hash, size, extension);
 	}
 
-	public static String channelIcon(String groupDmId, String hash, AllowedSize size, AllowedExtension extension) {
+	public static String makeChannelIconURL(String groupDmId, String hash, AllowedSize size, AllowedExtension extension) {
 		return makeURL("/channel-icons/" + groupDmId + '/' + hash, size, extension);
 	}
 
 	public static interface URLFactory {
-		String hash();
-		String url(AllowedSize size, AllowedExtension extension);
+		String getHash();
+		String makeURL(AllowedSize size, AllowedExtension extension);
 
-		default String url(AllowedSize size) {
-			return url(size, null);
+		default String makeURL(AllowedSize size) {
+			return makeURL(size, null);
 		}
 
-		default String url(AllowedExtension extension) {
-			return url(null, extension);
+		default String makeURL(AllowedExtension extension) {
+			return makeURL(null, extension);
 		}
 
-		default String url() {
-			return url(null, null);
+		default String makeURL() {
+			return makeURL(null, null);
 		}
 	}
 }

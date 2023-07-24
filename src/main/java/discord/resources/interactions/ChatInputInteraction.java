@@ -8,7 +8,6 @@ import discord.resources.ApplicationCommandOption;
 import sj.SjObject;
 
 public class ChatInputInteraction extends Interaction {
-
 	public static class Option {
 		public final ApplicationCommandOption.Type type;
 		public final String name;

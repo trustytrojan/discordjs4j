@@ -37,7 +37,7 @@ public class GuildMember extends AbstractGuildResource {
 	}
 
 	@Override
-	public String id() {
+	public String getId() {
 		return id;
 	}
 
@@ -47,13 +47,13 @@ public class GuildMember extends AbstractGuildResource {
 
 	public final URLFactory avatar = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("avatar");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildMemberAvatar(guild.id, user.id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeGuildMemberAvatarURL(guild.id, user.id, getHash(), size, extension);
 		}
 	};
 

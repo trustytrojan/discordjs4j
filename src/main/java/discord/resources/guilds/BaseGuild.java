@@ -25,13 +25,13 @@ public abstract class BaseGuild extends AbstractDiscordResource {
 
 	public final URLFactory icon = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("icon");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildIcon(id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeGuildIconURL(id, getHash(), size, extension);
 		}
 	};
 

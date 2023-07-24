@@ -29,6 +29,26 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		}
 	}
 
+	public static class Payload implements SjSerializable {
+		public Type type;
+		public String name;
+		public String description;
+		public List<ApplicationCommandOption.Payload> options;
+
+		@Override
+		public String toJsonString() {
+			final var obj = new SjObject();
+			obj.put("name", name);
+			if (type != null)
+				obj.put("type", type.value);
+			if (description != null)
+				obj.put("description", description);
+			if (options != null && options.size() > 0)
+				obj.put("options", options);
+			return obj.toJsonString();
+		}
+	}
+
 	private final BotDiscordClient client;
 	private List<ApplicationCommandOption> options;
 
@@ -68,25 +88,5 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		options = (rawOptions == null)
 				? Collections.emptyList()
 				: rawOptions.stream().map(ApplicationCommandOption::new).toList();
-	}
-
-	public static class Payload implements SjSerializable {
-		public Type type;
-		public String name;
-		public String description;
-		public List<ApplicationCommandOption.Payload> options;
-
-		@Override
-		public String toJsonString() {
-			final var obj = new SjObject();
-			obj.put("name", name);
-			if (type != null)
-				obj.put("type", type.value);
-			if (description != null)
-				obj.put("description", description);
-			if (options != null && options.size() > 0)
-				obj.put("options", options);
-			return obj.toJsonString();
-		}
 	}
 }

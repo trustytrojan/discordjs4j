@@ -181,7 +181,7 @@ public class Guild extends PreviewGuild {
 	/**
 	 * https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
 	 */
-	public static enum SystemChannelFlag implements BitFlagSet.BitFlag {
+	public static enum SystemChannelFlag implements BitFlagSet.BitFlagEnum {
 		SUPPRESS_JOIN_NOTIFICATIONS,
 		SUPPRESS_PREMIUM_SUBSCRIPTIONS,
 		SUPPRESS_GUILD_REMINDER_NOTIFICATIONS,
@@ -190,7 +190,7 @@ public class Guild extends PreviewGuild {
 		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES;
 	
 		@Override
-		public long bit() {
+		public long getBit() {
 			return 1 << ordinal();
 		}
 	}
@@ -344,13 +344,13 @@ public class Guild extends PreviewGuild {
 
 	public final URLFactory banner = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("banner");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildOrUserBanner(id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeGuildOrUserBannerURL(id, getHash(), size, extension);
 		}
 	};
 

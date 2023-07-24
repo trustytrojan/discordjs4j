@@ -17,7 +17,7 @@ public class AbstractGuildResource extends AbstractDiscordResource implements Gu
 	}
 
 	@Override
-	public Guild guild() {
+	public Guild getGuild() {
 		return guild;
 	}
 }

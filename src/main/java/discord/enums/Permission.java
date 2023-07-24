@@ -1,8 +1,8 @@
 package discord.enums;
 
-import discord.util.BitFlagSet.BitFlag;
+import discord.util.BitFlagSet.BitFlagEnum;
 
-public enum Permission implements BitFlag {
+public enum Permission implements BitFlagEnum {
 	CREATE_INSTANT_INVITE,
 	KICK_MEMBERS,
 	BAN_MEMBERS,
@@ -60,7 +60,7 @@ public enum Permission implements BitFlag {
 	}
 
 	@Override
-	public long bit() {
+	public long getBit() {
 		return value;
 	}
 }

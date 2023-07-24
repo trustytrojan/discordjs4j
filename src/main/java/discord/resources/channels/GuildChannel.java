@@ -22,7 +22,7 @@ public interface GuildChannel extends GuildResource, Channel {
 		final var id = parentId();
 		return (id == null)
 			? CompletableFuture.completedFuture(null)
-			: client().channels.get(id).thenApply(c -> (CategoryChannel) c);
+			: getClient().channels.get(id).thenApply(c -> (CategoryChannel) c);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public interface GuildChannel extends GuildResource, Channel {
 	 * @param payload The data to change in this channel
 	 */
 	default CompletableFuture<Void> edit(Payload payload) {
-		return guild().channels.edit(id(), payload).thenRun(Util.NO_OP);
+		return getGuild().channels.edit(getId(), payload).thenRun(Util.NO_OP);
 	}
 
 	// https://discord.com/developers/docs/resources/channel#modify-channel
@@ -81,7 +81,7 @@ public interface GuildChannel extends GuildResource, Channel {
 	}
 
 	default PositionPayload toPositionPayload() {
-		final var payload = new PositionPayload(id());
+		final var payload = new PositionPayload(getId());
 		payload.position = position();
 		payload.parentId = parentId();
 		return payload;

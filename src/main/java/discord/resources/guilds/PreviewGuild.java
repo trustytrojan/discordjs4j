@@ -14,25 +14,25 @@ public class PreviewGuild extends BaseGuild {
 
 	public final URLFactory splash = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("splash");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildSplash(id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeGuildSplashURL(id, getHash(), size, extension);
 		}
 	};
 
 	public final URLFactory discoverySplash = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("discovery_splash");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildDiscoverySplash(id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeGuildDiscoverySplashURL(id, getHash(), size, extension);
 		}
 	};
 

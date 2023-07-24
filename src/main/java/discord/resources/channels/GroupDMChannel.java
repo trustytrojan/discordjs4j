@@ -83,13 +83,13 @@ public class GroupDMChannel extends DMBasedChannel implements MessageChannel {
 
 	public final URLFactory icon = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("icon");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.channelIcon(id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeChannelIconURL(id, getHash(), size, extension);
 		}
 	};
 

@@ -34,12 +34,12 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 	}
 
 	@Override
-	public String id() {
+	public String getId() {
 		return id;
 	}
 
 	@Override
-	public DiscordClient client() {
+	public DiscordClient getClient() {
 		return client;
 	}
 

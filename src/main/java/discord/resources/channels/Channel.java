@@ -67,6 +67,6 @@ public interface Channel extends DiscordResource {
 	 * </ul>
 	 */
 	default CompletableFuture<Void> delete() {
-		return client().channels.delete(id());
+		return getClient().channels.delete(getId());
 	}
 }

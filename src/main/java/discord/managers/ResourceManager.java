@@ -34,7 +34,7 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 
 	// cache an already constructed object
 	public T cache(T resource) {
-		cache.put(resource.id(), resource);
+		cache.put(resource.getId(), resource);
 		return resource;
 	}
 
@@ -49,7 +49,7 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 	}
 
 	public void cacheNewDeleteOld(JsonResponse r) {
-		final var freshIds = r.toJsonObjectArray().stream().map(this::cache).map(DiscordResource::id).toList();
+		final var freshIds = r.toJsonObjectArray().stream().map(this::cache).map(DiscordResource::getId).toList();
 		final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
 		deletedIds.forEach(cache::remove);
 	}

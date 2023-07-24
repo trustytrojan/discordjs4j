@@ -14,7 +14,7 @@ public class MessageManager extends ResourceManager<Message> {
 	public final MessageChannel channel;
 
 	public MessageManager(DiscordClient client, MessageChannel channel) {
-		super(client, "/channels/" + channel.id() + "/messages");
+		super(client, "/channels/" + channel.getId() + "/messages");
 		this.channel = Objects.requireNonNull(channel);
 	}
 

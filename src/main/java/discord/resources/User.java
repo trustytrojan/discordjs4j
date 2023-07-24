@@ -6,7 +6,7 @@ import discord.client.DiscordClient;
 import discord.client.UserDiscordClient;
 import discord.resources.channels.DMChannel;
 import discord.util.BitFlagSet;
-import discord.util.BitFlagSet.BitFlag;
+import discord.util.BitFlagSet.BitFlagEnum;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
@@ -15,7 +15,7 @@ import discord.util.Util;
 import sj.SjObject;
 
 public class User extends AbstractDiscordResource {
-	public static enum Flag implements BitFlag {
+	public static enum Flag implements BitFlagEnum {
 		STAFF(1 << 0),
 		PARTNER(1 << 1),
 		HYPESQUAD(1 << 2),
@@ -39,7 +39,7 @@ public class User extends AbstractDiscordResource {
 		}
 
 		@Override
-		public long bit() {
+		public long getBit() {
 			return value;
 		}
 	}
@@ -49,9 +49,10 @@ public class User extends AbstractDiscordResource {
 	}
 
 	/**
-	 * USER-ONLY METHOD: If {@code this.client} is not an instance of
+	 * <b>USER-ONLY METHOD:</b> If {@code this.client} is not an instance of
 	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
-	 * WARNING: This API method is heavily monitored by Discord. It is very likely
+	 * <p>
+	 * <b>WARNING:</b> This API method is heavily monitored by Discord. It is very likely
 	 * that this will throw a {@code DiscordAPIException} with the response body
 	 * containing captcha-related data. It is advised not to use this endpoint as a
 	 * user.
@@ -61,7 +62,7 @@ public class User extends AbstractDiscordResource {
 	}
 
 	/**
-	 * USER-ONLY METHOD: If {@code this.client} is not an instance of
+	 * <b>USER-ONLY METHOD:</b> If {@code this.client} is not an instance of
 	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
 	 */
 	public CompletableFuture<Void> block() {
@@ -69,8 +70,9 @@ public class User extends AbstractDiscordResource {
 	}
 
 	/**
-	 * USER-ONLY METHOD: If {@code this.client} is not an instance of
+	 * <b>USER-ONLY METHOD:</b> If {@code this.client} is not an instance of
 	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
+	 * <p>
 	 * Either removes this user as a friend or unblocks them.
 	 */
 	public CompletableFuture<Void> deleteRelationship() {
@@ -86,50 +88,50 @@ public class User extends AbstractDiscordResource {
 				.thenApply(r -> new DMChannel(client, r.toJsonObject()));
 	}
 
-	public String username() {
+	public String getUsername() {
 		return data.getString("username");
 	}
 
-	public short discriminator() {
+	public short getDiscriminator() {
 		return Short.parseShort(data.getString("discriminator"));
 	}
 
-	public String tag() {
-		return username() + '#' + discriminator();
+	public String getTag() {
+		return getUsername() + '#' + getDiscriminator();
 	}
 
-	public boolean bot() {
+	public boolean isBot() {
 		return data.getBooleanDefaultFalse("bot");
 	}
 
 	public final URLFactory avatar = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("avatar");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			final var hash = hash();
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			final var hash = getHash();
 			return (hash == null)
-					? CDN.defaultUserAvatar(discriminator())
-					: CDN.userAvatar(id, hash, size, extension);
+					? CDN.makeDefaultUserAvatarURL(getDiscriminator())
+					: CDN.makeUserAvatarURL(id, hash, size, extension);
 		}
 	};
 
 	public final URLFactory banner = new URLFactory() {
 		@Override
-		public String hash() {
+		public String getHash() {
 			return data.getString("banner");
 		}
 
 		@Override
-		public String url(AllowedSize size, AllowedExtension extension) {
-			return CDN.guildOrUserBanner(id, hash(), size, extension);
+		public String makeURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeGuildOrUserBannerURL(id, getHash(), size, extension);
 		}
 	};
 
-	public BitFlagSet<Flag> publicFlags() {
+	public BitFlagSet<Flag> getPublicFlags() {
 		return new BitFlagSet<>(data.getInteger("public_flags"));
 	}
 }

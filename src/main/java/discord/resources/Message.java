@@ -59,12 +59,12 @@ public class Message extends AbstractDiscordResource {
 	public final String url;
 
 	public Message(DiscordClient client, MessageChannel channel, SjObject data) {
-		super(client, data, "/channels/" + channel.id() + "/messages");
+		super(client, data, "/channels/" + channel.getId() + "/messages");
 		this.channel = channel;
 		author = client.users.get(data.getObject("author").getString("id")).join();
-		final var urlFormat = "https://discord.com/channels/%s/" + channel.id() + '/' + id;
+		final var urlFormat = "https://discord.com/channels/%s/" + channel.getId() + '/' + id;
 		if (inGuild = channel instanceof GuildChannel) {
-			guild = ((GuildChannel) channel).guild();
+			guild = ((GuildChannel) channel).getGuild();
 			url = urlFormat.formatted(guild.id);
 		} else {
 			guild = null;
@@ -72,7 +72,7 @@ public class Message extends AbstractDiscordResource {
 		}
 	}
 
-	public String content() {
+	public String getContent() {
 		return data.getString("content");
 	}
 
@@ -80,7 +80,7 @@ public class Message extends AbstractDiscordResource {
 		return data.getBoolean("pinned");
 	}
 
-	public String url() {
+	public String getURL() {
 		return url;
 	}
 
