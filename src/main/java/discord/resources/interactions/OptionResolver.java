@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
+import discord.resources.DiscordResource;
 import discord.resources.GuildMember;
 import discord.resources.Role;
 import discord.resources.User;
@@ -21,17 +23,13 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	OptionResolver(final ChatInputInteraction interaction, final List<SjObject> rawOptions) {
 		this.interaction = Objects.requireNonNull(interaction);
 
-		if (rawOptions == null)
-			options = null;
-		else {
-			final var options = new HashMap<String, ChatInputInteraction.Option>();
+		options = new HashMap<String, ChatInputInteraction.Option>();
 
+		if (rawOptions != null) {
 			for (final var optionData : rawOptions) {
 				final var option = new ChatInputInteraction.Option(interaction, optionData);
 				options.put(option.name, option);
 			}
-
-			this.options = Collections.unmodifiableMap(options);
 		}
 	}
 
@@ -46,32 +44,27 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 		return options.get(optionName);
 	}
 
-	public CompletableFuture<Role> getRole(final String optionName) {
+	private <T extends DiscordResource> CompletableFuture<T> getResource(String optionName, Function<String, CompletableFuture<T>> resourceGetter) {
 		final var id = getString(optionName);
-		if (id == null)
-			return null;
-		return interaction.guild.roles.get(id);
+		return (id == null)
+			? CompletableFuture.completedFuture(null)
+			: resourceGetter.apply(id);
+	}
+
+	public CompletableFuture<Role> getRole(final String optionName) {
+		return getResource(optionName, interaction.guild.roles::get);
 	}
 
 	public CompletableFuture<User> getUser(final String optionName) {
-		final var id = getString(optionName);
-		if (id == null)
-			return null;
-		return interaction.client.users.get(id);
+		return getResource(optionName, interaction.client.users::get);
 	}
 
 	public CompletableFuture<GuildMember> getMember(final String optionName) {
-		final var id = getString(optionName);
-		if (id == null)
-			return null;
-		return interaction.guild.members.get(id);
+		return getResource(optionName, interaction.guild.members::get);
 	}
 
 	public CompletableFuture<GuildChannel> getChannel(final String optionName) {
-		final var id = getString(optionName);
-		if (id == null)
-			return null;
-		return interaction.guild.channels.get(id);
+		return getResource(optionName, interaction.guild.channels::get);
 	}
 
 	/**
