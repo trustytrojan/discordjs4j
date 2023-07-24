@@ -3,9 +3,7 @@ package discord.util;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Timer;
@@ -51,10 +49,6 @@ public final class Util {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public static Date longToDate(long ms) {
-		return Date.from(Instant.ofEpochMilli(ms));
 	}
 
 	private static final Pattern HEXADECIMAL_COLOR_CODE_REGEX = Pattern.compile("^#?[0-9a-fA-F]{6}$");

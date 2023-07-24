@@ -1,3 +1,4 @@
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,21 +11,70 @@ import discord.resources.ApplicationCommand;
 import discord.resources.ApplicationCommandOption;
 import discord.resources.Embed;
 import discord.resources.Message;
+import discord.resources.channels.MessageChannel;
 import discord.resources.guilds.Guild;
 import discord.resources.interactions.ChatInputInteraction;
 import discord.resources.interactions.Interaction;
 import discord.util.Util;
 import sj.Sj;
+import sj.SjObject;
+import sj.SjSerializable;
 
 public class ActivityTrackerBot extends BotDiscordClient {
-	private final Map<String, Map<String, Long>> activityPerMemberPerGuild = new HashMap<>();
+	private class ActivityData implements SjSerializable {
+		Message lastMessage;
+		long messageCount;
+		long minutesActive;
+
+		ActivityData(Message message) {
+			lastMessage = message;
+		}
+
+		ActivityData(SjObject data) {
+			final var lastMessageArray = data.getStringArray("last_message");
+			final var channel = (MessageChannel) channels.get(lastMessageArray.get(0)).join();
+			lastMessage = channel.messages().get(lastMessageArray.get(1)).join();
+			messageCount = data.getLong("message_count");
+			minutesActive = data.getLong("minutes_active");
+		}
+
+		void incrementMessageCount() {
+			messageCount += 1;
+		}
+
+		void incrementMinutesActive() {
+			minutesActive += 1;
+		}
+
+		@Override
+		public String toJsonString() {
+			return """
+					{
+						"last_message": ["%s", "%s"],
+						"message_count": %d,
+						"minutes_active": %d
+					}
+					""".formatted(lastMessage.getId(), messageCount, minutesActive);
+		}
+	}
+
+	private final Map<String, Map<String, ActivityData>> activityPerMemberPerGuild = new HashMap<>();
 	private final Map<String, String> previousMessageContentPerUser = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	private void readData() {
 		try {
 			Sj.parseObject(Util.readFile("atguilds.json")).entrySet().forEach(
-				entry -> activityPerMemberPerGuild.put(entry.getKey(), (HashMap<String, Long>) entry.getValue())
+				entry -> {
+					final var guildId = entry.getKey();
+					final var memberIdToObject = (Map<String, Map<String, Object>>) entry.getValue();
+					final var activityPerMember = new HashMap<String, ActivityData>();
+					for (final var e : memberIdToObject.entrySet()) {
+						final var obj = new SjObject(e.getValue());
+						activityPerMember.put(e.getKey(), new ActivityData(obj));
+					}
+					activityPerMemberPerGuild.put(guildId, activityPerMember);
+				}
 			);
 		} catch (Exception e) {}
 	}
@@ -64,7 +114,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 				var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.getId());
 
 				if (activityPerMember == null) {
-					activityPerMember = new HashMap<String, Long>();
+					activityPerMember = new HashMap<String, ActivityData>();
 					activityPerMemberPerGuild.put(interaction.guild.getId(), activityPerMember);
 				}
 
@@ -111,17 +161,23 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		var activityPerMember = activityPerMemberPerGuild.get(message.guild.getId());
 
 		if (activityPerMember == null) {
-			activityPerMember = new HashMap<String, Long>();
+			activityPerMember = new HashMap<String, ActivityData>();
 			activityPerMemberPerGuild.put(guildId, activityPerMember);
 		}
 
 		var activity = activityPerMember.get(authorId);
 
 		if (activity == null) {
-			activity = Long.valueOf(0);
+			activity = new ActivityData(message);
 		}
 
-		activityPerMember.put(authorId, activity + 1);
+		activity.messageCount += 1;
+
+		if (Instant.now().minusSeconds(message.createdInstant.getEpochSecond()).getEpochSecond() >= 60) {
+			activity.minutesActive += 1;
+		}
+
+		activityPerMember.put(authorId, activity);
 	}
 
 	private CompletableFuture<Void> setCommands() {
