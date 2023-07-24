@@ -10,11 +10,11 @@ public class CurrentUserGuild extends BaseGuild {
 		super(client, data);
 	}
 
-	public boolean owner() {
+	public boolean currentUserIsOwner() {
 		return data.getBoolean("owner");
 	}
 
-	public BitFlagSet<Permission> permissions() {
+	public BitFlagSet<Permission> getCurrentUserPermissions() {
 		return new BitFlagSet<>(Long.parseLong(data.getString("permissions")));
 	}
 }

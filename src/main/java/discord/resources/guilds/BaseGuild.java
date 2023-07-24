@@ -15,11 +15,11 @@ public abstract class BaseGuild extends AbstractDiscordResource {
 		super(client, data, "/guilds");
 	}
 
-	public boolean unavailable() {
+	public boolean isUnavailable() {
 		return data.getBooleanDefaultFalse("unavailable");
 	}
 
-	public String name() {
+	public String getName() {
 		return data.getString("name");
 	}
 
@@ -35,15 +35,15 @@ public abstract class BaseGuild extends AbstractDiscordResource {
 		}
 	};
 
-	public List<Guild.Feature> features() {
+	public List<Guild.Feature> getFeatures() {
 		return data.getStringArray("features").stream().map(s -> Guild.Feature.valueOf(s)).toList();
 	}
 
-	public Integer approximateMemberCount() {
+	public Integer getApproximateMemberCount() {
 		return data.getInteger("approximate_member_count");
 	}
 
-	public Integer approximatePresenceCount() {
+	public Integer getApproximatePresenceCount() {
 		return data.getInteger("approximate_presence_count");
 	}
 }

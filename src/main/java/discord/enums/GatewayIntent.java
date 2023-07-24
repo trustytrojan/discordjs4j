@@ -1,5 +1,7 @@
 package discord.enums;
 
+import java.util.stream.Stream;
+
 public enum GatewayIntent {
 	GUILDS,
 	GUILD_MEMBERS,
@@ -22,9 +24,7 @@ public enum GatewayIntent {
 	AUTO_MODERATION_EXECUTION(21);
 
 	public static int sum(GatewayIntent... intents) {
-		var sum = 0;
-		for (final var intent : intents) sum += intent.value;
-		return sum;
+		return Stream.of(intents).mapToInt(i -> i.value).sum();
 	}
 
 	public final int value;

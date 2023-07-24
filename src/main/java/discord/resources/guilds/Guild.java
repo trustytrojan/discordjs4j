@@ -278,67 +278,71 @@ public class Guild extends PreviewGuild {
 				 : null;
 	}
 
-	public String ownerId() {
+	public String getOwnerId() {
 		return data.getString("owner_id");
 	}
 
 	public CompletableFuture<User> getOwner() {
-		return client.users.get(ownerId());
+		return client.users.get(getOwnerId());
 	}
 
-	public String afkChannelId() {
+	public String getAfkChannelId() {
 		return data.getString("afk_channel_id");
 	}
 
 	public CompletableFuture<VoiceChannel> getAfkChannel() {
-		return client.channels.get(afkChannelId()).thenApply(c -> (VoiceChannel) c);
+		return client.channels.get(getAfkChannelId()).thenApply(c -> (VoiceChannel) c);
 	}
 
-	public VerificationLevel verificationLevel() {
+	public VerificationLevel getVerificationLevel() {
 		return VerificationLevel.values()[data.getInteger("verification_level")];
 	}
 
-	public DefaultMessageNotificationLevel defaultMessageNotifications() {
+	public DefaultMessageNotificationLevel getDefaultMessageNotificationsLevel() {
 		return DefaultMessageNotificationLevel.values()[data.getInteger("default_message_notifications")];
 	}
 
-	public ExplicitContentFilterLevel explicitContentFilter() {
+	public ExplicitContentFilterLevel getExplicitContentFilterLevel() {
 		return ExplicitContentFilterLevel.values()[data.getInteger("explicit_content_filter")];
 	}
 
-	public MFALevel mfaLevel() {
+	public MFALevel getMFALevel() {
 		return MFALevel.values()[data.getInteger("mfa_level")];
 	}
 
-	public String applicationId() {
+	public String getApplicationId() {
 		return data.getString("application_id");
 	}
 
-	public String systemChannelId() {
+	public String getSystemChannelId() {
 		return data.getString("system_channel_id");
 	}
 
 	public CompletableFuture<TextChannel> getSystemChannel() {
-		return client.channels.get(systemChannelId()).thenApply(c -> (TextChannel) c);
+		return client.channels.get(getSystemChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
-	public BitFlagSet<SystemChannelFlag> systemChannelFlags() {
+	public BitFlagSet<SystemChannelFlag> getSystemChannelFlags() {
 		return new BitFlagSet<>(data.getLong("system_channel_flags"));
 	}
 
-	public String rulesChannelId() {
+	public String getRulesChannelId() {
 		return data.getString("rules_channel_id");
 	}
 
-	public Integer maxPresences() {
+	public CompletableFuture<TextChannel> getRulesChannel() {
+		return client.channels.get(getRulesChannelId()).thenApply(c -> (TextChannel) c);
+	}
+
+	public Integer getMaxPresences() {
 		return data.getInteger("max_presences");
 	}
 
-	public Integer maxMembers() {
+	public Integer getMaxMembers() {
 		return data.getInteger("max_members");
 	}
 
-	public String vanityUrlCode() {
+	public String getVanityUrlCode() {
 		return data.getString("vanity_url_code");
 	}
 
@@ -354,52 +358,52 @@ public class Guild extends PreviewGuild {
 		}
 	};
 
-	public PremiumTier premiumTier() {
+	public PremiumTier getPremiumTier() {
 		return PremiumTier.values()[data.getInteger("premium_tier")];
 	}
 
-	public Integer premiumSubscriptionCount() {
+	public Integer getPremiumSubscriptionCount() {
 		return data.getInteger("premium_subscription_count");
 	}
 
-	public String preferredLocale() {
+	public String getPreferredLocale() {
 		return data.getString("preferred_locale");
 	}
 
-	public String publicUpdatesChannelId() {
+	public String getPublicUpdatesChannelId() {
 		return data.getString("public_updates_channel_id");
 	}
 
 	public CompletableFuture<TextChannel> getPublicUpdatesChannel() {
-		return client.channels.get(publicUpdatesChannelId()).thenApply(c -> (TextChannel) c);
+		return client.channels.get(getPublicUpdatesChannelId()).thenApply(c -> (TextChannel) c);
 	}
 
-	public Integer maxVideoChannelUsers() {
+	public Integer getMaxVideoChannelUsers() {
 		return data.getInteger("max_video_channel_users");
 	}
 
-	public Integer maxStageVideoChannelUsers() {
+	public Integer getMaxStageVideoChannelUsers() {
 		return data.getInteger("max_stage_video_channel_users");
 	}
 
-	public WelcomeScreen welcomeScreen() {
+	public WelcomeScreen getWelcomeScreen() {
 		final var o = data.getObject("welcome_screen");
 		return (o == null) ? null : new WelcomeScreen(o);
 	}
 
-	public NSFWLevel nsfwLevel() {
+	public NSFWLevel getNSFWLevel() {
 		return NSFWLevel.values()[data.getInteger("nsfw_level")];
 	}
 
-	public boolean premiumProgressBarEnabled() {
+	public boolean premiumProgressBarIsEnabled() {
 		return data.getBoolean("premium_progress_bar_enabled");
 	}
 
-	public String safetyAlertsChannelId() {
+	public String getSafetyAlertsChannelId() {
 		return data.getString("safety_alerts_channel_id");
 	}
 
 	public CompletableFuture<TextChannel> getSafetyAlertsChannel() {
-		return client.channels.get(safetyAlertsChannelId()).thenApply(c -> (TextChannel) c);
+		return client.channels.get(getSafetyAlertsChannelId()).thenApply(c -> (TextChannel) c);
 	}
 }

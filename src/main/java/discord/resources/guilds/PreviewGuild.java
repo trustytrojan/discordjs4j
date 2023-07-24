@@ -36,7 +36,7 @@ public class PreviewGuild extends BaseGuild {
 		}
 	};
 
-	public String description() {
+	public String getDescription() {
 		return data.getString("description");
 	}
 }
