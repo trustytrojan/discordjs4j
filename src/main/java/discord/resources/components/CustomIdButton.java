@@ -28,7 +28,7 @@ public class CustomIdButton extends Button {
 
 	@Override
 	public String toJsonString() {
-		final var obj = toJSONObject();
+		final var obj = toJsonObject();
 		obj.put("custom_id", customId);
 		if (unicodeEmoji != null)
 			obj.put("emoji", unicodeEmoji);

@@ -22,7 +22,7 @@ public class ActionRow extends MessageComponent {
 
 	@Override
 	public String toJsonString() {
-		final var obj = toJSONObject();
+		final var obj = toJsonObject();
 		obj.put("components", components);
 		return obj.toJsonString();
 	}

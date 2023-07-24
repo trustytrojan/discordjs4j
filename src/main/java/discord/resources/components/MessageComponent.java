@@ -55,7 +55,7 @@ public abstract class MessageComponent implements SjSerializable {
 		this.type = Objects.requireNonNull(type);
 	}
 
-	protected SjObject toJSONObject() {
+	protected SjObject toJsonObject() {
 		final var obj = new SjObject();
 		obj.put("type", type.value());
 		return obj;

@@ -17,7 +17,7 @@ public class LinkButton extends Button {
 
 	@Override
 	public String toJsonString() {
-		final var obj = toJSONObject();
+		final var obj = toJsonObject();
 		obj.put("url", url);
 		return obj.toJsonString();
 	}

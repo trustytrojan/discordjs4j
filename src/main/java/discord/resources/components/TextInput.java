@@ -8,11 +8,11 @@ public class TextInput extends MessageComponent {
 	public static enum Style {
 		SHORT, PARAGRAPH;
 
-		public static Style resolve(final short value) {
+		public static Style resolve(short value) {
 			return Style.values()[value - 1];
 		}
 
-		public short value() {
+		public short getValue() {
 			return (short) (ordinal() + 1);
 		}
 	}
@@ -26,7 +26,7 @@ public class TextInput extends MessageComponent {
 	public String value;
 	public String placeholder;
 
-	public TextInput(final SjObject data) {
+	public TextInput(SjObject data) {
 		super(data);
 		customId = Objects.requireNonNull(data.getString("custom_id"));
 		style = Style.resolve(Objects.requireNonNull(data.getShort("style")));
@@ -38,7 +38,7 @@ public class TextInput extends MessageComponent {
 		placeholder = data.getString("placeholder");
 	}
 	
-	public TextInput(final String customId, final Style style, final String label) {
+	public TextInput(String customId, Style style, String label) {
 		super(Type.TEXT_INPUT);
 		this.customId = Objects.requireNonNull(customId);
 		this.style = Objects.requireNonNull(style);
@@ -47,9 +47,9 @@ public class TextInput extends MessageComponent {
 
 	@Override
 	public String toJsonString() {
-		final var obj = toJSONObject();
+		final var obj = toJsonObject();
 		obj.put("custom_id", customId);
-		obj.put("style", style.value());
+		obj.put("style", style.getValue());
 		obj.put("label", label);
 		if (minLength != null)
 			obj.put("min_length", minLength);

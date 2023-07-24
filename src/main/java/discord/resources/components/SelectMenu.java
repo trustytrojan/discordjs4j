@@ -27,7 +27,7 @@ public class SelectMenu extends MessageComponent {
 
 	@Override
 	public String toJsonString() {
-		final var obj = toJSONObject();
+		final var obj = toJsonObject();
 		obj.put("custom_id", customId);
 		if (placeholder != null)
 			obj.put("placeholder", placeholder);

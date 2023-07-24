@@ -47,8 +47,8 @@ public abstract class Button extends MessageComponent {
 	}
 
 	@Override
-	public SjObject toJSONObject() {
-		final var obj = super.toJSONObject();
+	public SjObject toJsonObject() {
+		final var obj = super.toJsonObject();
 		obj.put("style", style.value());
 		if (label != null)
 			obj.put("label", label);
