@@ -24,9 +24,11 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		super(Util.readFile("tokens/activity-tracker"));
 
 		if (Util.fileExists("atguilds.json")) {
-			Sj.parseObject(Util.readFile("atguilds.json")).entrySet().forEach(
-				entry -> activityPerMemberPerGuild.put(entry.getKey(), (HashMap<String, Long>) entry.getValue())
-			);
+			try {
+				Sj.parseObject(Util.readFile("atguilds.json")).entrySet().forEach(
+					entry -> activityPerMemberPerGuild.put(entry.getKey(), (HashMap<String, Long>) entry.getValue())
+				);
+			} catch (Exception e) {}
 		}
 
 		//setCommands().thenRun(() -> System.out.println("Commands set!")).exceptionally(Util::printStackTrace);
@@ -52,7 +54,13 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		switch (interaction.commandName) {
 			case "view_activity" -> {
 				final var member = interaction.options.getMember("member").join();
-				final var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.getId());
+
+				var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.getId());
+				if (activityPerMember == null) {
+					activityPerMember = new HashMap<String, Long>();
+					activityPerMemberPerGuild.put(interaction.guild.getId(), activityPerMember);
+				}
+
 				final var embed = new Embed();
 				if (member == null) {
 					final var membersStr = new StringBuilder();
@@ -61,6 +69,9 @@ public class ActivityTrackerBot extends BotDiscordClient {
 						membersStr.append(entry.getKey());
 						activityNumsStr.append(entry.getValue());
 					}
+					embed.title = "Activity per member";
+					embed.addField("Member", membersStr.toString(), true);
+					embed.addField("Activity", activityNumsStr.toString(), true);
 				} else {
 					embed.title = "Activity for <@" + member.getId() + '>';
 					embed.description = activityPerMember.get(member.getId()) + " messages sent";
@@ -73,12 +84,22 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	@Override
 	protected void onMessageCreate(Message message) {
 		if (!message.inGuild) return;
+
 		final var authorId = message.author.getId();
+		final var guildId = message.guild.getId();
 		final var content = message.getContent();
+
 		final var previousMessageContent = previousMessageContentPerUser.get(authorId);
 		if (content.equals(previousMessageContent)) return;
 		previousMessageContentPerUser.put(authorId, content);
-		final var activityPerMember = activityPerMemberPerGuild.get(message.guild.getId());
+
+		var activityPerMember = activityPerMemberPerGuild.get(message.guild.getId());
+
+		if (activityPerMember == null) {
+			activityPerMember = new HashMap<String, Long>();
+			activityPerMemberPerGuild.put(guildId, activityPerMember);
+		}
+
 		activityPerMember.put(authorId, activityPerMember.get(authorId) + 1);
 	}
 
