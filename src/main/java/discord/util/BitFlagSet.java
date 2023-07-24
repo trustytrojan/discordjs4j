@@ -1,19 +1,19 @@
 package discord.util;
 
-import discord.util.BitFlagSet.BitFlagEnum;
+import discord.util.BitFlagSet.BitFlag;
 
 /**
  * A simple recreation of {@code java.util.BitSet} that
  * supports the use of enums that implement {@code BitFlag}.
  */
-public class BitFlagSet<T extends BitFlagEnum> {
+public class BitFlagSet<T extends BitFlag> {
 	/**
 	 * An interface requiring enums to return a {@code long}
 	 * that has only one bit as a {@code 1}, for use with
 	 * {@code BitFlagSet}.
 	 */
-	public static interface BitFlagEnum {
-		long getBit();
+	public static interface BitFlag {
+		int getBitIndex();
 	}
 
 	private long bitset;
@@ -28,7 +28,7 @@ public class BitFlagSet<T extends BitFlagEnum> {
 	}
 
 	public void set(T flag) {
-		bitset |= flag.getBit();
+		set(flag.getBitIndex());
 	}
 
 	public void set(int bitIndex) {
@@ -36,7 +36,7 @@ public class BitFlagSet<T extends BitFlagEnum> {
 	}
 
 	public void unset(T flag) {
-		bitset &= ~flag.getBit();
+		unset(flag.getBitIndex());
 	}
 
 	public void unset(int bitIndex) {
@@ -44,7 +44,7 @@ public class BitFlagSet<T extends BitFlagEnum> {
 	}
 
 	public void toggle(T flag) {
-		bitset ^= flag.getBit();
+		toggle(flag.getBitIndex());
 	}
 
 	public void toggle(int bitIndex) {
@@ -52,22 +52,14 @@ public class BitFlagSet<T extends BitFlagEnum> {
 	}
 
 	public boolean has(T flag) {
-		return (bitset & flag.getBit()) != 0;
+		return is1(flag.getBitIndex());
 	}
 
-	public long bitAt(int bitIndex) {
-		return bitset & (1 << bitIndex);
+	public boolean is1(int bitIndex) {
+		return (bitset & (1 << bitIndex)) != 0;
 	}
 
 	public long asLong() {
 		return bitset;
-	}
-
-	public static void main(String[] args) {
-		final var bs = new BitFlagSet<>(0b1001);
-		bs.set(2);
-		System.out.println(bs);
-		bs.unset(2);
-		System.out.println(bs);
 	}
 }

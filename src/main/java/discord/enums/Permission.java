@@ -1,8 +1,8 @@
 package discord.enums;
 
-import discord.util.BitFlagSet.BitFlagEnum;
+import discord.util.BitFlagSet.BitFlag;
 
-public enum Permission implements BitFlagEnum {
+public enum Permission implements BitFlag {
 	CREATE_INSTANT_INVITE,
 	KICK_MEMBERS,
 	BAN_MEMBERS,
@@ -49,18 +49,18 @@ public enum Permission implements BitFlagEnum {
 	USE_EXTERNAL_SOUNDS(45),
 	SEND_VOICE_MESSAGES(46);
 
-	private final int value;
+	private final int bitIndex;
 
 	private Permission() {
-		value = (1 << ordinal());
+		bitIndex = ordinal();
 	}
 
-	private Permission(int bitshift) {
-		value = (1 << bitshift);
+	private Permission(int bitIndex) {
+		this.bitIndex = bitIndex;
 	}
 
 	@Override
-	public long getBit() {
-		return value;
+	public int getBitIndex() {
+		return bitIndex;
 	}
 }

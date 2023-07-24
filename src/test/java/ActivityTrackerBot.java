@@ -36,7 +36,10 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		final var shutdownHook = new Thread(() -> Util.writeFile("atguilds.json", Sj.writePretty(activityPerMemberPerGuild)));
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
-		gateway.connectAndIdentify(GatewayIntent.GUILDS, GatewayIntent.GUILD_MEMBERS);
+		gateway.connectAndIdentify(
+			GatewayIntent.GUILDS,
+			GatewayIntent.GUILD_MESSAGES
+		);
 	}
 
 	@Override
@@ -56,18 +59,25 @@ public class ActivityTrackerBot extends BotDiscordClient {
 				final var member = interaction.options.getMember("member").join();
 
 				var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.getId());
+
 				if (activityPerMember == null) {
 					activityPerMember = new HashMap<String, Long>();
 					activityPerMemberPerGuild.put(interaction.guild.getId(), activityPerMember);
 				}
 
+				if (activityPerMember.size() == 0) {
+					interaction.reply("Your server has no recorded activity!");
+					return;
+				}
+
 				final var embed = new Embed();
+				
 				if (member == null) {
 					final var membersStr = new StringBuilder();
 					final var activityNumsStr = new StringBuilder();
 					for (final var entry : activityPerMember.entrySet()) {
-						membersStr.append(entry.getKey());
-						activityNumsStr.append(entry.getValue());
+						membersStr.append("<@").append(entry.getKey()).append(">\n");
+						activityNumsStr.append(entry.getValue()).append('\n');
 					}
 					embed.title = "Activity per member";
 					embed.addField("Member", membersStr.toString(), true);
@@ -76,6 +86,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 					embed.title = "Activity for <@" + member.getId() + '>';
 					embed.description = activityPerMember.get(member.getId()) + " messages sent";
 				}
+
 				interaction.reply(embed);
 			}
 		}
@@ -84,6 +95,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	@Override
 	protected void onMessageCreate(Message message) {
 		if (!message.inGuild) return;
+		if (message.author.isBot) return;
 
 		final var authorId = message.author.getId();
 		final var guildId = message.guild.getId();
@@ -100,7 +112,13 @@ public class ActivityTrackerBot extends BotDiscordClient {
 			activityPerMemberPerGuild.put(guildId, activityPerMember);
 		}
 
-		activityPerMember.put(authorId, activityPerMember.get(authorId) + 1);
+		var activity = activityPerMember.get(authorId);
+
+		if (activity == null) {
+			activity = Long.valueOf(0);
+		}
+
+		activityPerMember.put(authorId, activity + 1);
 	}
 
 	private CompletableFuture<Void> setCommands() {

@@ -181,7 +181,7 @@ public class Guild extends PreviewGuild {
 	/**
 	 * https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags
 	 */
-	public static enum SystemChannelFlag implements BitFlagSet.BitFlagEnum {
+	public static enum SystemChannelFlag implements BitFlagSet.BitFlag {
 		SUPPRESS_JOIN_NOTIFICATIONS,
 		SUPPRESS_PREMIUM_SUBSCRIPTIONS,
 		SUPPRESS_GUILD_REMINDER_NOTIFICATIONS,
@@ -190,8 +190,8 @@ public class Guild extends PreviewGuild {
 		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES;
 	
 		@Override
-		public long getBit() {
-			return 1 << ordinal();
+		public int getBitIndex() {
+			return ordinal();
 		}
 	}
 
