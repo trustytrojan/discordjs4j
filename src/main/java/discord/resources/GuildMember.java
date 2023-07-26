@@ -27,18 +27,11 @@ public class GuildMember extends AbstractGuildResource {
 
 	public final GuildMemberRoleManager roles;
 	public final User user;
-	private final String id;
 
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, "/guilds/" + guild.id + "/members");
-		id = data.getObject("user").getString("id");
+		super(client, guild, data, "/guilds/" + guild.id + "/members", o -> o.getObject("user").getString("id"));
 		user = client.users.get(id).join();
 		roles = new GuildMemberRoleManager(client, this);
-	}
-
-	@Override
-	public String getId() {
-		return id;
 	}
 
 	public String nickname() {

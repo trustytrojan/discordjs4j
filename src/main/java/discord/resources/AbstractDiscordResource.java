@@ -1,21 +1,33 @@
 package discord.resources;
 
+import java.time.Instant;
+import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import discord.client.DiscordClient;
 import sj.SjObject;
 
 public abstract class AbstractDiscordResource implements DiscordResource {
-	protected final DiscordClient client;
-	protected SjObject data;
-	protected final String id;
-	protected boolean deleted;
 	private final String apiPath;
 
+	protected final DiscordClient client;
+	protected SjObject data;
+
+	protected final String id;
+	protected boolean deleted;
+
+	public final Instant createdInstant;
+
 	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath) {
+		this(client, data, baseApiPath, o -> o.getString("id"));
+	}
+
+	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath, Function<SjObject, String> idGetter) {
 		this.client = client;
 		setData(data);
-		id = data.getString("id");
+		id = idGetter.apply(data);
+		createdInstant = Instant.ofEpochMilli((Long.parseLong(id) >> 22) + 1420070400000L);
 		apiPath = baseApiPath + '/' + id;
 	}
 
@@ -45,7 +57,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	@Override
 	public SjObject getData() {
-		return data;
+		return (SjObject) Collections.unmodifiableMap(data);
 	}
 
 	@Override

@@ -38,14 +38,6 @@ public class ActivityTrackerBot extends BotDiscordClient {
 			minutesActive = data.getLong("minutes_active");
 		}
 
-		void incrementMessageCount() {
-			messageCount += 1;
-		}
-
-		void incrementMinutesActive() {
-			minutesActive += 1;
-		}
-
 		@Override
 		public String toJsonString() {
 			return """
@@ -180,6 +172,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		activityPerMember.put(authorId, activity);
 	}
 
+	@SuppressWarnings("unused")
 	private CompletableFuture<Void> setCommands() {
 		final var viewActivity = new ApplicationCommand.Payload();
 		viewActivity.name = "view_activity";
