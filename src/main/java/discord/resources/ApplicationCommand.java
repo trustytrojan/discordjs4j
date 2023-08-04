@@ -18,8 +18,7 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		public static final Type[] TYPE_TABLE = new Type[4];
 
 		static {
-			Stream.of(Type.values())
-				.forEach(t -> TYPE_TABLE[t.value] = t);
+			Stream.of(Type.values()).forEach(t -> TYPE_TABLE[t.value] = t);
 		}
 
 		public final short value;
@@ -30,17 +29,20 @@ public class ApplicationCommand extends AbstractDiscordResource {
 	}
 
 	public static class Payload implements SjSerializable {
+		private final String name;
 		public Type type;
-		public String name;
 		public String description;
 		public List<ApplicationCommandOption.Payload> options;
 		public boolean dmPermission;
 
+		public Payload(String name) {
+			this.name = name;
+		}
+
 		@Override
 		public String toJsonString() {
 			final var obj = new SjObject();
-			if (name != null)
-				obj.put("name", name);
+			obj.put("name", name);
 			if (type != null)
 				obj.put("type", type.value);
 			if (description != null)

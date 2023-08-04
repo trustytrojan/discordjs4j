@@ -66,9 +66,15 @@ public final class ApplicationCommandOption {
 	}
 
 	public static abstract class Payload implements SjSerializable {
-		public Type type;
-		public String name;
-		public String description;
+		public final Type type;
+		public final String name;
+		public final String description;
+
+		protected Payload(Type type, String name, String description) {
+			this.type = type;
+			this.name = name;
+			this.description = description;
+		}
 
 		public SjObject toSjObject() {
 			final var obj = new SjObject();
@@ -83,6 +89,12 @@ public final class ApplicationCommandOption {
 		public boolean required;
 		public List<Choice> choices;
 
+		public NonSubcommandPayload(Type type, String name, String description) {
+			super(type, name, description);
+			if (type == Type.SUB_COMMAND)
+				throw new RuntimeException();
+		}
+
 		@Override
 		public String toJsonString() {
 			final var obj = toSjObject();
@@ -96,6 +108,10 @@ public final class ApplicationCommandOption {
 
 	public static class SubcommandPayload extends Payload {
 		public List<Payload> options;
+
+		public SubcommandPayload(String name, String description) {
+			super(Type.SUB_COMMAND, name, description);
+		}
 
 		@Override
 		public String toJsonString() {

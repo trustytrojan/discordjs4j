@@ -21,6 +21,9 @@ import sj.SjObject;
 import sj.SjSerializable;
 
 public class ActivityTrackerBot extends BotDiscordClient {
+	private static final String dataFilename = "at.json";
+	private static final String testGuildId = "1131342149301055488";
+
 	private class ActivityData implements SjSerializable {
 		Message lastMessage;
 		long messageCount;
@@ -56,35 +59,36 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	@SuppressWarnings("unchecked")
 	private void readData() {
 		try {
-			Sj.parseObject(Util.readFile("atguilds.json")).entrySet().forEach(
-				entry -> {
-					final var guildId = entry.getKey();
-					final var memberIdToObject = (Map<String, Map<String, Object>>) entry.getValue();
-					final var activityPerMember = new HashMap<String, ActivityData>();
-					for (final var e : memberIdToObject.entrySet()) {
-						final var obj = new SjObject(e.getValue());
-						activityPerMember.put(e.getKey(), new ActivityData(obj));
-					}
-					activityPerMemberPerGuild.put(guildId, activityPerMember);
+			Sj.parseObject(Util.readFile(dataFilename)).entrySet().forEach(entry -> {
+				final var guildId = entry.getKey();
+				final var memberIdToObject = (Map<String, Map<String, Object>>) entry.getValue();
+				final var activityPerMember = new HashMap<String, ActivityData>();
+				for (final var e : memberIdToObject.entrySet()) {
+					final var obj = new SjObject(e.getValue());
+					activityPerMember.put(e.getKey(), new ActivityData(obj));
 				}
-			);
-		} catch (Exception e) {}
+				activityPerMemberPerGuild.put(guildId, activityPerMember);
+			});
+		} catch (Exception e) {
+		}
 	}
 
 	private ActivityTrackerBot(String token) {
 		super(token);
 
-		if (Util.fileExists("atguilds.json")) readData();
+		if (Util.fileExists("atguilds.json"))
+			readData();
 
-		//setCommands().thenRun(() -> System.out.println("Commands set!")).exceptionally(Util::printStackTrace);
-		
-		final var shutdownHook = new Thread(() -> Util.writeFile("atguilds.json", Sj.writePretty(activityPerMemberPerGuild)));
+		// setCommands().thenRun(() -> System.out.println("Commands
+		// set!")).exceptionally(Util::printStackTrace);
+
+		final var shutdownHook = new Thread(
+				() -> Util.writeFile(dataFilename, Sj.writePretty(activityPerMemberPerGuild)));
 		Runtime.getRuntime().addShutdownHook(shutdownHook);
 
 		gateway.connectAndIdentify(
-			GatewayIntent.GUILDS,
-			GatewayIntent.GUILD_MESSAGES
-		);
+				GatewayIntent.GUILDS,
+				GatewayIntent.GUILD_MESSAGES);
 	}
 
 	@Override
@@ -98,7 +102,8 @@ public class ActivityTrackerBot extends BotDiscordClient {
 
 	@Override
 	protected void onInteractionCreate(Interaction i) {
-		if (!(i instanceof final ChatInputInteraction interaction)) return;
+		if (!(i instanceof final ChatInputInteraction interaction))
+			return;
 		switch (interaction.commandName) {
 			case "view_activity" -> {
 				final var member = interaction.options.getMember("member").join();
@@ -116,7 +121,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 				}
 
 				final var embed = new Embed();
-				
+
 				if (member == null) {
 					final var membersStr = new StringBuilder();
 					final var activityNumsStr = new StringBuilder();
@@ -139,15 +144,18 @@ public class ActivityTrackerBot extends BotDiscordClient {
 
 	@Override
 	protected void onMessageCreate(Message message) {
-		if (!message.inGuild) return;
-		if (message.author.isBot) return;
+		if (!message.inGuild)
+			return;
+		if (message.author.isBot)
+			return;
 
 		final var authorId = message.author.getId();
 		final var guildId = message.guild.getId();
 		final var content = message.getContent();
 
 		final var previousMessageContent = previousMessageContentPerUser.get(authorId);
-		if (content.equals(previousMessageContent)) return;
+		if (content.equals(previousMessageContent))
+			return;
 		previousMessageContentPerUser.put(authorId, content);
 
 		var activityPerMember = activityPerMemberPerGuild.get(message.guild.getId());
@@ -174,21 +182,21 @@ public class ActivityTrackerBot extends BotDiscordClient {
 
 	@SuppressWarnings("unused")
 	private CompletableFuture<Void> setCommands() {
-		final var viewActivity = new ApplicationCommand.Payload();
-		viewActivity.name = "view_activity";
-		viewActivity.description = "View activity stats for all members, or a certain member.";
+		final var viewActivity = new ApplicationCommand.Payload("view_activity");
+		//viewActivity.description = "View activity stats for all members, or a certain member.";
 
-		final var viewActivityMember = new ApplicationCommandOption.NonSubcommandPayload();
-		viewActivityMember.name = "member";
-		viewActivityMember.description = "View activity stats for a certain member.";
-		viewActivityMember.type = ApplicationCommandOption.Type.USER;
-
-		viewActivity.options = List.of(viewActivityMember);
+		viewActivity.options = List.of(
+			new ApplicationCommandOption.NonSubcommandPayload(
+				ApplicationCommandOption.Type.USER,
+				"member",
+				"View activity stats for a certain member."
+			)
+		);
 
 		final var commands = List.of(viewActivity);
 		final Function<Guild, CompletableFuture<Void>> setGuildCommands = g -> g.commands.set(commands);
 
-		return guilds.get("1131342149301055488").thenCompose(setGuildCommands);
+		return guilds.get(testGuildId).thenCompose(setGuildCommands);
 	}
 
 	public static void main(String[] args) {
