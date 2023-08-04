@@ -3,7 +3,7 @@ package discord.client;
 import java.util.concurrent.CompletableFuture;
 
 import discord.resources.Application;
-import discord.resources.interactions.Interaction;
+import discord.structures.interactions.Interaction;
 
 public class BotDiscordClient extends DiscordClient {
 	public final Application application;

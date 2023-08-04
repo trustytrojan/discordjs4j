@@ -1,4 +1,4 @@
-package discord.resources.components;
+package discord.structures.components;
 
 import java.util.Arrays;
 import java.util.List;

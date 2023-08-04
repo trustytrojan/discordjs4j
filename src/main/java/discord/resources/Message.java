@@ -7,9 +7,9 @@ import java.util.List;
 import discord.client.DiscordClient;
 import discord.resources.channels.GuildChannel;
 import discord.resources.channels.MessageChannel;
-import discord.resources.components.ActionRow;
-import discord.resources.components.MessageComponent;
 import discord.resources.guilds.Guild;
+import discord.structures.components.ActionRow;
+import discord.structures.components.MessageComponent;
 import sj.SjObject;
 import sj.SjSerializable;
 

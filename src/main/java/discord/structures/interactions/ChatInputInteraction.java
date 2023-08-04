@@ -1,4 +1,4 @@
-package discord.resources.interactions;
+package discord.structures.interactions;
 
 import java.util.Objects;
 

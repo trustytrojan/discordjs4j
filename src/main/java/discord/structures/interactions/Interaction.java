@@ -1,4 +1,4 @@
-package discord.resources.interactions;
+package discord.structures.interactions;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,8 +12,8 @@ import discord.resources.GuildMember;
 import discord.resources.Message;
 import discord.resources.User;
 import discord.resources.channels.MessageChannel;
-import discord.resources.components.ActionRow;
 import discord.resources.guilds.Guild;
+import discord.structures.components.ActionRow;
 import discord.util.BitFlagSet;
 import sj.SjObject;
 

@@ -1,11 +1,11 @@
-package discord.resources.interactions;
+package discord.structures.interactions;
 
 import java.util.Collections;
 import java.util.List;
 
 import discord.client.BotDiscordClient;
 import discord.resources.Message;
-import discord.resources.components.MessageComponent;
+import discord.structures.components.MessageComponent;
 import sj.SjObject;
 
 public class MessageComponentInteraction extends Interaction {

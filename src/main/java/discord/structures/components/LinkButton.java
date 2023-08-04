@@ -1,4 +1,4 @@
-package discord.resources.components;
+package discord.structures.components;
 
 import sj.SjObject;
 
