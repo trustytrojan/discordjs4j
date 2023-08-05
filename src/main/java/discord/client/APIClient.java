@@ -23,19 +23,19 @@ public final class APIClient {
 	private static class DiscordAPIException extends RuntimeException {
 		DiscordAPIException(HttpRequestWithBody requestWrapper, HttpResponse<String> response) {
 			super(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + response.statusCode()
-						+ "\nResponse body: " + response.body()
-						+ "\nRequest body: " + requestWrapper.body);
+					+ "\nResponse body: " + response.body()
+					+ "\nRequest body: " + requestWrapper.body);
 		}
 	}
 
 	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {}
 	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
-	
+
 	private static final BodyHandler<String> BODY_HANDLER = BodyHandlers.ofString();
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 	private static final String BASE_URL = "https://discord.com/api/v10";
 
-	private static void log(String message) {
+	private static void debugPrint(String message) {
 		System.out.println("[APIClient] " + message);
 	}
 
@@ -55,39 +55,14 @@ public final class APIClient {
 		}
 	}
 
-	private static CompletableFuture<JsonResponse> sendRequest(HttpRequestWithBody requestWrapper) {
-		return HTTP_CLIENT.sendAsync(requestWrapper.request, BODY_HANDLER)
-			.thenApply(response -> {
-				final var statusCode = response.statusCode();
-				final var responseBody = response.body();
-				log(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + statusCode);
-				if (statusCode == 429)
-					return retryAfter(requestWrapper, responseBody).join();
-				else if (statusCode >= 400)
-					throw new DiscordAPIException(requestWrapper, response);
-				return new JsonResponse(response.body());
-			}).exceptionally(Util::printStackTrace);
-	}
-
-	private static CompletableFuture<JsonResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
-		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
-		log("Being rate limited for " + retryAfter + "ms");
-		try { Thread.sleep(retryAfter); }
-		catch (InterruptedException e) { e.printStackTrace(); }
-		return sendRequest(requestWrapper);
-	}
-
 	private final String token;
+	private final boolean debug;
 
-	APIClient(String token, boolean bot) {
+	APIClient(String token, boolean bot, boolean debug) {
 		Objects.requireNonNull(token);
+		this.debug = debug;
 		this.token = bot ? ("Bot " + token) : token;
 	}
-
-	// public void setToken(String token, boolean bot) {
-	// 	Objects.requireNonNull(token);
-	// 	this.token = bot ? ("Bot " + token) : token;
-	// }
 
 	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String body) {
 		final var requestBuilder = HttpRequest.newBuilder(URI.create(BASE_URL + path));
@@ -105,6 +80,33 @@ public final class APIClient {
 		}
 		requestBuilder.header("Authorization", token);
 		return new HttpRequestWithBody(requestBuilder.build(), path, body);
+	}
+
+	private CompletableFuture<JsonResponse> sendRequest(HttpRequestWithBody requestWrapper) {
+		return HTTP_CLIENT.sendAsync(requestWrapper.request, BODY_HANDLER)
+			.thenApply(response -> {
+				final var statusCode = response.statusCode();
+				final var responseBody = response.body();
+				if (debug)
+					debugPrint(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + statusCode);
+				if (statusCode == 429)
+					return retryAfter(requestWrapper, responseBody).join();
+				else if (statusCode >= 400)
+					throw new DiscordAPIException(requestWrapper, response);
+				return new JsonResponse(response.body());
+			}).exceptionally(Util::printStackTrace);
+	}
+
+	private CompletableFuture<JsonResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
+		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
+		if (debug)
+			debugPrint("Being rate limited for " + retryAfter + "ms");
+		try {
+			Thread.sleep(retryAfter);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return sendRequest(requestWrapper);
 	}
 
 	private CompletableFuture<JsonResponse> buildAndSend(HttpMethod method, String path, String body) {

@@ -19,9 +19,9 @@ public abstract class DiscordClient {
 
 	public final CurrentUser user;
 
-	protected DiscordClient(String token, boolean bot) {
-		api = new APIClient(token, bot);
-		gateway = new GatewayClient(this, token);
+	protected DiscordClient(String token, boolean bot, boolean debug) {
+		api = new APIClient(token, bot, debug);
+		gateway = new GatewayClient(this, token, debug);
 		user = users.getCurrentUser().join();
 	}
 

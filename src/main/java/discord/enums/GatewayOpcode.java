@@ -1,9 +1,13 @@
 package discord.enums;
 
+import java.util.stream.Stream;
+
 public enum GatewayOpcode {
-	DISPATCH,
-	HEARTBEAT,
-	IDENTIFY,
+	DISPATCH, // 0
+	HEARTBEAT, // 1
+	IDENTIFY, // 2
+	PRESENCE_UPDATE, // 3
+	VOICE_STATE_UPDATE, // 4
 	RESUME(6),
 	RECONNECT(7),
 	REQUEST_GUILD_MEMBERS(8),
@@ -11,11 +15,16 @@ public enum GatewayOpcode {
 	HELLO(10),
 	HEARTBEAT_ACK(11);
 
+	private static final GatewayOpcode[] LOOKUP_TABLE;
+
+	static {
+		final var values = GatewayOpcode.values();
+		LOOKUP_TABLE = new GatewayOpcode[values[values.length - 1].value + 1];
+		Stream.of(values).forEach(v -> LOOKUP_TABLE[v.value] = v);
+	}
+
 	public static GatewayOpcode resolve(int value) {
-		for (final var x : GatewayOpcode.values())
-			if (x.value == value)
-				return x;
-		return null;
+		return LOOKUP_TABLE[value];
 	}
 
 	public final int value;

@@ -21,8 +21,8 @@ import sj.SjObject;
 import sj.SjSerializable;
 
 public class ActivityTrackerBot extends BotDiscordClient {
-	private static final String dataFilename = "at.json";
-	private static final String testGuildId = "1131342149301055488";
+	private static final String DATA_FILENAME = "at.json";
+	private static final String TEST_GUILD_ID = "1131342149301055488";
 
 	private class ActivityData implements SjSerializable {
 		Message lastMessage;
@@ -59,7 +59,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	@SuppressWarnings("unchecked")
 	private void readData() {
 		try {
-			Sj.parseObject(Util.readFile(dataFilename)).entrySet().forEach(entry -> {
+			Sj.parseObject(Util.readFile(DATA_FILENAME)).entrySet().forEach(entry -> {
 				final var guildId = entry.getKey();
 				final var memberIdToObject = (Map<String, Map<String, Object>>) entry.getValue();
 				final var activityPerMember = new HashMap<String, ActivityData>();
@@ -74,17 +74,17 @@ public class ActivityTrackerBot extends BotDiscordClient {
 	}
 
 	private ActivityTrackerBot(String token) {
-		super(token);
+		super(token, false);
 
 		if (Util.fileExists("atguilds.json"))
 			readData();
 
-		// setCommands().thenRun(() -> System.out.println("Commands
-		// set!")).exceptionally(Util::printStackTrace);
+		setCommands().thenRun(() -> System.out.println("Commands set!")).exceptionally(Util::printStackTrace);
 
-		final var shutdownHook = new Thread(
-				() -> Util.writeFile(dataFilename, Sj.writePretty(activityPerMemberPerGuild)));
-		Runtime.getRuntime().addShutdownHook(shutdownHook);
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			Util.writeFile(DATA_FILENAME, Sj.writePretty(activityPerMemberPerGuild));
+			gateway.close();
+		}));
 
 		gateway.connectAndIdentify(
 				GatewayIntent.GUILDS,
@@ -180,23 +180,21 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		activityPerMember.put(authorId, activity);
 	}
 
-	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	private CompletableFuture<Void> setCommands() {
-		final var viewActivity = new ApplicationCommand.Payload("view_activity");
-		//viewActivity.description = "View activity stats for all members, or a certain member.";
+		final var viewActivity = new ApplicationCommand.Payload("view_activity",
+				"View activity stats for all members, or a certain member.");
 
 		viewActivity.options = List.of(
-			new ApplicationCommandOption.NonSubcommandPayload(
-				ApplicationCommandOption.Type.USER,
-				"member",
-				"View activity stats for a certain member."
-			)
-		);
+				new ApplicationCommandOption.NonSubcommandPayload(
+						ApplicationCommandOption.Type.USER,
+						"member",
+						"View activity stats for a certain member."));
 
 		final var commands = List.of(viewActivity);
 		final Function<Guild, CompletableFuture<Void>> setGuildCommands = g -> g.commands.set(commands);
 
-		return guilds.get(testGuildId).thenCompose(setGuildCommands);
+		return guilds.get(TEST_GUILD_ID).thenCompose(setGuildCommands);
 	}
 
 	public static void main(String[] args) {

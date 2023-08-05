@@ -30,13 +30,14 @@ public class ApplicationCommand extends AbstractDiscordResource {
 
 	public static class Payload implements SjSerializable {
 		private final String name;
+		public final String description;
 		public Type type;
-		public String description;
 		public List<ApplicationCommandOption.Payload> options;
 		public boolean dmPermission;
 
-		public Payload(String name) {
+		public Payload(String name, String description) {
 			this.name = name;
+			this.description = description;
 		}
 
 		@Override

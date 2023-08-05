@@ -24,7 +24,7 @@ public class AuditLogEntry {
 		executor = client.users.get(data.getString("user_id")).join();
 		targetId = data.getString("target_id");
 		reason = data.getString("reason");
-		actionType = AuditLogEvent.resolve(data.getLong("action_type"));
+		actionType = AuditLogEvent.resolve(data.getInteger("action_type"));
 
 		for (final var changeData : data.getObjectArray("changes")) {
 			final var change = new AuditLogChange(changeData);

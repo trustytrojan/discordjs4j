@@ -1,5 +1,8 @@
 package discord.enums;
 
+import java.util.HashMap;
+import java.util.stream.Stream;
+
 public enum AuditLogEvent {
 	GUILD_UPDATE(1),
 	CHANNEL_CREATE(10),
@@ -56,14 +59,17 @@ public enum AuditLogEvent {
 	AUTO_MODERATION_FLAG_TO_CHANNEL(144),
 	AUTO_MODERATION_USER_COMMUNICATION_DISABLED(145);
 
-	public static AuditLogEvent resolve(long value) {
-		for (final var x : AuditLogEvent.values())
-			if (x.value == value)
-				return x;
-		return null;
+	private static final HashMap<Integer, AuditLogEvent> LOOKUP_TABLE = new HashMap<>();
+
+	static {
+		Stream.of(AuditLogEvent.values()).forEach(v -> LOOKUP_TABLE.put(v.value, v));
 	}
 
-	public final int value;
+	public static AuditLogEvent resolve(int value) {
+		return LOOKUP_TABLE.get(value);
+	}
+
+	private final int value;
 
 	private AuditLogEvent(int value) {
 		this.value = value;

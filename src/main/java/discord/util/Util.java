@@ -23,12 +23,16 @@ public final class Util {
 		return null;
 	}
 
-	public static void repeat(Runnable r, long ms) {
-		new Timer().schedule(new TimerTask() {
+	public static Timer timerFrom(Runnable r, long ms) {
+		final var timer = new Timer();
+		
+		timer.schedule(new TimerTask() {
 			public void run() {
 				r.run();
 			}
 		}, 0, ms);
+
+		return timer;
 	}
 
 	public static boolean fileExists(String path) {

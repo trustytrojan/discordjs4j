@@ -14,7 +14,7 @@ public enum GatewayIntent {
 	GUILD_PRESENCES,
 	GUILD_MESSAGES,
 	GUILD_MESSAGE_REACTIONS,
-	GUILD_MESSAGE_TYPING,
+	GUILD_MESSAGE_TYPING, 
 	DIRECT_MESSAGES,
 	DIRECT_MESSAGE_REACTIONS,
 	DIRECT_MESSAGE_TYPING,
@@ -27,7 +27,7 @@ public enum GatewayIntent {
 		return Stream.of(intents).mapToInt(i -> i.value).sum();
 	}
 
-	public final int value;
+	private final int value;
 
 	private GatewayIntent() {
 		value = (1 << ordinal());
