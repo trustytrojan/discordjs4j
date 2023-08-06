@@ -2,6 +2,7 @@ package discord.resources;
 
 import discord.client.DiscordClient;
 import discord.enums.Permission;
+import discord.misc.Mentionable;
 import discord.resources.guilds.Guild;
 import discord.util.BitFlagSet;
 import discord.util.CDN;
@@ -11,7 +12,7 @@ import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
 
-public class Role extends AbstractGuildResource {
+public class Role extends AbstractGuildResource implements Mentionable {
 	public static class Payload implements SjSerializable {
 		public String name;
 		public BitFlagSet<Permission> permissions;
@@ -41,6 +42,11 @@ public class Role extends AbstractGuildResource {
 
 	public Role(DiscordClient client, Guild guild, SjObject data) {
 		super(client, guild, data, "/roles");
+	}
+
+	@Override
+	public String mention() {
+		return "<@&" + id + '>';
 	}
 
 	public String name() {
