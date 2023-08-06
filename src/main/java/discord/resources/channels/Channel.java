@@ -48,13 +48,13 @@ public interface Channel extends DiscordResource {
 		};
 	}
 
-	String url();
+	String getURL();
 
-	default String name() {
+	default String getName() {
 		return getData().getString("name");
 	}
 
-	default Type type() {
+	default Type getType() {
 		return Type.LOOKUP_TABLE[getData().getInteger("type")];
 	}
 

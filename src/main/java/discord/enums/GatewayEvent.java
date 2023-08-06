@@ -2,6 +2,7 @@ package discord.enums;
 
 public enum GatewayEvent {
 	READY,
+	SESSIONS_REPLACE,
 	CHANNEL_CREATE,
 	CHANNEL_UPDATE,
 	CHANNEL_DELETE,

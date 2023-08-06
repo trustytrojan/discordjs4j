@@ -12,7 +12,7 @@ public class DMBasedChannel extends AbstractDiscordResource implements Channel {
 	}
 
 	@Override
-	public String url() {
+	public String getURL() {
 		return url;
 	}
 }

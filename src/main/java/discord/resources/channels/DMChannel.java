@@ -21,7 +21,7 @@ public class DMChannel extends DMBasedChannel implements MessageChannel {
 	}
 
 	@Override
-	public String name() {
+	public String getName() {
 		return "DM with " + recipient.getTag();
 	}
 

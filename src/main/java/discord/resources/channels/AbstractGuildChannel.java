@@ -12,7 +12,7 @@ public abstract class AbstractGuildChannel extends AbstractGuildResource impleme
 	}
 
 	@Override
-	public String url() {
+	public String getURL() {
 		return url;
 	}
 }
