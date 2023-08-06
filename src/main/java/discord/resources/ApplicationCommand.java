@@ -3,7 +3,6 @@ package discord.resources;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 import discord.client.BotDiscordClient;
 import sj.SjObject;
@@ -11,20 +10,23 @@ import sj.SjSerializable;
 
 public class ApplicationCommand extends AbstractDiscordResource {
 	public static enum Type {
-		CHAT_INPUT(1),
-		MESSAGE(2),
-		USER(3);
+		CHAT_INPUT,
+		MESSAGE,
+		USER;
 
-		public static final Type[] TYPE_TABLE = new Type[4];
-
-		static {
-			Stream.of(Type.values()).forEach(t -> TYPE_TABLE[t.value] = t);
+		public static Type resolve(SjObject data) {
+			return switch (data.getInteger("type")) {
+				case 1 -> CHAT_INPUT;
+				case 2 -> MESSAGE;
+				case 3 -> USER;
+				default -> null;
+			};
 		}
 
-		public final short value;
+		public final int value;
 
-		private Type(int value) {
-			this.value = (short) value;
+		private Type() {
+			value = ordinal() + 1;
 		}
 	}
 
@@ -72,19 +74,19 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		return client.application.commands.delete(id);
 	}
 
-	public List<ApplicationCommandOption> options() {
-		return options;
+	public List<ApplicationCommandOption> getOptions() {
+		return Collections.unmodifiableList(options);
 	}
 
-	public Type type() {
-		return Type.TYPE_TABLE[data.getShort("type")];
+	public Type getType() {
+		return Type.resolve(data);
 	}
 
-	public String name() {
+	public String getName() {
 		return data.getString("name");
 	}
 
-	public String description() {
+	public String getDescription() {
 		return data.getString("description");
 	}
 

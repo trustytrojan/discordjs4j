@@ -14,14 +14,12 @@ public class ChatInputInteraction extends Interaction {
 		public final Object value;
 		public final OptionResolver options;
 
-		public Option(final ChatInputInteraction interaction, final SjObject data) {
+		public Option(ChatInputInteraction interaction, SjObject data) {
 			Objects.requireNonNull(interaction);
 			Objects.requireNonNull(data);
-
 			type = ApplicationCommandOption.Type.resolve(data.getLong("type"));
 			name = data.getString("name");
 			value = data.get("value");
-
 			options = new OptionResolver(interaction, data.getObjectArray("options"));
 		}
 	}
@@ -31,12 +29,11 @@ public class ChatInputInteraction extends Interaction {
 	public final String commandName;
 	public final ApplicationCommand.Type commandType;
 
-	public ChatInputInteraction(final BotDiscordClient client, final SjObject data) {
+	public ChatInputInteraction(BotDiscordClient client, SjObject data) {
 		super(client, data);
-
 		commandId = innerData.getString("id");
 		commandName = innerData.getString("name");
-		commandType = ApplicationCommand.Type.TYPE_TABLE[innerData.getInteger("type")];
+		commandType = ApplicationCommand.Type.resolve(data);
 		options = new OptionResolver(this, data.getObjectArray("options"));
 	}
 }
