@@ -29,8 +29,8 @@ public class GuildMember extends AbstractGuildResource {
 	public final User user;
 
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, "/guilds/" + guild.id + "/members", o -> o.getObject("user").getString("id"));
-		user = client.users.get(id).join();
+		super(client, guild, data, "/guilds/" + guild.getId() + "/members", o -> o.getObject("user").getString("id"));
+		user = client.users.get(getId()).join();
 		roles = new GuildMemberRoleManager(client, this);
 	}
 
@@ -46,7 +46,7 @@ public class GuildMember extends AbstractGuildResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildMemberAvatarURL(guild.id, user.id, getHash(), size, extension);
+			return CDN.makeGuildMemberAvatarURL(guild.getId(), user.getId(), getHash(), size, extension);
 		}
 	};
 

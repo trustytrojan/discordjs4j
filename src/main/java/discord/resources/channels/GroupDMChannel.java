@@ -65,12 +65,12 @@ public class GroupDMChannel extends DMBasedChannel implements MessageChannel {
 	}
 
 	public CompletableFuture<GroupDMChannel> edit(Payload payload) {
-		return client.channels.editGroupDM(id, payload);
+		return client.channels.editGroupDM(getId(), payload);
 	}
 
 	private CompletableFuture<Void> leave(boolean silent) {
-		return client.api.delete("/channels/" + id + "?silent=" + silent)
-			.thenRun(() -> client.channels.cache.remove(id));
+		return client.api.delete("/channels/" + getId() + "?silent=" + silent)
+			.thenRun(() -> client.channels.cache.remove(getId()));
 	}
 
 	public CompletableFuture<Void> leave() {
@@ -89,7 +89,7 @@ public class GroupDMChannel extends DMBasedChannel implements MessageChannel {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeChannelIconURL(id, getHash(), size, extension);
+			return CDN.makeChannelIconURL(getId(), getHash(), size, extension);
 		}
 	};
 

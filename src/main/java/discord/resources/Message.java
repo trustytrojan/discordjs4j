@@ -62,10 +62,10 @@ public class Message extends AbstractDiscordResource {
 		super(client, data, "/channels/" + channel.getId() + "/messages");
 		this.channel = channel;
 		author = client.users.get(data.getObject("author").getString("id")).join();
-		final var urlFormat = "https://discord.com/channels/%s/" + channel.getId() + '/' + id;
+		final var urlFormat = "https://discord.com/channels/%s/" + channel.getId() + '/' + getId();
 		if (inGuild = channel instanceof GuildChannel) {
 			guild = ((GuildChannel) channel).getGuild();
-			url = urlFormat.formatted(guild.id);
+			url = urlFormat.formatted(guild.getId());
 		} else {
 			guild = null;
 			url = urlFormat.formatted("@me");

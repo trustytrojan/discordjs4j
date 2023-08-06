@@ -31,7 +31,7 @@ public abstract class BaseGuild extends AbstractDiscordResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildIconURL(id, getHash(), size, extension);
+			return CDN.makeGuildIconURL(getId(), getHash(), size, extension);
 		}
 	};
 

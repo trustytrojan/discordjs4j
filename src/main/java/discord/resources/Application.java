@@ -42,7 +42,7 @@ public class Application extends AbstractDiscordResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeApplicationIconURL(id, getHash(), size, extension);
+			return CDN.makeApplicationIconURL(getId(), getHash(), size, extension);
 		}
 	};
 }
