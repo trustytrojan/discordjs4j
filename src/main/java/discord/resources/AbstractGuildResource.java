@@ -11,7 +11,7 @@ import sj.SjObject;
  * exist on one guild.
  */
 public class AbstractGuildResource extends AbstractDiscordResource implements GuildResource {
-	protected final Guild guild;
+	public final Guild guild;
 
 	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String guildApiPath) {
 		super(client, data, "/guilds/" + guildApiPath);
