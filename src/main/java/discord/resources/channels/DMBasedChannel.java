@@ -5,14 +5,14 @@ import discord.resources.AbstractDiscordResource;
 import sj.SjObject;
 
 public class DMBasedChannel extends AbstractDiscordResource implements Channel {
-	private final String url = "https://discord.com/channels/@me/" + getId();
+	private final String url = "https://discord.com/channels/@me/" + id;
 
 	protected DMBasedChannel(DiscordClient client, SjObject data) {
 		super(client, data, "/channels");
 	}
 
 	@Override
-	public String getURL() {
+	public String getUrl() {
 		return url;
 	}
 }

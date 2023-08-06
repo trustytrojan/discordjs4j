@@ -49,7 +49,7 @@ public interface Channel extends DiscordResource, Mentionable {
 		};
 	}
 
-	String getURL();
+	String getUrl();
 
 	default String getName() {
 		return getData().getString("name");

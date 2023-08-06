@@ -11,7 +11,7 @@ public abstract class GuildResourceManager<T extends GuildResource> extends Reso
 	protected final Guild guild;
 
 	protected GuildResourceManager(DiscordClient client, Guild guild, String guildPath) {
-		super(client, "/guilds/" + guild.getId() + guildPath);
+		super(client, "/guilds/" + guild.id + guildPath);
 		this.guild = Objects.requireNonNull(guild);
 	}
 }

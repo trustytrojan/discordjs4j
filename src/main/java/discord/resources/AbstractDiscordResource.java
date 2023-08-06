@@ -14,7 +14,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 	protected final DiscordClient client;
 	protected SjObject data;
 
-	private final String id;
+	public final String id;
 	private boolean deleted;
 
 	public final Instant createdInstant;

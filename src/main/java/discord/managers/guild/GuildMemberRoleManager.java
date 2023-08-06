@@ -12,7 +12,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	private final GuildMember member;
 
 	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
-		super(client, member.getGuild(), "/members" + member.getId() + "/roles");
+		super(client, member.getGuild(), "/members" + member.id + "/roles");
 		this.member = member;
 	}
 

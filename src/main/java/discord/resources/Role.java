@@ -89,7 +89,7 @@ public class Role extends AbstractGuildResource implements Mentionable {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeRoleIconURL(getId(), getHash(), size, extension);
+			return CDN.makeRoleIconURL(id, getHash(), size, extension);
 		}
 	};
 

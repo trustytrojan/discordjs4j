@@ -51,7 +51,7 @@ public class Message extends AbstractDiscordResource {
 		}
 	}
 
-	public List<MessageComponent> components;
+	private List<MessageComponent> components;
 	public final User author;
 	public final MessageChannel channel;
 	public final Guild guild;
@@ -62,10 +62,10 @@ public class Message extends AbstractDiscordResource {
 		super(client, data, "/channels/" + channel.getId() + "/messages");
 		this.channel = channel;
 		author = client.users.get(data.getObject("author").getString("id")).join();
-		final var urlFormat = "https://discord.com/channels/%s/" + channel.getId() + '/' + getId();
+		final var urlFormat = "https://discord.com/channels/%s/" + channel.getId() + '/' + id;
 		if (inGuild = channel instanceof GuildChannel) {
 			guild = ((GuildChannel) channel).getGuild();
-			url = urlFormat.formatted(guild.getId());
+			url = urlFormat.formatted(guild.id);
 		} else {
 			guild = null;
 			url = urlFormat.formatted("@me");
@@ -80,8 +80,8 @@ public class Message extends AbstractDiscordResource {
 		return data.getBoolean("pinned");
 	}
 
-	public String getURL() {
-		return url;
+	public List<MessageComponent> getComponents() {
+		return Collections.unmodifiableList(components);
 	}
 
 	@Override

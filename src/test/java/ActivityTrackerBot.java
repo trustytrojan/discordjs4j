@@ -49,7 +49,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 						"message_count": %d,
 						"minutes_active": %d
 					}
-					""".formatted(lastMessage.getId(), messageCount, minutesActive);
+					""".formatted(lastMessage.id, messageCount, minutesActive);
 		}
 	}
 
@@ -108,11 +108,11 @@ public class ActivityTrackerBot extends BotDiscordClient {
 			case "view_activity" -> {
 				final var member = interaction.options.getMember("member").join();
 
-				var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.getId());
+				var activityPerMember = activityPerMemberPerGuild.get(interaction.guild.id);
 
 				if (activityPerMember == null) {
 					activityPerMember = new HashMap<String, ActivityData>();
-					activityPerMemberPerGuild.put(interaction.guild.getId(), activityPerMember);
+					activityPerMemberPerGuild.put(interaction.guild.id, activityPerMember);
 				}
 
 				if (activityPerMember.size() == 0) {
@@ -133,8 +133,8 @@ public class ActivityTrackerBot extends BotDiscordClient {
 					embed.addField("Member", membersStr.toString(), true);
 					embed.addField("Activity", activityNumsStr.toString(), true);
 				} else {
-					embed.title = "Activity for <@" + member.getId() + '>';
-					embed.description = activityPerMember.get(member.getId()) + " messages sent";
+					embed.title = "Activity for <@" + member.id + '>';
+					embed.description = activityPerMember.get(member.id) + " messages sent";
 				}
 
 				interaction.reply(embed);
@@ -149,8 +149,8 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		if (message.author.isBot)
 			return;
 
-		final var authorId = message.author.getId();
-		final var guildId = message.guild.getId();
+		final var authorId = message.author.id;
+		final var guildId = message.guild.id;
 		final var content = message.getContent();
 
 		final var previousMessageContent = previousMessageContentPerUser.get(authorId);
@@ -158,7 +158,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 			return;
 		previousMessageContentPerUser.put(authorId, content);
 
-		var activityPerMember = activityPerMemberPerGuild.get(message.guild.getId());
+		var activityPerMember = activityPerMemberPerGuild.get(message.guild.id);
 
 		if (activityPerMember == null) {
 			activityPerMember = new HashMap<String, ActivityData>();

@@ -60,16 +60,16 @@ public class ApplicationCommand extends AbstractDiscordResource {
 	private List<ApplicationCommandOption> options;
 
 	public ApplicationCommand(BotDiscordClient client, SjObject data) {
-		super(client, data, "/applications/" + client.application.getId() + "/commands");
+		super(client, data, "/applications/" + client.application.id + "/commands");
 		this.client = client;
 	}
 
 	public CompletableFuture<ApplicationCommand> edit(Payload payload) {
-		return client.application.commands.edit(getId(), payload);
+		return client.application.commands.edit(id, payload);
 	}
 
 	public CompletableFuture<Void> delete() {
-		return client.application.commands.delete(getId());
+		return client.application.commands.delete(id);
 	}
 
 	public List<ApplicationCommandOption> options() {

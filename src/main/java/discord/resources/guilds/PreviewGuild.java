@@ -20,7 +20,7 @@ public class PreviewGuild extends BaseGuild {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildSplashURL(getId(), getHash(), size, extension);
+			return CDN.makeGuildSplashURL(id, getHash(), size, extension);
 		}
 	};
 
@@ -32,7 +32,7 @@ public class PreviewGuild extends BaseGuild {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildDiscoverySplashURL(getId(), getHash(), size, extension);
+			return CDN.makeGuildDiscoverySplashURL(id, getHash(), size, extension);
 		}
 	};
 
