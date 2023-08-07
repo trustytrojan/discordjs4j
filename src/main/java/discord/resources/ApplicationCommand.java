@@ -16,7 +16,7 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		MESSAGE(2),
 		USER(3);
 
-		private static final Type[] LOOKUP_TABLE = new Type[3];
+		private static final Type[] LOOKUP_TABLE = new Type[4];
 
 		static {
 			Stream.of(Type.values()).forEach(t -> LOOKUP_TABLE[t.value] = t);

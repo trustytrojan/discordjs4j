@@ -17,12 +17,12 @@ public abstract class DiscordClient {
 	public final ChannelManager channels = new ChannelManager(this);
 	public final GuildManager guilds = new GuildManager(this);
 
-	public final CurrentUser user;
+	public final CurrentUser currentUser;
 
 	protected DiscordClient(String token, boolean bot, boolean debug) {
 		api = new APIClient(token, bot, debug);
 		gateway = new GatewayClient(this, token, debug);
-		user = users.getCurrentUser().join();
+		currentUser = users.getCurrentUser().join();
 	}
 
 	/*

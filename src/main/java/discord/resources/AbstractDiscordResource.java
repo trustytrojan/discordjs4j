@@ -1,6 +1,5 @@
 package discord.resources;
 
-import java.util.Collections;
 import java.util.Objects;
 
 import discord.client.DiscordClient;
@@ -14,7 +13,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	protected AbstractDiscordResource(final DiscordClient client, final SjObject data) {
 		this.client = Objects.requireNonNull(client);
-		this.data = (SjObject) Collections.unmodifiableMap(data);
+		setData(data);
 	}
 
 	@Override
@@ -28,7 +27,7 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 	}
 
 	@Override
-	public void setData(SjObject data) {
+	public void setData(final SjObject data) {
 		this.data = data;
 	}
 

@@ -51,19 +51,19 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 			: resourceGetter.apply(id);
 	}
 
-	public CompletableFuture<Role> getRole(String optionName) {
+	public CompletableFuture<Role> getRoleAsync(String optionName) {
 		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.roles::get));
 	}
 
-	public CompletableFuture<User> getUser(String optionName) {
+	public CompletableFuture<User> getUserAsync(String optionName) {
 		return getResource(optionName, interaction.client.users::get);
 	}
 
-	public CompletableFuture<GuildMember> getMember(String optionName) {
+	public CompletableFuture<GuildMember> getMemberAsync(String optionName) {
 		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.members::get));
 	}
 
-	public CompletableFuture<GuildChannel> getChannel(String optionName) {
+	public CompletableFuture<GuildChannel> getChannelAsync(String optionName) {
 		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.channels::get));
 	}
 

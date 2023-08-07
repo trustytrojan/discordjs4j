@@ -1,5 +1,6 @@
 package discord.resources;
 
+import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -28,6 +29,10 @@ public interface DiscordResource {
 	 */
 	default String getId() {
 		return getData().getString("id");
+	}
+
+	default Instant getCreatedInstant() {
+		return Instant.ofEpochMilli((Long.parseLong(getId()) >> 22) + 1420070400000L);
 	}
 
 	/**

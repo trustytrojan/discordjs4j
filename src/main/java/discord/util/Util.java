@@ -9,7 +9,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import discord.resources.DiscordResource;
 
 public final class Util {
 	public static final Runnable NO_OP = () -> {};
@@ -93,5 +97,14 @@ public final class Util {
 			if (hasNext) sb.append('&');
 		}
 		return sb.toString();
+	}
+
+	@SafeVarargs
+	public static DiscordResource[] awaitResources(CompletableFuture<? extends DiscordResource>... resourceCfs) {
+		return Stream.of(resourceCfs).map(CompletableFuture::join).toArray(DiscordResource[]::new);
+	}
+
+	public static <T, U> void whenDone(CompletableFuture<T> cf1, CompletableFuture<U> cf2, BiConsumer<T, U> consumer) {
+		consumer.accept(cf1.join(), cf2.join());
 	}
 }

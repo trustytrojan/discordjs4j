@@ -47,11 +47,15 @@ public final class APIClient {
 		}
 
 		public SjObject asObject() {
-			return Sj.parseObject(rawText);
+			final var obj = Sj.parseObject(rawText);
+			obj.freeze();
+			return obj;
 		}
 
 		public List<SjObject> asObjectArray() {
-			return Sj.parseObjectArray(rawText);
+			final var arr = Sj.parseObjectArray(rawText);
+			arr.forEach(SjObject::freeze);
+			return arr;
 		}
 	}
 

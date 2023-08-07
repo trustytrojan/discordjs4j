@@ -97,6 +97,10 @@ public class User extends AbstractDiscordResource {
 				.thenApply(r -> new DMChannel(client, r.asObject()));
 	}
 
+	public boolean isBot() {
+		return data.getBooleanDefaultFalse("bot");
+	}
+
 	public String getUsername() {
 		return data.getString("username");
 	}
