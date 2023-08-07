@@ -1,6 +1,7 @@
 package discord.resources;
 
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.managers.guild.GuildMemberRoleManager;
@@ -29,12 +30,17 @@ public class GuildMember extends AbstractGuildResource {
 	public final User user;
 
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, "/guilds/" + guild.id + "/members", o -> o.getObject("user").getString("id"));
+		super(client, guild, data, null, data.getObject("user").getString("id"));
 		user = client.users.get(id).join();
 		roles = new GuildMemberRoleManager(client, this);
 	}
 
-	public String nickname() {
+	@Override
+	public CompletableFuture<Void> refreshData() {
+		throw new UnsupportedOperationException("Guild members cannot be fetched individually");
+	}
+
+	public String getNickname() {
 		return data.getString("nick");
 	}
 
@@ -58,15 +64,15 @@ public class GuildMember extends AbstractGuildResource {
 		return Instant.parse(data.getString("premium_since"));
 	}
 
-	public boolean deaf() {
+	public boolean isDeaf() {
 		return data.getBoolean("deaf");
 	}
 
-	public boolean mute() {
+	public boolean isMute() {
 		return data.getBoolean("mute");
 	}
 
-	public boolean pending() {
+	public boolean isPending() {
 		return data.getBoolean("pending");
 	}
 

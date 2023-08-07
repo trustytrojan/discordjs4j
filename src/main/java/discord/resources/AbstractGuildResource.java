@@ -1,7 +1,5 @@
 package discord.resources;
 
-import java.util.function.Function;
-
 import discord.client.DiscordClient;
 import discord.resources.guilds.Guild;
 import sj.SjObject;
@@ -18,8 +16,8 @@ public class AbstractGuildResource extends AbstractDiscordResource implements Gu
 		this.guild = guild;
 	}
 
-	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String guildApiPath, Function<SjObject, String> idGetter) {
-		super(client, data, "/guilds/" + guildApiPath, idGetter);
+	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String guildApiPath, String id) {
+		super(client, data, "/guilds/" + guildApiPath, id);
 		this.guild = guild;
 	}
 

@@ -1,5 +1,7 @@
 package discord.resources;
 
+import java.util.concurrent.CompletableFuture;
+
 import discord.client.DiscordClient;
 import discord.enums.Permission;
 import discord.misc.Mentionable;
@@ -41,7 +43,12 @@ public class Role extends AbstractGuildResource implements Mentionable {
 	}
 
 	public Role(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, "/roles");
+		super(client, guild, data, null);
+	}
+
+	@Override
+	public CompletableFuture<Void> refreshData() {
+		throw new UnsupportedOperationException("Roles cannot be fetched individually");
 	}
 
 	@Override

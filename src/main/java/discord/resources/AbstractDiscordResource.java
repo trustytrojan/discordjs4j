@@ -3,7 +3,6 @@ package discord.resources;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import discord.client.DiscordClient;
 import sj.SjObject;
@@ -20,13 +19,13 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 	public final Instant createdInstant;
 
 	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath) {
-		this(client, data, baseApiPath, o -> o.getString("id"));
+		this(client, data, baseApiPath, data.getString("id"));
 	}
 
-	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath, Function<SjObject, String> idGetter) {
+	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath, String id) {
 		this.client = client;
 		setData(data);
-		id = idGetter.apply(data);
+		this.id = id;
 		apiPath = baseApiPath + '/' + id;
 		createdInstant = Instant.ofEpochMilli((Long.parseLong(id) >> 22) + 1420070400000L);
 	}
