@@ -79,7 +79,7 @@ public class Message extends AbstractDiscordResource {
 	}
 
 	public CompletableFuture<Guild> getGuildAsync() {
-		return getChannelAsync().thenApply(c -> ((GuildChannel) c).getGuild());
+		return getChannelAsync().thenApply(c -> ((GuildChannel) c).getGuildAsync());
 	}
 
 	public Guild getGuild() {

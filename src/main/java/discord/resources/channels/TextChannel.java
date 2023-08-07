@@ -2,9 +2,11 @@ package discord.resources.channels;
 
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
+import discord.resources.AbstractGuildResource;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 
-public class TextChannel extends AbstractGuildChannel implements MessageChannel {
+public class TextChannel extends AbstractGuildResource implements GuildChannel, MessageChannel {
 	public static class Payload extends GuildChannel.Payload {
 		public Channel.Type type;
 		public String topic;
@@ -33,27 +35,27 @@ public class TextChannel extends AbstractGuildChannel implements MessageChannel 
 		}
 	}
 
-	private final MessageManager messages;
+	private final MessageManager messageManager;
 
-	public TextChannel(DiscordClient client, SjObject data) {
-		super(client, data);
-		messages = new MessageManager(client, this);
+	TextChannel(DiscordClient client, Guild guild, SjObject data) {
+		super(client, guild, data);
+		messageManager = new MessageManager(client, this);
 	}
 
-	public String topic() {
+	public String getTopic() {
 		return data.getString("topic");
 	}
 
-	public Long slowmodeDuration() {
+	public Long getSlowmodeDuration() {
 		return data.getLong("rate_limit_per_user");
 	}
 
-	public boolean nsfw() {
+	public boolean isNsfw() {
 		return data.getBooleanDefaultFalse("nsfw");
 	}
 
 	@Override
 	public MessageManager getMessageManager() {
-		return messages;
+		return messageManager;
 	}
 }

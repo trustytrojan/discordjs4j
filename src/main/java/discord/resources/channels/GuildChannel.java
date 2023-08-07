@@ -3,38 +3,10 @@ package discord.resources.channels;
 import java.util.concurrent.CompletableFuture;
 
 import discord.resources.GuildResource;
-import discord.util.Util;
 import sj.SjObject;
 import sj.SjSerializable;
 
 public interface GuildChannel extends GuildResource, Channel {
-	// TODO: PermissionOverwrites
-
-	default Integer position() {
-		return getData().getInteger("position");
-	}
-
-	default String parentId() {
-		return getData().getString("parent_id");
-	}
-
-	default CompletableFuture<CategoryChannel> getParent() {
-		final var id = parentId();
-		return (id == null)
-			? CompletableFuture.completedFuture(null)
-			: getClient().channels.get(id).thenApply(c -> (CategoryChannel) c);
-	}
-
-	/**
-	 * Edit this channel using the data in {@code payload}. If successful, changes
-	 * will be reflected in {@code this}.
-	 * 
-	 * @param payload The data to change in this channel
-	 */
-	default CompletableFuture<Void> edit(Payload payload) {
-		return getGuild().channels.edit(getId(), payload).thenRun(Util.NO_OP);
-	}
-
 	// https://discord.com/developers/docs/resources/channel#modify-channel
 	public abstract class Payload implements SjSerializable {
 		// subclasses can hardcode the channel type!
@@ -82,8 +54,47 @@ public interface GuildChannel extends GuildResource, Channel {
 
 	default PositionPayload toPositionPayload() {
 		final var payload = new PositionPayload(getId());
-		payload.position = position();
-		payload.parentId = parentId();
+		payload.position = getPosition();
+		payload.parentId = getParentId();
 		return payload;
+	}
+
+	@Override
+	default String getUrl() {
+		return "https://discord.com/channels/" + getGuildId() + '/' + getId();
+	}
+
+	default String getGuildId() {
+		return getData().getString("guild_id");
+	}
+
+	default Integer getPosition() {
+		return getData().getInteger("position");
+	}
+
+	default String getParentId() {
+		return getData().getString("parent_id");
+	}
+
+	default boolean hasParent() {
+		return getParentId() != null;
+	}
+
+	default CompletableFuture<CategoryChannel> getParent() {
+		final var id = getParentId();
+		return (id == null)
+			? CompletableFuture.completedFuture(null)
+			: getClient().channels.get(id).thenApply(c -> (CategoryChannel) c);
+	}
+
+	/**
+	 * Edit this channel using the data in {@code payload}. If successful, changes
+	 * will be reflected in {@code this}.
+	 * 
+	 * @param payload The data to change in this channel
+	 * @return 
+	 */
+	default CompletableFuture<Void> edit(Payload payload) {
+		return getGuildAsync().thenAccept(g -> g.channels.edit(getId(), payload));
 	}
 }

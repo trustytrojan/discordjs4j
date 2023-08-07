@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import discord.client.BotDiscordClient;
 import discord.resources.ApplicationCommand;
-import discord.resources.ApplicationCommandOption;
+import discord.structures.ApplicationCommandOption;
 import sj.SjObject;
 
 public class ChatInputInteraction extends Interaction {

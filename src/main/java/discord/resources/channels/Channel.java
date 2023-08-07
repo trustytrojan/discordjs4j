@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
 import discord.resources.DiscordResource;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public interface Channel extends DiscordResource {
@@ -21,31 +22,38 @@ public interface Channel extends DiscordResource {
 		PRIVATE_THREAD(12),
 		GUILD_STAGE_VOICE(13),
 		GUILD_DIRECTORY(14),
-		GUILD_FORUM(15);
+		GUILD_FORUM(15),
+		GUILD_MEDIA(16);
 
-		private static final Type[] LOOKUP_TABLE = new Type[16];
+		private static final Type[] LOOKUP_TABLE = new Type[17];
 
 		static {
 			Stream.of(Type.values()).forEach(t -> LOOKUP_TABLE[t.value] = t);
 		}
 
-		public final short value;
+		public final int value;
 
 		private Type(int value) {
-			this.value = (short) value;
+			this.value = value;
 		}
 	}
 
-	public static Channel construct(DiscordClient client, SjObject data) {
+	public static Channel construct(DiscordClient client, SjObject data, Guild guild) {
 		Objects.requireNonNull(client);
 		return switch (Type.LOOKUP_TABLE[data.getInteger("type")]) {
-			case GUILD_TEXT -> new TextChannel(client, data);
+			case GUILD_TEXT -> new TextChannel(client, guild, data);
 			case DM -> new DMChannel(client, data);
+			case GUILD_VOICE -> new VoiceChannel(client, guild, data);
 			case GROUP_DM -> new GroupDMChannel(client, data);
-			case GUILD_CATEGORY -> new CategoryChannel(client, data);
+			case GUILD_CATEGORY -> new CategoryChannel(client, guild, data);
 			// ...
 			default -> null;
 		};
+	}
+
+	@Override
+	default String getApiPath() {
+		return "/channels/" + getId();
 	}
 
 	String getUrl();

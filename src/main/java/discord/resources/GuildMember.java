@@ -12,17 +12,17 @@ import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
-public class GuildMember extends AbstractGuildResource {
+public class GuildMember extends AbstractDiscordResource implements GuildResource {
 	public static enum Flags {
-		DID_REJOIN(1 << 0),
-		COMPLETED_ONBOARDING(1 << 1),
-		BYPASSES_VERIFICATION(1 << 2),
-		STARTED_ONBOARDING(1 << 3);
+		DID_REJOIN,
+		COMPLETED_ONBOARDING,
+		BYPASSES_VERIFICATION,
+		STARTED_ONBOARDING;
 
 		public final int value;
 
-		private Flags(int value) {
-			this.value = value;
+		private Flags() {
+			this.value = (1 << ordinal());
 		}
 	}
 
@@ -33,8 +33,18 @@ public class GuildMember extends AbstractGuildResource {
 		roles = new GuildMemberRoleManager(client, this);
 	}
 
+	@Override
+	public String getId() {
+		return getData().getObject("user").getString(getId());
+	}
+
+	@Override
+	public String getGuildId() {
+		return guild.id;
+	}
+
 	public CompletableFuture<User> getUserAsync() {
-		return client.users.get(id);
+		return client.users.get(getId());
 	}
 
 	public User getUser() {
@@ -53,7 +63,7 @@ public class GuildMember extends AbstractGuildResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildMemberAvatarURL(guild.id, id, getHash(), size, extension);
+			return CDN.makeGuildMemberAvatarURL(getGuildId(), id, getHash(), size, extension);
 		}
 	};
 

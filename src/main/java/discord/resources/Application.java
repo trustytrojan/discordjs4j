@@ -18,8 +18,13 @@ public class Application extends AbstractDiscordResource {
 	public final ApplicationCommandManager commands;
 
 	public Application(DiscordClient client, SjObject data) {
-		super(client, data, "/applications");
+		super(client, data);
 		commands = new ApplicationCommandManager((BotDiscordClient) client, null);
+	}
+
+	@Override
+	public String getApiPath() {
+		return "/applications/" + getId();
 	}
 
 	public CompletableFuture<User> getOwner() {
@@ -42,7 +47,7 @@ public class Application extends AbstractDiscordResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeApplicationIconURL(id, getHash(), size, extension);
+			return CDN.makeApplicationIconURL(getId(), getHash(), size, extension);
 		}
 	};
 }

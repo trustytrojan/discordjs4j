@@ -1,9 +1,12 @@
 package discord.resources.channels;
 
 import discord.client.DiscordClient;
+import discord.managers.MessageManager;
+import discord.resources.AbstractGuildResource;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 
-public class VoiceChannel extends AbstractGuildChannel {
+public class VoiceChannel extends AbstractGuildResource implements GuildChannel, MessageChannel {
 	public static class Payload extends GuildChannel.Payload {
 		public boolean nsfw;
 		public Integer bitrate;
@@ -12,7 +15,7 @@ public class VoiceChannel extends AbstractGuildChannel {
 		public String rtcRegion;
 		public VideoQualityMode videoQualityMode;
 
-		public Payload(String name) {
+		public Payload(final String name) {
 			super(name);
 		}
 
@@ -44,13 +47,16 @@ public class VoiceChannel extends AbstractGuildChannel {
 
 		public final int value;
 
-		private VideoQualityMode(int value) {
+		private VideoQualityMode(final int value) {
 			this.value = value;
 		}
 	}
 
-	public VoiceChannel(DiscordClient client, SjObject data) {
-		super(client, data);
+	private final MessageManager messageManager;
+
+	public VoiceChannel(DiscordClient client, Guild guild, SjObject data) {
+		super(client, guild, data);
+		messageManager = new MessageManager(client, this);
 	}
 
 	public VideoQualityMode videoQualityMode() {
@@ -67,5 +73,10 @@ public class VoiceChannel extends AbstractGuildChannel {
 
 	public String rtcRegion() {
 		return data.getString("rtc_region");
+	}
+
+	@Override
+	public MessageManager getMessageManager() {
+		return messageManager;
 	}
 }

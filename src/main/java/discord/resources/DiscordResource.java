@@ -1,5 +1,7 @@
 package discord.resources;
 
+import java.util.concurrent.CompletableFuture;
+
 import discord.client.DiscordClient;
 import sj.SjObject;
 
@@ -24,7 +26,21 @@ public interface DiscordResource {
 	/**
 	 * @return This resource's ID.
 	 */
-	String getId();
+	default String getId() {
+		return getData().getString("id");
+	}
+
+	/**
+	 * @return The specific path to get this resource from the Discord API.
+	 */
+	String getApiPath();
+
+	/**
+	 * @return Refreshes this DiscordResource's internal data with data fresh from the Discord API.
+	 */
+	default CompletableFuture<Void> refreshData() {
+		return getClient().api.get(getApiPath()).thenAccept(r -> setData(r.asObject()));
+	}
 
 	/**
 	 * @return Whether this resource has been deleted from Discord.

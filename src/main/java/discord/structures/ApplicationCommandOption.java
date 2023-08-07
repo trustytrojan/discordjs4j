@@ -1,4 +1,4 @@
-package discord.resources;
+package discord.structures;
 
 import java.util.List;
 
