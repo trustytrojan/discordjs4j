@@ -94,7 +94,7 @@ public class GroupDMChannel extends DMBasedChannel implements MessageChannel {
 	};
 
 	@Override
-	public MessageManager messages() {
+	public MessageManager getMessageManager() {
 		return messages;
 	}
 }

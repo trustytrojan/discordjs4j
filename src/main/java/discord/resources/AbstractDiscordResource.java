@@ -27,8 +27,8 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 		this.client = client;
 		setData(data);
 		id = idGetter.apply(data);
-		createdInstant = Instant.ofEpochMilli((Long.parseLong(id) >> 22) + 1420070400000L);
 		apiPath = baseApiPath + '/' + id;
+		createdInstant = Instant.ofEpochMilli((Long.parseLong(id) >> 22) + 1420070400000L);
 	}
 
 	public CompletableFuture<Void> refreshData() {

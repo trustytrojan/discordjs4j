@@ -16,7 +16,7 @@ public class MessageComponentInteraction extends Interaction {
 
 	public MessageComponentInteraction(final BotDiscordClient client, final SjObject data) {
 		super(client, data);
-		message = channel.messages().get(data.getObject("message").getString("id")).join();
+		message = channel.getMessageManager().get(data.getObject("message").getString("id")).join();
 		customId = innerData.getString("custom_id");
 		componentType = MessageComponent.Type.resolve(innerData.getShort("component_type"));
 		switch (componentType) {

@@ -26,11 +26,11 @@ public class Application extends AbstractDiscordResource {
 		return client.users.get(data.getObject("owner").getString("id"));
 	}
 
-	public String name() {
+	public String getName() {
 		return data.getString("name");
 	}
 
-	public String description() {
+	public String getDescription() {
 		return data.getString("description");
 	}
 

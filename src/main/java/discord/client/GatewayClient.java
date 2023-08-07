@@ -192,32 +192,32 @@ public class GatewayClient extends WebSocketClient {
 					case MESSAGE_CREATE -> {
 						final var messageObj = obj.getObject("d");
 						client.channels.get(messageObj.getString("channel_id"))
-								.thenAccept(c -> {
-									final var channel = (MessageChannel) c;
-									final var message = channel.messages().cache(messageObj);
-									client.onMessageCreate(message);
-								});
+							.thenAccept(c -> {
+								final var channel = (MessageChannel) c;
+								final var message = channel.getMessageManager().cache(messageObj);
+								client.onMessageCreate(message);
+							});
 					}
 
 					case MESSAGE_UPDATE -> {
 						final var messageObj = obj.getObject("d");
 						client.channels.get(messageObj.getString("channel_id"))
-								.thenAccept(c -> {
-									final var channel = (MessageChannel) c;
-									final var message = channel.messages().cache(messageObj);
-									client.onMessageUpdate(message);
-								});
+							.thenAccept(c -> {
+								final var channel = (MessageChannel) c;
+								final var message = channel.getMessageManager().cache(messageObj);
+								client.onMessageUpdate(message);
+							});
 					}
 
 					case MESSAGE_DELETE -> {
 						final var d = obj.getObject("d");
 						client.channels.get(d.getString("channel_id"))
-								.thenAccept(c -> {
-									final var channel = (MessageChannel) c;
-									final var deletedMessage = channel.messages().cache.get(d.getString("id"));
-									deletedMessage.setDeleted();
-									client.onMessageDelete(deletedMessage);
-								});
+							.thenAccept(c -> {
+								final var channel = (MessageChannel) c;
+								final var deletedMessage = channel.getMessageManager().cache.get(d.getString("id"));
+								deletedMessage.setDeleted();
+								client.onMessageDelete(deletedMessage);
+							});
 					}
 
 					default -> {

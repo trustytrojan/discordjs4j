@@ -8,10 +8,10 @@ import discord.resources.Embed;
 import discord.resources.Message;
 
 public interface MessageChannel extends Channel {
-	MessageManager messages();
+	MessageManager getMessageManager();
 
 	default CompletableFuture<Message> send(final Message.Payload payload) {
-		return messages().create(payload);
+		return getMessageManager().create(payload);
 	}
 
 	default CompletableFuture<Message> send(final String content) {

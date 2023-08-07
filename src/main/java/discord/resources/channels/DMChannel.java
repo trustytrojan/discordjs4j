@@ -16,7 +16,7 @@ public class DMChannel extends DMBasedChannel implements MessageChannel {
 	}
 
 	@Override
-	public MessageManager messages() {
+	public MessageManager getMessageManager() {
 		return messages;
 	}
 

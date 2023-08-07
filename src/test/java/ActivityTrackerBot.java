@@ -36,7 +36,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 		ActivityData(SjObject data) {
 			final var lastMessageArray = data.getStringArray("last_message");
 			final var channel = (MessageChannel) channels.get(lastMessageArray.get(0)).join();
-			lastMessage = channel.messages().get(lastMessageArray.get(1)).join();
+			lastMessage = channel.getMessageManager().get(lastMessageArray.get(1)).join();
 			messageCount = data.getLong("message_count");
 			minutesActive = data.getLong("minutes_active");
 		}

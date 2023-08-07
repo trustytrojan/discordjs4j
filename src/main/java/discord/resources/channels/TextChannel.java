@@ -53,7 +53,7 @@ public class TextChannel extends AbstractGuildChannel implements MessageChannel 
 	}
 
 	@Override
-	public MessageManager messages() {
+	public MessageManager getMessageManager() {
 		return messages;
 	}
 }
