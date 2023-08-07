@@ -1,12 +1,10 @@
 package discord.resources.channels;
 
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
 import discord.resources.DiscordResource;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public interface Channel extends DiscordResource {
@@ -38,14 +36,13 @@ public interface Channel extends DiscordResource {
 		}
 	}
 
-	public static Channel construct(DiscordClient client, SjObject data, Guild guild) {
-		Objects.requireNonNull(client);
+	public static Channel construct(DiscordClient client, SjObject data) {
 		return switch (Type.LOOKUP_TABLE[data.getInteger("type")]) {
-			case GUILD_TEXT -> new TextChannel(client, guild, data);
+			case GUILD_TEXT -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
-			case GUILD_VOICE -> new VoiceChannel(client, guild, data);
+			case GUILD_VOICE -> new VoiceChannel(client, data);
 			case GROUP_DM -> new GroupDMChannel(client, data);
-			case GUILD_CATEGORY -> new CategoryChannel(client, guild, data);
+			case GUILD_CATEGORY -> new CategoryChannel(client, data);
 			// ...
 			default -> null;
 		};

@@ -105,34 +105,18 @@ public abstract class Interaction {
 		return client.guilds.get(guildId);
 	}
 
-	public Guild getGuild() {
-		return getGuildAsync().join();
-	}
-
 	public CompletableFuture<MessageChannel> getChannelAsync() {
 		return client.channels.get(channelId).thenApply(c -> (MessageChannel) c);
 	}
 
-	public MessageChannel getChannel() {
-		return getChannelAsync().join();
-	}
-	
 	public CompletableFuture<GuildMember> getMemberAsync() {
 		return getGuildAsync().thenCompose(g -> g.members.get(userId));
-	}
-
-	public GuildMember getMember() {
-		return getMemberAsync().join();
 	}
 
 	public CompletableFuture<User> getUserAsync() {
 		return client.users.get(userId);
 	}
-
-	public User getUser() {
-		return getUserAsync().join();
-	}
-
+	
 	public Message getOriginalResponse() {
 		return originalResponse;
 	}
@@ -166,7 +150,7 @@ public abstract class Interaction {
 	}
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
-		final var path = "/webhooks/" + client.application.id + '/' + token;
+		final var path = "/webhooks/" + client.application.getId() + '/' + token;
 		return client.api.post(path, payload.toJsonString())
 			.thenApply(r -> new Message(client, r.asObject()));
 	}

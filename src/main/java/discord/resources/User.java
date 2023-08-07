@@ -48,11 +48,13 @@ public class User extends AbstractDiscordResource {
 		}
 	}
 
-	public final boolean isBot;
-
 	public User(DiscordClient client, SjObject data) {
-		super(client, data, "/users");
-		isBot = data.getBooleanDefaultFalse("bot");
+		super(client, data);
+	}
+
+	@Override
+	public String getApiPath() {
+		return "/users/" + getId();
 	}
 
 	/**
@@ -65,7 +67,7 @@ public class User extends AbstractDiscordResource {
 	 * user.
 	 */
 	public CompletableFuture<Void> addFriend() {
-		return ((UserDiscordClient) client).relationships.addFriendWithId(id);
+		return ((UserDiscordClient) client).relationships.addFriendWithId(getId());
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class User extends AbstractDiscordResource {
 	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
 	 */
 	public CompletableFuture<Void> block() {
-		return ((UserDiscordClient) client).relationships.blockUser(id);
+		return ((UserDiscordClient) client).relationships.blockUser(getId());
 	}
 
 	/**
@@ -83,15 +85,15 @@ public class User extends AbstractDiscordResource {
 	 * Either removes this user as a friend or unblocks them.
 	 */
 	public CompletableFuture<Void> deleteRelationship() {
-		return ((UserDiscordClient) client).relationships.delete(id);
+		return ((UserDiscordClient) client).relationships.delete(getId());
 	}
 
 	public CompletableFuture<Void> setNote(String note) {
-		return client.api.put("/users/@me/notes/" + id, "{\"note\":\"" + note + "\"}").thenRun(Util.NO_OP);
+		return client.api.put("/users/@me/notes/" + getId(), "{\"note\":\"" + note + "\"}").thenRun(Util.NO_OP);
 	}
 
 	public CompletableFuture<DMChannel> createDM() {
-		return client.api.post("/users/@me/channels", "{\"recipient_id\":\"" + id + "\"}")
+		return client.api.post("/users/@me/channels", "{\"recipient_id\":\"" + getId() + "\"}")
 				.thenApply(r -> new DMChannel(client, r.asObject()));
 	}
 
@@ -118,7 +120,7 @@ public class User extends AbstractDiscordResource {
 			final var hash = getHash();
 			return (hash == null)
 					? CDN.makeDefaultUserAvatarURL(getDiscriminator())
-					: CDN.makeUserAvatarURL(id, hash, size, extension);
+					: CDN.makeUserAvatarURL(getId(), hash, size, extension);
 		}
 	};
 
@@ -130,7 +132,7 @@ public class User extends AbstractDiscordResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildOrUserBannerURL(id, getHash(), size, extension);
+			return CDN.makeGuildOrUserBannerURL(getId(), getHash(), size, extension);
 		}
 	};
 

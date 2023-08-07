@@ -12,7 +12,7 @@ import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
-public class GuildMember extends AbstractDiscordResource implements GuildResource {
+public class GuildMember extends AbstractGuildResource {
 	public static enum Flags {
 		DID_REJOIN,
 		COMPLETED_ONBOARDING,
@@ -28,19 +28,19 @@ public class GuildMember extends AbstractDiscordResource implements GuildResourc
 
 	public final GuildMemberRoleManager roles;
 
-	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, data.getObject("user").getString("id"));
+	public GuildMember(DiscordClient client, SjObject data, Guild guild) {
+		super(client, data, guild);
 		roles = new GuildMemberRoleManager(client, this);
+	}
+
+	@Override
+	public String getApiPath() {
+		throw new UnsupportedOperationException("Guild members cannot be fetched individually");
 	}
 
 	@Override
 	public String getId() {
 		return getData().getObject("user").getString(getId());
-	}
-
-	@Override
-	public String getGuildId() {
-		return guild.id;
 	}
 
 	public CompletableFuture<User> getUserAsync() {
@@ -63,7 +63,7 @@ public class GuildMember extends AbstractDiscordResource implements GuildResourc
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildMemberAvatarURL(getGuildId(), id, getHash(), size, extension);
+			return CDN.makeGuildMemberAvatarURL(getGuildId(), getId(), getHash(), size, extension);
 		}
 	};
 

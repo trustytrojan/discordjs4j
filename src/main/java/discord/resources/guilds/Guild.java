@@ -274,7 +274,7 @@ public class Guild extends PreviewGuild {
 		roles = new RoleManager(client, this);
 		members = new GuildMemberManager(client, this);
 		commands = (client instanceof final BotDiscordClient bot && bot.application != null)
-				 ? new ApplicationCommandManager(bot, id)
+				 ? new ApplicationCommandManager(bot, getId())
 				 : null;
 	}
 
@@ -354,7 +354,7 @@ public class Guild extends PreviewGuild {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildOrUserBannerURL(id, getHash(), size, extension);
+			return CDN.makeGuildOrUserBannerURL(getId(), getHash(), size, extension);
 		}
 	};
 

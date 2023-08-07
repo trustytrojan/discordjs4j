@@ -16,7 +16,7 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 
 	@Override
 	public GuildMember construct(SjObject data) {
-		return new GuildMember(client, guild, data);
+		return new GuildMember(client, data, guild);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 			else if (limitProvided) appendLimitParam.run();
 			else if (afterIdProvided) appendAfterIdParam.run();
 		}
-		return client.api.get(sb.toString()).thenApply(r -> r.asObjectArray().stream().map(o -> new GuildMember(client, guild, o)).toList());
+		return client.api.get(sb.toString()).thenApply(r -> r.asObjectArray().stream().map(o -> new GuildMember(client, o, guild)).toList());
 	}
 
 	/**
@@ -72,6 +72,6 @@ public class GuildMemberManager extends GuildResourceManager<GuildMember> {
 		Objects.requireNonNull(query);
 		final var sb = new StringBuilder(basePath + "/search?query=" + query);
 		if (limit > 0) sb.append("&limit=" + limit);
-		return client.api.get(sb.toString()).thenApply(r -> r.asObjectArray().stream().map(o -> new GuildMember(client, guild, o)).toList());
+		return client.api.get(sb.toString()).thenApply(r -> r.asObjectArray().stream().map(o -> new GuildMember(client, o, guild)).toList());
 	}
 }

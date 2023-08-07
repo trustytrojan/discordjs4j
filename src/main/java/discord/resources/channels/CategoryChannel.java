@@ -2,7 +2,6 @@ package discord.resources.channels;
 
 import discord.client.DiscordClient;
 import discord.resources.AbstractGuildResource;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class CategoryChannel extends AbstractGuildResource implements GuildChannel {
@@ -19,8 +18,8 @@ public class CategoryChannel extends AbstractGuildResource implements GuildChann
 		}
 	}
 
-	public CategoryChannel(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data);
+	public CategoryChannel(DiscordClient client, SjObject data) {
+		super(client, data);
 	}
 
 	// public List<NonCategoryChannel> children() { ... }

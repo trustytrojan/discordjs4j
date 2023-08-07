@@ -39,8 +39,13 @@ public class Role extends AbstractGuildResource {
 		}
 	}
 
-	public Role(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, null);
+	public Role(DiscordClient client, SjObject data,Guild guild) {
+		super(client, data, guild);
+	}
+
+	@Override
+	public String getApiPath() {
+		throw new UnsupportedOperationException("Roles cannot be fetched individually");
 	}
 
 	public String getName() {
@@ -83,7 +88,7 @@ public class Role extends AbstractGuildResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeRoleIconURL(id, getHash(), size, extension);
+			return CDN.makeRoleIconURL(getId(), getHash(), size, extension);
 		}
 	};
 

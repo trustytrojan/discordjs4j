@@ -22,6 +22,10 @@ public class ApplicationCommand extends AbstractDiscordResource {
 			Stream.of(Type.values()).forEach(t -> LOOKUP_TABLE[t.value] = t);
 		}
 
+		public static Type resolve(int value) {
+			return LOOKUP_TABLE[value];
+		}
+
 		public final int value;
 
 		private Type(int value) {

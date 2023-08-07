@@ -12,13 +12,13 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	private final GuildMember member;
 
 	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
-		super(client, member.guild, "/members" + member.id + "/roles");
+		super(client, member.getGuildAsync().join(), null);
 		this.member = member;
 	}
 
 	@Override
 	public Role construct(SjObject data) {
-		return new Role(client, guild, data);
+		return new Role(client, data, guild);
 	}
 
 	/**
@@ -28,7 +28,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	 */
 	@Override
 	public CompletableFuture<Role> get(String id, boolean force) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Member roles can only be fetched all at once");
+		throw new UnsupportedOperationException("Roles can only be fetched individually");
 	}
 
 	public CompletableFuture<Void> add(String id) {

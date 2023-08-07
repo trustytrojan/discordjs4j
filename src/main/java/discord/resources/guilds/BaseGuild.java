@@ -10,9 +10,14 @@ import discord.util.CDN.AllowedSize;
 import discord.util.CDN.URLFactory;
 import sj.SjObject;
 
-public abstract class BaseGuild extends AbstractDiscordResource {
+public class BaseGuild extends AbstractDiscordResource {
 	protected BaseGuild(DiscordClient client, SjObject data) {
-		super(client, data, "/guilds");
+		super(client, data);
+	}
+
+	@Override
+	public String getApiPath() {
+		return "/guilds/" + getId();
 	}
 
 	public boolean isUnavailable() {
@@ -31,7 +36,7 @@ public abstract class BaseGuild extends AbstractDiscordResource {
 
 		@Override
 		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildIconURL(id, getHash(), size, extension);
+			return CDN.makeGuildIconURL(getId(), getHash(), size, extension);
 		}
 	};
 

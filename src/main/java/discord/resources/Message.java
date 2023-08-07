@@ -52,38 +52,34 @@ public class Message extends AbstractDiscordResource {
 		}
 	}
 
-	private List<MessageComponent> components;
-	public final String channelId;
-	public final String authorId;
 
 	public Message(DiscordClient client, SjObject data) {
 		super(client, data);
-		channelId = data.getString("channel_id");
-		authorId = data.getObject("author").getString("id");
+	}
+
+	@Override
+	public String getApiPath() {
+		return "/channels/" + getChannelId() + "/messages/" + getId();
+	}
+
+	public String getChannelId() {
+		return data.getString("channel_id");
 	}
 
 	public CompletableFuture<MessageChannel> getChannelAsync() {
-		return client.channels.get(channelId).thenApply(c -> (MessageChannel) c);
+		return client.channels.get(getChannelId()).thenApply(c -> (MessageChannel) c);
 	}
 
-	public MessageChannel getChannel() {
-		return getChannelAsync().join();
+	public String getAuthorId() {
+		return data.getObject("data").getString("id");
 	}
 
 	public CompletableFuture<User> getAuthorAsync() {
-		return client.users.get(authorId);
-	}
-
-	public User getAuthor() {
-		return getAuthorAsync().join();
+		return client.users.get(getAuthorId());
 	}
 
 	public CompletableFuture<Guild> getGuildAsync() {
-		return getChannelAsync().thenApply(c -> ((GuildChannel) c).getGuildAsync());
-	}
-
-	public Guild getGuild() {
-		return getGuildAsync().join();
+		return getChannelAsync().thenCompose(c -> ((GuildChannel) c).getGuildAsync());
 	}
 
 	public String getContent() {
@@ -95,20 +91,14 @@ public class Message extends AbstractDiscordResource {
 	}
 
 	public List<MessageComponent> getComponents() {
-		return Collections.unmodifiableList(components);
-	}
-
-	@Override
-	public void setData(SjObject data) {
-		this.data = data;
 		final var rawComponents = data.getObjectArray("components");
 		if (rawComponents != null) {
 			final var _components = new LinkedList<MessageComponent>();
 			for (final var rawComponent : data.getObjectArray("components"))
 				_components.add(MessageComponent.construct(rawComponent));
-			components = Collections.unmodifiableList(_components);
+			return Collections.unmodifiableList(_components);
 		} else {
-			components = Collections.emptyList();
+			return Collections.emptyList();
 		}
 	}
 }

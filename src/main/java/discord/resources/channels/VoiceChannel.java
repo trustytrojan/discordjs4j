@@ -3,7 +3,6 @@ package discord.resources.channels;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.resources.AbstractGuildResource;
-import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class VoiceChannel extends AbstractGuildResource implements GuildChannel, MessageChannel {
@@ -54,8 +53,8 @@ public class VoiceChannel extends AbstractGuildResource implements GuildChannel,
 
 	private final MessageManager messageManager;
 
-	public VoiceChannel(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data);
+	public VoiceChannel(DiscordClient client, SjObject data) {
+		super(client, data);
 		messageManager = new MessageManager(client, this);
 	}
 
