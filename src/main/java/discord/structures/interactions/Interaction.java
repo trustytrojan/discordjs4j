@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.APIClient.JsonResponse;
 import discord.client.BotDiscordClient;
-import discord.enums.Permission;
 import discord.resources.Embed;
 import discord.resources.GuildMember;
 import discord.resources.Message;
@@ -14,28 +13,18 @@ import discord.resources.User;
 import discord.resources.channels.MessageChannel;
 import discord.resources.guilds.Guild;
 import discord.structures.components.ActionRow;
-import discord.util.BitFlagSet;
 import sj.SjObject;
 
 public abstract class Interaction {
 	public static enum Type {
-		PING(1),
-		APPLICATION_COMMAND(2),
-		MESSAGE_COMPONENT(3),
-		APPLICATION_COMMAND_AUTOCOMPLETE(4),
-		MODAL_SUBMIT(5);
+		PING,
+		APPLICATION_COMMAND,
+		MESSAGE_COMPONENT,
+		APPLICATION_COMMAND_AUTOCOMPLETE,
+		MODAL_SUBMIT;
 
-		public static Type resolve(short value) {
-			for (final var x : Type.values())
-				if (x.value == value)
-					return x;
-			return null;
-		}
-
-		public final short value;
-
-		private Type(int value) {
-			this.value = (short) value;
+		public static Type resolve(int value) {
+			return Type.values()[value - 1];
 		}
 	}
 
@@ -80,50 +69,68 @@ public abstract class Interaction {
 	}
 
 	protected final BotDiscordClient client;
+	
 	private final String id;
-
-	public final Type type;
-	public final Guild guild;
-	public final GuildMember member;
-	public final User user;
-	public final MessageChannel channel;
-	public final BitFlagSet<Permission> appPermissions;
-	public final BitFlagSet<Permission> memberPermissions;
-
-	protected final SjObject innerData;
 	private final String token;
-
+	
+	public final Type type;
+	
+	public final String channelId;
+	public final String guildId;
+	public final String userId;
+	
+	protected final SjObject innerData;
+	
 	private Message originalResponse;
 	private boolean deferred;
 
 	protected Interaction(BotDiscordClient client, SjObject data) {
 		this.client = Objects.requireNonNull(client);
-
 		id = data.getString("id");
 		type = Type.resolve(data.getShort("type"));
-
-		channel = (MessageChannel) client.channels.get(data.getObject("channel").getString("id")).join();
 		innerData = data.getObject("data");
 		token = data.getString("token");
-
-		final var guildId = data.getString("guild_id");
-		if (guildId == null) {
-			user = client.users.get(data.getObject("user").getString("id")).join();
-			guild = null;
-			member = null;
-			appPermissions = null;
-			memberPermissions = null;
-		} else {
-			appPermissions = new BitFlagSet<>(Long.parseLong(data.getString("app_permissions")));
-			memberPermissions = new BitFlagSet<>(Long.parseLong(data.getObject("member").getString("permissions")));
-			guild = client.guilds.get(guildId).join();
-			member = guild.members.get(data.getObject("member").getObject("user").getString("id")).join();
-			user = member.user;
-		}
+		channelId = data.getObject("channel").getString("id");
+		guildId = data.getString("guild_id");
+		userId = (guildId == null)
+			? data.getObject("user").getString("id")
+			: data.getObject("member").getObject("user").getString("id");
 	}
 
 	public boolean inGuild() {
-		return (guild != null);
+		return (guildId != null);
+	}
+
+	public CompletableFuture<Guild> getGuildAsync() {
+		return client.guilds.get(guildId);
+	}
+
+	public Guild getGuild() {
+		return getGuildAsync().join();
+	}
+
+	public CompletableFuture<MessageChannel> getChannelAsync() {
+		return client.channels.get(channelId).thenApply(c -> (MessageChannel) c);
+	}
+
+	public MessageChannel getChannel() {
+		return getChannelAsync().join();
+	}
+	
+	public CompletableFuture<GuildMember> getMemberAsync() {
+		return getGuildAsync().thenCompose(g -> g.members.get(userId));
+	}
+
+	public GuildMember getMember() {
+		return getMemberAsync().join();
+	}
+
+	public CompletableFuture<User> getUserAsync() {
+		return client.users.get(userId);
+	}
+
+	public User getUser() {
+		return getUserAsync().join();
 	}
 
 	public Message getOriginalResponse() {
@@ -155,13 +162,13 @@ public abstract class Interaction {
 
 	public CompletableFuture<Message> replyThenGetResponse(Response payload) {
 		return createResponse(CallbackType.CHANNEL_MESSAGE_WITH_SOURCE, payload)
-			.thenApply(r -> (originalResponse = new Message(client, channel, r.asObject())));
+			.thenApply(r -> (originalResponse = new Message(client, r.asObject())));
 	}
 
 	public CompletableFuture<Message> createFollowupMessage(Message.Payload payload) {
 		final var path = "/webhooks/" + client.application.id + '/' + token;
 		return client.api.post(path, payload.toJsonString())
-			.thenApply(r -> new Message(client, channel, r.asObject()));
+			.thenApply(r -> new Message(client, r.asObject()));
 	}
 
 	// Content only

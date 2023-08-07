@@ -79,7 +79,7 @@ public class Guild extends PreviewGuild {
 			if (systemChannelId != null)
 				obj.put("system_channel_id", systemChannelId);
 			if (systemChannelFlags != null)
-				obj.put("system_channel_flags", systemChannelFlags.asLong());
+				obj.put("system_channel_flags", systemChannelFlags.getBitset());
 			return obj.toJsonString();
 		}
 	}
@@ -129,7 +129,7 @@ public class Guild extends PreviewGuild {
 			if (systemChannelId != null)
 				obj.put("system_channel_id", systemChannelId);
 			if (systemChannelFlags != null)
-				obj.put("system_channel_flags", systemChannelFlags.asLong());
+				obj.put("system_channel_flags", systemChannelFlags.getBitset());
 			if (rulesChannelId != null)
 				obj.put("rules_channel_id", rulesChannelId);
 			if (publicUpdatesChannelId != null)

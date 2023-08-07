@@ -11,13 +11,13 @@ import sj.SjObject;
 public class AbstractGuildResource extends AbstractDiscordResource implements GuildResource {
 	public final Guild guild;
 
-	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String guildApiPath) {
-		super(client, data, "/guilds/" + guildApiPath);
+	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data) {
+		super(client, data);
 		this.guild = guild;
 	}
 
-	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String guildApiPath, String id) {
-		super(client, data, "/guilds/" + guildApiPath, id);
+	protected AbstractGuildResource(DiscordClient client, Guild guild, SjObject data, String id) {
+		super(client, data, id);
 		this.guild = guild;
 	}
 

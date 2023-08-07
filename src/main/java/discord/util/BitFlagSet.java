@@ -16,7 +16,7 @@ public class BitFlagSet<T extends BitFlag> {
 		int getBitIndex();
 	}
 
-	private long bitset;
+	protected long bitset;
 
 	public BitFlagSet(long bitset) {
 		this.bitset = bitset;
@@ -27,30 +27,6 @@ public class BitFlagSet<T extends BitFlag> {
 		return Long.toBinaryString(bitset);
 	}
 
-	public void set(T flag) {
-		set(flag.getBitIndex());
-	}
-
-	public void set(int bitIndex) {
-		bitset |= (1 << bitIndex);
-	}
-
-	public void unset(T flag) {
-		unset(flag.getBitIndex());
-	}
-
-	public void unset(int bitIndex) {
-		bitset &= ~(1 << bitIndex);
-	}
-
-	public void toggle(T flag) {
-		toggle(flag.getBitIndex());
-	}
-
-	public void toggle(int bitIndex) {
-		bitset ^= (1 << bitIndex);
-	}
-
 	public boolean has(T flag) {
 		return is1(flag.getBitIndex());
 	}
@@ -59,7 +35,7 @@ public class BitFlagSet<T extends BitFlag> {
 		return (bitset & (1 << bitIndex)) != 0;
 	}
 
-	public long asLong() {
+	public long getBitset() {
 		return bitset;
 	}
 }

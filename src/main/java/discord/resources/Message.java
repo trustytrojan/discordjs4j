@@ -3,6 +3,7 @@ package discord.resources;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.resources.channels.GuildChannel;
@@ -52,24 +53,37 @@ public class Message extends AbstractDiscordResource {
 	}
 
 	private List<MessageComponent> components;
-	public final User author;
-	public final MessageChannel channel;
-	public final Guild guild;
-	public final boolean inGuild;
-	public final String url;
+	public final String channelId;
+	public final String authorId;
 
-	public Message(DiscordClient client, MessageChannel channel, SjObject data) {
-		super(client, data, "/channels/" + channel.getId() + "/messages");
-		this.channel = channel;
-		author = client.users.get(data.getObject("author").getString("id")).join();
-		final var urlFormat = "https://discord.com/channels/%s/" + channel.getId() + '/' + id;
-		if (inGuild = channel instanceof GuildChannel) {
-			guild = ((GuildChannel) channel).getGuild();
-			url = urlFormat.formatted(guild.id);
-		} else {
-			guild = null;
-			url = urlFormat.formatted("@me");
-		}
+	public Message(DiscordClient client, SjObject data) {
+		super(client, data);
+		channelId = data.getString("channel_id");
+		authorId = data.getObject("author").getString("id");
+	}
+
+	public CompletableFuture<MessageChannel> getChannelAsync() {
+		return client.channels.get(channelId).thenApply(c -> (MessageChannel) c);
+	}
+
+	public MessageChannel getChannel() {
+		return getChannelAsync().join();
+	}
+
+	public CompletableFuture<User> getAuthorAsync() {
+		return client.users.get(authorId);
+	}
+
+	public User getAuthor() {
+		return getAuthorAsync().join();
+	}
+
+	public CompletableFuture<Guild> getGuildAsync() {
+		return getChannelAsync().thenApply(c -> ((GuildChannel) c).getGuild());
+	}
+
+	public Guild getGuild() {
+		return getGuildAsync().join();
 	}
 
 	public String getContent() {

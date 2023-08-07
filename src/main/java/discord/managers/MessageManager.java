@@ -20,7 +20,7 @@ public class MessageManager extends ResourceManager<Message> {
 
 	@Override
 	public Message construct(SjObject data) {
-		return new Message(client, channel, data);
+		return new Message(client, data);
 	}
 
 	public CompletableFuture<Message> create(Message.Payload payload) {

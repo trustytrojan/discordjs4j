@@ -27,17 +27,18 @@ public class GuildMember extends AbstractGuildResource {
 	}
 
 	public final GuildMemberRoleManager roles;
-	public final User user;
 
 	public GuildMember(DiscordClient client, Guild guild, SjObject data) {
-		super(client, guild, data, null, data.getObject("user").getString("id"));
-		user = client.users.get(id).join();
+		super(client, guild, data, data.getObject("user").getString("id"));
 		roles = new GuildMemberRoleManager(client, this);
 	}
 
-	@Override
-	public CompletableFuture<Void> refreshData() {
-		throw new UnsupportedOperationException("Guild members cannot be fetched individually");
+	public CompletableFuture<User> getUserAsync() {
+		return client.users.get(id);
+	}
+
+	public User getUser() {
+		return getUserAsync().join();
 	}
 
 	public String getNickname() {

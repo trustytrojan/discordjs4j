@@ -5,11 +5,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import discord.client.DiscordClient;
-import discord.misc.Mentionable;
 import discord.resources.DiscordResource;
 import sj.SjObject;
 
-public interface Channel extends DiscordResource, Mentionable {
+public interface Channel extends DiscordResource {
 	public static enum Type {
 		GUILD_TEXT(0),
 		DM(1),
@@ -69,10 +68,5 @@ public interface Channel extends DiscordResource, Mentionable {
 	 */
 	default CompletableFuture<Void> delete() {
 		return getClient().channels.delete(getId());
-	}
-
-	@Override
-	default String mention() {
-		return "<#" + getId() + '>';
 	}
 }

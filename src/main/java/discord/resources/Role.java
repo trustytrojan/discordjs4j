@@ -1,10 +1,7 @@
 package discord.resources;
 
-import java.util.concurrent.CompletableFuture;
-
 import discord.client.DiscordClient;
 import discord.enums.Permission;
-import discord.misc.Mentionable;
 import discord.resources.guilds.Guild;
 import discord.util.BitFlagSet;
 import discord.util.CDN;
@@ -14,7 +11,7 @@ import discord.util.CDN.URLFactory;
 import sj.SjObject;
 import sj.SjSerializable;
 
-public class Role extends AbstractGuildResource implements Mentionable {
+public class Role extends AbstractGuildResource {
 	public static class Payload implements SjSerializable {
 		public String name;
 		public BitFlagSet<Permission> permissions;
@@ -46,45 +43,35 @@ public class Role extends AbstractGuildResource implements Mentionable {
 		super(client, guild, data, null);
 	}
 
-	@Override
-	public CompletableFuture<Void> refreshData() {
-		throw new UnsupportedOperationException("Roles cannot be fetched individually");
-	}
-
-	@Override
-	public String mention() {
-		return "<@&" + getId() + '>';
-	}
-
-	public String name() {
+	public String getName() {
 		return data.getString("name");
 	}
 
-	public String description() {
+	public String getDescription() {
 		return data.getString("description");
 	}
 
-	public BitFlagSet<Permission> permissions() {
+	public BitFlagSet<Permission> getPermissions() {
 		return new BitFlagSet<>(data.getLong("permissions"));
 	}
 
-	public Long color() {
+	public Long getColor() {
 		return data.getLong("color");
 	}
 
-	public Long position() {
+	public Long getPosition() {
 		return data.getLong("position");
 	}
 
-	public Boolean hoist() {
+	public Boolean isHoisted() {
 		return data.getBoolean("hoist");
 	}
 
-	public Boolean managed() {
+	public Boolean isManaged() {
 		return data.getBoolean("managed");
 	}
 
-	public Boolean mentionable() {
+	public Boolean isMentionable() {
 		return data.getBoolean("mentionable");
 	}
 
@@ -100,7 +87,7 @@ public class Role extends AbstractGuildResource implements Mentionable {
 		}
 	};
 
-	public String unicodeEmoji() {
+	public String getUnicodeEmoji() {
 		return data.getString("unicode_emoji");
 	}
 }

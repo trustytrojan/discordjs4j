@@ -40,7 +40,7 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 				: options.values().iterator();
 	}
 
-	public ChatInputInteraction.Option get(final String optionName) {
+	public ChatInputInteraction.Option get(String optionName) {
 		return options.get(optionName);
 	}
 
@@ -51,20 +51,20 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 			: resourceGetter.apply(id);
 	}
 
-	public CompletableFuture<Role> getRole(final String optionName) {
-		return getResource(optionName, interaction.guild.roles::get);
+	public CompletableFuture<Role> getRole(String optionName) {
+		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.roles::get));
 	}
 
-	public CompletableFuture<User> getUser(final String optionName) {
+	public CompletableFuture<User> getUser(String optionName) {
 		return getResource(optionName, interaction.client.users::get);
 	}
 
-	public CompletableFuture<GuildMember> getMember(final String optionName) {
-		return getResource(optionName, interaction.guild.members::get);
+	public CompletableFuture<GuildMember> getMember(String optionName) {
+		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.members::get));
 	}
 
-	public CompletableFuture<GuildChannel> getChannel(final String optionName) {
-		return getResource(optionName, interaction.guild.channels::get);
+	public CompletableFuture<GuildChannel> getChannel(String optionName) {
+		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.channels::get));
 	}
 
 	/**

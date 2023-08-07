@@ -41,7 +41,7 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return CompletableFuture.allOf(member.refreshData(), guild.roles.refreshCache()).thenRun(() -> {
+		return guild.roles.refreshCache().thenRun(() -> {
 			final var freshIds = member.getData().getStringArray("roles");
 			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
 			deletedIds.forEach(cache::remove);

@@ -4,7 +4,6 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.client.UserDiscordClient;
-import discord.misc.Mentionable;
 import discord.resources.channels.DMChannel;
 import discord.util.BitFlagSet;
 import discord.util.BitFlagSet.BitFlag;
@@ -15,7 +14,7 @@ import discord.util.CDN.URLFactory;
 import discord.util.Util;
 import sj.SjObject;
 
-public class User extends AbstractDiscordResource implements Mentionable {
+public class User extends AbstractDiscordResource {
 	public static enum Flag implements BitFlag {
 		STAFF,
 		PARTNER,
@@ -54,11 +53,6 @@ public class User extends AbstractDiscordResource implements Mentionable {
 	public User(DiscordClient client, SjObject data) {
 		super(client, data, "/users");
 		isBot = data.getBooleanDefaultFalse("bot");
-	}
-
-	@Override
-	public String mention() {
-		return "<@" + getId() + '>';
 	}
 
 	/**

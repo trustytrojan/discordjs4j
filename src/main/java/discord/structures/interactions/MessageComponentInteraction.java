@@ -2,6 +2,7 @@ package discord.structures.interactions;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import discord.client.BotDiscordClient;
 import discord.resources.Message;
@@ -9,14 +10,14 @@ import discord.structures.components.MessageComponent;
 import sj.SjObject;
 
 public class MessageComponentInteraction extends Interaction {
-	public final Message message;
+	public final String messageId;
 	public final String customId;
 	public final MessageComponent.Type componentType;
 	public final List<String> values;
 
 	public MessageComponentInteraction(final BotDiscordClient client, final SjObject data) {
 		super(client, data);
-		message = channel.getMessageManager().get(data.getObject("message").getString("id")).join();
+		messageId = data.getObject("message").getString("id");
 		customId = innerData.getString("custom_id");
 		componentType = MessageComponent.Type.resolve(innerData.getShort("component_type"));
 		switch (componentType) {
@@ -30,6 +31,14 @@ public class MessageComponentInteraction extends Interaction {
 			default:
 				values = Collections.emptyList();
 		}
+	}
+
+	public CompletableFuture<Message> getMessageAsync() {
+		return getChannelAsync().thenCompose(c -> c.getMessageManager().get(messageId));
+	}
+
+	public Message getMessage() {
+		return getMessageAsync().join();
 	}
 
 	public boolean isButton() {

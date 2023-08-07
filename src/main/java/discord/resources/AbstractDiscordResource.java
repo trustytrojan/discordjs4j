@@ -2,14 +2,12 @@ package discord.resources;
 
 import java.time.Instant;
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 
 import discord.client.DiscordClient;
 import sj.SjObject;
 
 public abstract class AbstractDiscordResource implements DiscordResource {
-	private final String apiPath;
-
 	protected final DiscordClient client;
 	protected SjObject data;
 
@@ -18,20 +16,15 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	public final Instant createdInstant;
 
-	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath) {
-		this(client, data, baseApiPath, data.getString("id"));
+	protected AbstractDiscordResource(DiscordClient client, SjObject data) {
+		this(client, data, data.getString("id"));
 	}
 
-	protected AbstractDiscordResource(DiscordClient client, SjObject data, String baseApiPath, String id) {
-		this.client = client;
+	protected AbstractDiscordResource(DiscordClient client, SjObject data, String id) {
+		this.client = Objects.requireNonNull(client);
 		setData(data);
-		this.id = id;
-		apiPath = baseApiPath + '/' + id;
+		this.id = Objects.requireNonNull(id);
 		createdInstant = Instant.ofEpochMilli((Long.parseLong(id) >> 22) + 1420070400000L);
-	}
-
-	public CompletableFuture<Void> refreshData() {
-		return client.api.get(apiPath).thenAccept(r -> setData(r.asObject()));
 	}
 
 	@Override
@@ -61,6 +54,6 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	@Override
 	public void setData(SjObject data) {
-		this.data = data;
+		this.data = Objects.requireNonNull(data);
 	}
 }
