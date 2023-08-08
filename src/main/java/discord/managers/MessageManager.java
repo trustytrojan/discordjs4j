@@ -1,7 +1,6 @@
 package discord.managers;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -11,11 +10,8 @@ import discord.util.Util;
 import sj.SjObject;
 
 public class MessageManager extends ResourceManager<Message> {
-	public final MessageChannel channel;
-
 	public MessageManager(DiscordClient client, MessageChannel channel) {
 		super(client, "/channels/" + channel.getId() + "/messages");
-		this.channel = Objects.requireNonNull(channel);
 	}
 
 	@Override
@@ -39,7 +35,7 @@ public class MessageManager extends ResourceManager<Message> {
 	 * https://discord.com/developers/docs/resources/channel#get-channel-messages
 	 */
 
-	private static enum GetManyFilter { AROUND, BEFORE, AFTER }
+	private static enum GetManyFilter { AROUND, BEFORE, AFTER };
 
 	private CompletableFuture<List<Message>> getMany(GetManyFilter filter, String id, int limit) {
 		final var sb = new StringBuilder(basePath);

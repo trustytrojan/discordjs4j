@@ -184,6 +184,7 @@ public class GatewayClient extends WebSocketClient {
 					case CHANNEL_UPDATE -> client.onChannelUpdate(client.channels.cache(obj.getObject("d")));
 					case CHANNEL_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
+						System.out.println(id);
 						final var deletedChannel = client.channels.cache.get(id);
 						deletedChannel.setDeleted();
 						client.onChannelDelete(deletedChannel);

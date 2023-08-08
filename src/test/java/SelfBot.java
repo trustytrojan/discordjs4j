@@ -3,8 +3,9 @@ import discord.enums.GatewayIntent;
 import discord.resources.Message;
 import discord.util.Util;
 
-public class SelfBot extends UserDiscordClient {
+public final class SelfBot extends UserDiscordClient {
 	// private static final String PRIVATE_GUILD_ID = "1131342149301055488";
+	// 1131342149301055488
 	private static final String PREFIX = "!";
 
 	private SelfBot(String token) {
@@ -22,11 +23,10 @@ public class SelfBot extends UserDiscordClient {
 
 	@Override
 	protected void onMessageCreate(Message message) {
-		final var guild = message.getGuildAsync().join();
-		final var author = message.getAuthorAsync().join();
-		final var channel = message.getChannelAsync().join();
-		if (author != currentUser)
+		if (!message.getAuthorId().equals(currentUser.getId()))
 			return;
+		final var guild = message.getGuildAsync().join();
+		final var channel = message.getChannelAsync().join();
 		final var content = message.getContent();
 		final var args = content.split(" ");
 		if (!args[0].startsWith(PREFIX))
@@ -37,8 +37,20 @@ public class SelfBot extends UserDiscordClient {
 					case "channels" -> {
 						if (guild == null)
 							return;
+						guild.channels.refreshCache().join();
 						final var categoryChannels = guild.channels.getCategoryChannels();
+						System.out.println(categoryChannels);
+						System.out.println(guild.channels.cache);
 						channel.send(categoryChannels.toString());
+					}
+
+					case "roles" -> {
+						if (guild == null)
+							return;
+						guild.roles.refreshCache().join();
+						final var sb = new StringBuilder("```Id                 \tName\n");
+						guild.roles.cache.values().forEach(r -> sb.append(r.getId()).append('\t').append(r.getName()).append('\n'));
+						message.reply(sb.append("```").toString());
 					}
 				}
 			}

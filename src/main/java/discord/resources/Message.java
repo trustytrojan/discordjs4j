@@ -3,6 +3,7 @@ package discord.resources;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -28,7 +29,7 @@ public class Message extends AbstractDiscordResource {
 				obj.put("content", content);
 
 			if (replyMessageId != null) {
-				obj.put("message_reference", "{\"message_id\":\"" + replyMessageId + "\"}");
+				obj.put("message_reference", Map.of("message_id", replyMessageId));
 			}
 
 			if (embeds != null && embeds.size() > 0) {
@@ -52,9 +53,25 @@ public class Message extends AbstractDiscordResource {
 		}
 	}
 
-
 	public Message(DiscordClient client, SjObject data) {
 		super(client, data);
+	}
+
+	public CompletableFuture<Message> reply(String content) {
+		final var mp = new Message.Payload();
+		mp.content = content;
+		return reply(mp);
+	}
+
+	public CompletableFuture<Message> reply(Embed embed) {
+		final var mp = new Message.Payload();
+		mp.embeds = List.of(embed);
+		return reply(mp);
+	}
+
+	public CompletableFuture<Message> reply(Message.Payload payload) {
+		payload.replyMessageId = getId();
+		return getChannelAsync().thenCompose(c -> c.send(payload));
 	}
 
 	@Override
@@ -71,7 +88,7 @@ public class Message extends AbstractDiscordResource {
 	}
 
 	public String getAuthorId() {
-		return data.getObject("data").getString("id");
+		return data.getObject("author").getString("id");
 	}
 
 	public CompletableFuture<User> getAuthorAsync() {

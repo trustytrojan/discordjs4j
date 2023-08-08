@@ -9,7 +9,7 @@ import discord.resources.channels.Channel;
 import discord.resources.guilds.Guild;
 import discord.structures.AuditLogEntry;
 
-public abstract class DiscordClient {
+public sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
 	public final APIClient api;
 	public final GatewayClient gateway;
 
@@ -26,8 +26,7 @@ public abstract class DiscordClient {
 	}
 
 	/*
-	 * Subclasses should override the below methods as necessary
-	 * if they want to use old-style signal handling.
+	 * Subclasses should override the below methods to receive events.
 	 */
 
 	protected void onReady() {}
