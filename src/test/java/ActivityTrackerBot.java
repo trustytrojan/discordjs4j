@@ -186,8 +186,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 
 	// @SuppressWarnings("unused")
 	private CompletableFuture<Void> setCommands() {
-		final var viewActivity = new ApplicationCommand.Payload("view_activity",
-				"View activity stats for all members, or a certain member.");
+		final var viewActivity = new ApplicationCommand.ChatInputPayload("view_activity", "View activity stats for all members, or a certain member.");
 
 		viewActivity.options = List.of(
 				new ApplicationCommandOption.NonSubcommandPayload(

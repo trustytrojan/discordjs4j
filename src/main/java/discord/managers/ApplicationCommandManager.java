@@ -33,7 +33,7 @@ public class ApplicationCommandManager extends ResourceManager<ApplicationComman
 		return client.api.delete(pathWithId(id)).thenRun(Util.NO_OP);
 	}
 
-	public CompletableFuture<Void> set(List<ApplicationCommand.Payload> commandPayloads) {
+	public CompletableFuture<Void> set(List<? extends ApplicationCommand.Payload> commandPayloads) {
 		cache.clear();
 		return client.api.put(basePath, Sj.write(commandPayloads))
 			.thenAccept(r -> r.asObjectArray().forEach(this::cache));

@@ -2,24 +2,32 @@ package discord.resources;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import discord.client.BotDiscordClient;
+import discord.managers.ApplicationCommandManager;
 import discord.structures.ApplicationCommandOption;
 import sj.SjObject;
 import sj.SjSerializable;
 
+/**
+ * https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure
+ */
 public class ApplicationCommand extends AbstractDiscordResource {
+	/**
+	 * https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
+	 */
 	public static enum Type {
-		CHAT_INPUT(1),
-		MESSAGE(2),
-		USER(3);
+		CHAT_INPUT, MESSAGE, USER;
 
-		private static final Type[] LOOKUP_TABLE = new Type[4];
+		private static final Type[] LOOKUP_TABLE;
 
 		static {
-			Stream.of(Type.values()).forEach(t -> LOOKUP_TABLE[t.value] = t);
+			final var values = Type.values();
+			LOOKUP_TABLE = new Type[values[values.length - 1].value + 1];
+			Stream.of(values).forEach(t -> LOOKUP_TABLE[t.value] = t);
 		}
 
 		public static Type resolve(int value) {
@@ -28,39 +36,89 @@ public class ApplicationCommand extends AbstractDiscordResource {
 
 		public final int value;
 
-		private Type(int value) {
-			this.value = value;
+		private Type() {
+			this.value = 1 + ordinal();
 		}
 	}
 
+	/**
+	 * Application command payload. Should be used when creating or editing
+	 * application commands using {@link ApplicationCommandManager#create} or
+	 * {@link ApplicationCommandManager#edit}.
+	 */
 	public static class Payload implements SjSerializable {
+		/**
+		 * Name of command, 1-32 characters
+		 */
 		private final String name;
-		public final String description;
-		public Type type;
-		public List<ApplicationCommandOption.Payload> options;
-		public boolean dmPermission;
 
-		public Payload(String name, String description) {
-			this.name = name;
-			this.description = description;
+		/**
+		 * Type of command. When sent to Discord, it defaults to {@link Type#CHAT_INPUT} if not set
+		 */
+		private final Type type;
+
+		/**
+		 * Indicates whether the command is available in DMs with the app, only for
+		 * globally-scoped commands. By default, commands are visible. <b>Use only when
+		 * creating application commands globally, and not for a guild.</b>
+		 */
+		public Boolean dmPermission;
+
+		/**
+		 * @param type Must be either {@link Type#MESSAGE} or {@link Type#USER}
+		 * @param name Name of the command
+		 */
+		public Payload(Type type, String name) {
+			if (type == Type.CHAT_INPUT)
+				throw new IllegalArgumentException("Use ChatInputPayload instead");
+			this.type = type;
+			this.name = Objects.requireNonNull(name);
 		}
 
-		@Override
-		public String toJsonString() {
+		// only used by ChatInputPayload
+		protected SjObject toSjObject() {
 			final var obj = new SjObject();
 			obj.put("name", name);
 			if (type != null)
 				obj.put("type", type.value);
-			if (description != null)
-				obj.put("description", description);
+			if (dmPermission != null)
+				obj.put("dm_permission", dmPermission);
+			return obj;
+		}
+
+		@Override
+		public String toJsonString() {
+			return toSjObject().toJsonString();
+		}
+	}
+
+	/**
+	 * Chat input application command payload. Has extra attributes specific to
+	 * chat input commands.
+	 */
+	public static class ChatInputPayload extends Payload {
+		private final String description;
+		public List<ApplicationCommandOption.Payload> options;
+
+		public ChatInputPayload(String name, String description) {
+			super(null, name);
+			this.description = Objects.requireNonNull(description);
+		}
+
+		@Override
+		public String toJsonString() {
+			final var obj = toSjObject();
+			obj.put("description", description);
 			if (options != null && options.size() > 0)
 				obj.put("options", options);
-			if (dmPermission)
-				obj.put("dm_permission", Boolean.TRUE);
 			return obj.toJsonString();
 		}
 	}
 
+	/**
+	 * Extra reference to the same client but as the desired type. This is better
+	 * than having to cast to {@link BotDiscordClient} every time.
+	 */
 	private final BotDiscordClient client;
 
 	public ApplicationCommand(BotDiscordClient client, SjObject data) {
@@ -84,8 +142,8 @@ public class ApplicationCommand extends AbstractDiscordResource {
 	public List<ApplicationCommandOption> getOptions() {
 		final var rawOptions = data.getObjectArray("options");
 		return (rawOptions == null)
-			? Collections.emptyList()
-			: rawOptions.stream().map(ApplicationCommandOption::new).toList();
+				? Collections.emptyList()
+				: rawOptions.stream().map(ApplicationCommandOption::new).toList();
 	}
 
 	public Type getType() {
