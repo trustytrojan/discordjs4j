@@ -40,30 +40,31 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 				: options.values().iterator();
 	}
 
-	public ChatInputInteraction.Option get(String optionName) {
+	public ChatInputInteraction.Option get(final String optionName) {
 		return options.get(optionName);
 	}
 
-	private <T extends DiscordResource> CompletableFuture<T> getResource(String optionName, Function<String, CompletableFuture<T>> resourceGetter) {
+	private <T extends DiscordResource> CompletableFuture<T> getResource(final String optionName,
+			final Function<String, CompletableFuture<T>> resourceGetter) {
 		final var id = getString(optionName);
 		return (id == null)
-			? CompletableFuture.completedFuture(null)
-			: resourceGetter.apply(id);
+				? CompletableFuture.completedFuture(null)
+				: resourceGetter.apply(id);
 	}
 
-	public CompletableFuture<Role> getRoleAsync(String optionName) {
+	public CompletableFuture<Role> getRoleAsync(final String optionName) {
 		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.roles::get));
 	}
 
-	public CompletableFuture<User> getUserAsync(String optionName) {
+	public CompletableFuture<User> getUserAsync(final String optionName) {
 		return getResource(optionName, interaction.client.users::get);
 	}
 
-	public CompletableFuture<GuildMember> getMemberAsync(String optionName) {
+	public CompletableFuture<GuildMember> getMemberAsync(final String optionName) {
 		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.members::get));
 	}
 
-	public CompletableFuture<GuildChannel> getChannelAsync(String optionName) {
+	public CompletableFuture<GuildChannel> getChannelAsync(final String optionName) {
 		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.channels::get));
 	}
 

@@ -13,7 +13,7 @@ public class Activity implements SjSerializable {
 	public final Type type;
 	public String url;
 
-	public Activity(String name, Type type) {
+	public Activity(final String name, final Type type) {
 		this.name = name;
 		this.type = type;
 	}

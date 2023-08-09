@@ -9,7 +9,7 @@ public class SelectMenu extends MessageComponent {
 	public String placeholder;
 	public Short minValues;
 	public Short maxValues;
-	public boolean disabled;
+	public Boolean disabled;
 
 	public SelectMenu(final SjObject data) {
 		super(data);
@@ -20,6 +20,11 @@ public class SelectMenu extends MessageComponent {
 		maxValues = data.getShort("max_values");
 	}
 
+	/**
+	 * Construct a {@link SelectMenu} to use as a message component payload.
+	 * @param type Type of the select menu
+	 * @param customId
+	 */
 	public SelectMenu(final Type type, final String customId) {
 		super(type);
 		this.customId = Objects.requireNonNull(customId);
@@ -31,8 +36,8 @@ public class SelectMenu extends MessageComponent {
 		obj.put("custom_id", customId);
 		if (placeholder != null)
 			obj.put("placeholder", placeholder);
-		if (disabled)
-			obj.put("disabled", Boolean.TRUE);
+		if (disabled != null)
+			obj.put("disabled", disabled);
 		if (minValues != null)
 			obj.put("min_values", minValues);
 		if (maxValues != null)

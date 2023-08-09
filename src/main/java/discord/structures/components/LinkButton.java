@@ -5,12 +5,16 @@ import sj.SjObject;
 public class LinkButton extends Button {
 	public final String url;
 
-	public LinkButton(final SjObject data) {
+	LinkButton(final SjObject data) {
 		super(data);
+		final var typeIsNotButton = (data.getInteger("type") != MessageComponent.Type.BUTTON.getValue());
+		final var styleIsNotLink = (data.getInteger("style") != Button.Style.LINK.getValue());
+		if (typeIsNotButton || styleIsNotLink)
+			throw new IllegalArgumentException("Type is not BUTTON or style is not LINK");
 		url = data.getString("url");
 	}
 
-	public LinkButton(final String url) {
+	LinkButton(final String url) {
 		super(Style.LINK);
 		this.url = url;
 	}

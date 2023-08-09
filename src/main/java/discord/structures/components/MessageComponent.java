@@ -16,12 +16,12 @@ public abstract class MessageComponent implements SjSerializable {
 		MENTIONABLE_SELECT,
 		CHANNEL_SELECT;
 
-		public static Type resolve(final short value) {
+		public static Type resolve(final int value) {
 			return Type.values()[value - 1];
 		}
 
-		public short value() {
-			return (short) (ordinal() + 1);
+		public int getValue() {
+			return ordinal() + 1;
 		}
 	}
 
@@ -47,7 +47,7 @@ public abstract class MessageComponent implements SjSerializable {
 
 	// When parsing Sj from Discord
 	protected MessageComponent(final SjObject data) {
-		type = Type.resolve(Objects.requireNonNull(data.getShort("type")));
+		type = Type.resolve(data.getShort("type"));
 	}
 
 	// When sending a message
@@ -57,7 +57,7 @@ public abstract class MessageComponent implements SjSerializable {
 
 	protected SjObject toJsonObject() {
 		final var obj = new SjObject();
-		obj.put("type", type.value());
+		obj.put("type", type.getValue());
 		return obj;
 	}
 }

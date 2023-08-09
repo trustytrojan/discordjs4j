@@ -10,18 +10,16 @@ public class SelectOption implements SjSerializable {
 	public final String value;
 	public String description;
 	public String unicodeEmoji;
-	//public Emoji emoji;
-	public boolean isDefault;
+	// public Emoji emoji;
+	public Boolean isDefault;
 
 	public SelectOption(final SjObject data) {
 		label = Objects.requireNonNull(data.getString("label"));
 		value = Objects.requireNonNull(data.getString("value"));
 		description = data.getString("description");
-		try {
-			unicodeEmoji = data.getString("emoji");
-		} catch (final ClassCastException e) {
-		}
-		isDefault = data.getBooleanDefaultFalse("default");
+		try { unicodeEmoji = data.getString("emoji"); }
+		catch (final ClassCastException e) {}
+		isDefault = data.getBoolean("default");
 	}
 
 	public SelectOption(final String label, final String value) {
@@ -38,8 +36,8 @@ public class SelectOption implements SjSerializable {
 			obj.put("description", description);
 		if (unicodeEmoji != null)
 			obj.put("emoji", unicodeEmoji);
-		if (isDefault)
-			obj.put("default", Boolean.TRUE);
+		if (isDefault != null)
+			obj.put("default", isDefault);
 		return obj.toJsonString();
 	}
 }

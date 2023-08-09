@@ -8,12 +8,12 @@ public class TextInput extends MessageComponent {
 	public static enum Style {
 		SHORT, PARAGRAPH;
 
-		public static Style resolve(short value) {
+		public static Style resolve(final int value) {
 			return Style.values()[value - 1];
 		}
 
-		public short getValue() {
-			return (short) (ordinal() + 1);
+		public int getValue() {
+			return (ordinal() + 1);
 		}
 	}
 
@@ -22,11 +22,11 @@ public class TextInput extends MessageComponent {
 	public final String label;
 	public Short minLength;
 	public Short maxLength;
-	public boolean required;
+	public Boolean required;
 	public String value;
 	public String placeholder;
 
-	public TextInput(SjObject data) {
+	public TextInput(final SjObject data) {
 		super(data);
 		customId = Objects.requireNonNull(data.getString("custom_id"));
 		style = Style.resolve(Objects.requireNonNull(data.getShort("style")));
@@ -38,7 +38,7 @@ public class TextInput extends MessageComponent {
 		placeholder = data.getString("placeholder");
 	}
 	
-	public TextInput(String customId, Style style, String label) {
+	public TextInput(final String customId, final Style style, final String label) {
 		super(Type.TEXT_INPUT);
 		this.customId = Objects.requireNonNull(customId);
 		this.style = Objects.requireNonNull(style);
@@ -55,8 +55,8 @@ public class TextInput extends MessageComponent {
 			obj.put("min_length", minLength);
 		if (maxLength != null)
 			obj.put("max_length", maxLength);
-		if (required)
-			obj.put("required", Boolean.TRUE);
+		if (required != null)
+			obj.put("required", required);
 		if (value != null)
 			obj.put("value", value);
 		if (placeholder != null)

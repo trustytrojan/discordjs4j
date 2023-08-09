@@ -7,29 +7,14 @@ import sj.SjSerializable;
 
 public final class ApplicationCommandOption {
 	public static enum Type {
-		SUB_COMMAND(1),
-		SUB_COMMAND_GROUP(2),
-		STRING(3),
-		INTEGER(4),
-		BOOLEAN(5),
-		USER(6),
-		CHANNEL(7),
-		ROLE(8),
-		MENTIONABLE(9),
-		NUMBER(10),
-		ATTACHMENT(11);
+		SUB_COMMAND, SUB_COMMAND_GROUP, STRING, INTEGER, BOOLEAN, USER, CHANNEL, ROLE, MENTIONABLE, NUMBER, ATTACHMENT;
 
-		public static Type resolve(long value) {
-			for (final var x : Type.values())
-				if (x.value == value)
-					return x;
-			return null;
+		public static Type resolve(final int value) {
+			return Type.values()[value - 1];
 		}
 
-		public final int value;
-
-		private Type(int value) {
-			this.value = value;
+		public int getValue() {
+			return 1 + ordinal();
 		}
 	}
 
@@ -40,28 +25,18 @@ public final class ApplicationCommandOption {
 		/**
 		 * {@code value} should be either a {@code String} or a {@code Number}.
 		 */
-		private Choice(String name, Object value) {
+		private Choice(final String name, final Object value) {
 			this.name = name;
 			this.value = value;
 		}
 
-		private Choice(SjObject data) {
+		private Choice(final SjObject data) {
 			this(data.getString("name"), data.get("value"));
 		}
 
 		@Override
 		public String toJsonString() {
-			return """
-					{
-						"name": "%s",
-						"value": "%s"
-					}
-					""".formatted(name, value);
-		}
-
-		@Override
-		public String toString() {
-			return toJsonString();
+			return "{\"name\":\"" + name + "\",\"value\":\"" + value + "\"}";
 		}
 	}
 
@@ -70,7 +45,7 @@ public final class ApplicationCommandOption {
 		public final String name;
 		public final String description;
 
-		protected Payload(Type type, String name, String description) {
+		protected Payload(final Type type, final String name, final String description) {
 			this.type = type;
 			this.name = name;
 			this.description = description;
@@ -78,7 +53,7 @@ public final class ApplicationCommandOption {
 
 		public SjObject toSjObject() {
 			final var obj = new SjObject();
-			obj.put("type", type.value);
+			obj.put("type", type.getValue());
 			obj.put("name", name);
 			obj.put("description", description);
 			return obj;
@@ -86,10 +61,10 @@ public final class ApplicationCommandOption {
 	}
 
 	public static class NonSubcommandPayload extends Payload {
-		public boolean required;
+		public Boolean required;
 		public List<Choice> choices;
 
-		public NonSubcommandPayload(Type type, String name, String description) {
+		public NonSubcommandPayload(final Type type, final String name, final String description) {
 			super(type, name, description);
 			if (type == Type.SUB_COMMAND)
 				throw new RuntimeException();
@@ -98,8 +73,8 @@ public final class ApplicationCommandOption {
 		@Override
 		public String toJsonString() {
 			final var obj = toSjObject();
-			if (required)
-				obj.put("required", Boolean.TRUE);
+			if (required != null)
+				obj.put("required", required);
 			if (choices != null && choices.size() > 0)
 				obj.put("choices", choices);
 			return obj.toJsonString();
@@ -109,7 +84,7 @@ public final class ApplicationCommandOption {
 	public static class SubcommandPayload extends Payload {
 		public List<Payload> options;
 
-		public SubcommandPayload(String name, String description) {
+		public SubcommandPayload(final String name, final String description) {
 			super(Type.SUB_COMMAND, name, description);
 		}
 
@@ -129,8 +104,8 @@ public final class ApplicationCommandOption {
 	public final List<Choice> choices;
 	public final List<ApplicationCommandOption> options;
 
-	public ApplicationCommandOption(SjObject data) {
-		type = Type.resolve(data.getLong("type"));
+	public ApplicationCommandOption(final SjObject data) {
+		type = Type.resolve(data.getInteger("type"));
 		name = data.getString("name");
 		description = data.getString("description");
 		final var r = data.getBoolean("required");
