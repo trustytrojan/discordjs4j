@@ -8,6 +8,10 @@ import discord.structures.interactions.Interaction;
 public non-sealed class BotDiscordClient extends DiscordClient {
 	public final Application application;
 
+	public BotDiscordClient(String token) {
+		this(token, false);
+	}
+
 	public BotDiscordClient(String token, boolean debug) {
 		super(token, true, debug);
 		application = getApplication().join();
