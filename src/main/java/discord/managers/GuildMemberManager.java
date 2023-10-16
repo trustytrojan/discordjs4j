@@ -1,4 +1,4 @@
-package discord.managers.guild;
+package discord.managers;
 
 import java.util.List;
 import java.util.Objects;

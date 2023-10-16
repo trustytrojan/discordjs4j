@@ -4,7 +4,7 @@ import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
-import discord.managers.guild.GuildMemberRoleManager;
+import discord.managers.GuildMemberRoleManager;
 import discord.resources.guilds.Guild;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;

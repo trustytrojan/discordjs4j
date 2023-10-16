@@ -1,9 +1,8 @@
-package discord.managers.guild;
+package discord.managers;
 
 import java.util.Objects;
 
 import discord.client.DiscordClient;
-import discord.managers.ResourceManager;
 import discord.resources.GuildResource;
 import discord.resources.guilds.Guild;
 
