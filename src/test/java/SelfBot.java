@@ -25,8 +25,8 @@ public final class SelfBot extends UserDiscordClient {
 	protected void onMessageCreate(Message message) {
 		if (!message.getAuthorId().equals(currentUser.getId()))
 			return;
-		final var guild = message.getGuildAsync().join();
-		final var channel = message.getChannelAsync().join();
+		final var guild = message.getGuild().join();
+		final var channel = message.getChannel().join();
 		final var content = message.getContent();
 		final var args = content.split(" ");
 		if (!args[0].startsWith(PREFIX))

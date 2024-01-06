@@ -3,6 +3,7 @@ package discord.resources;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
+import discord.client.APIClient.JsonResponse;
 import discord.client.DiscordClient;
 import sj.SjObject;
 
@@ -21,6 +22,7 @@ public interface DiscordResource {
 	 * Patches this resource's data with fresh data from Discord.
 	 * 
 	 * @param data Fresh data from Discord.
+	 * @throws IllegalArgumentException If the data does not match the structure of a Discord resource.
 	 */
 	void setData(SjObject data);
 
@@ -31,29 +33,37 @@ public interface DiscordResource {
 		return getData().getString("id");
 	}
 
+	/**
+	 * @return The {@link Instant} that this resource was created.
+	 */
 	default Instant getCreatedInstant() {
 		return Instant.ofEpochMilli((Long.parseLong(getId()) >> 22) + 1420070400000L);
 	}
 
 	/**
-	 * @return The specific path to get this resource from the Discord API.
+	 * @return This resource's specific path on the Discord API.
 	 */
 	String getApiPath();
 
 	/**
-	 * @return Refreshes this DiscordResource's internal data with data fresh from the Discord API.
+	 * @return Refreshes this DiscordResource's internal data with data fresh from
+	 *         the Discord API.
 	 */
 	default CompletableFuture<Void> refreshData() {
-		return getClient().api.get(getApiPath()).thenAccept(r -> setData(r.asObject()));
+		if (isDeleted())
+			return CompletableFuture.failedFuture(new IllegalStateException("this resource has been marked as deleted!"));
+		return getClient().api.get(getApiPath())
+			.thenApply(JsonResponse::asObject)
+			.thenAccept(this::setData);
 	}
 
 	/**
-	 * @return Whether this resource has been deleted from Discord.
+	 * @return Whether this resource has been marked as deleted from Discord.
 	 */
-	boolean wasDeleted();
+	boolean isDeleted();
 
 	/**
-	 * Set's this resource's {@code deleted} flag to {@code true}.
+	 * Marks this resource as deleted from Discord.
 	 */
-	void setDeleted();
+	void markAsDeleted();
 }

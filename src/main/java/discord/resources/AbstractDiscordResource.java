@@ -28,16 +28,18 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	@Override
 	public void setData(final SjObject data) {
-		this.data = data;
+		if (!data.containsKey("id"))
+			throw new IllegalArgumentException("data does not match Discord resource structure");
+		this.data = Objects.requireNonNull(data);
 	}
 
 	@Override
-	public boolean wasDeleted() {
+	public boolean isDeleted() {
 		return deleted;
 	}
 
 	@Override
-	public void setDeleted() {
+	public void markAsDeleted() {
 		deleted = true;
 	}
 }

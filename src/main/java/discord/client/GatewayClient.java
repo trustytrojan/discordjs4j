@@ -23,7 +23,7 @@ import sj.Sj;
 import sj.SjObject;
 
 public class GatewayClient extends WebSocketClient {
-	private static void debugPrint(String message) {
+	private static void debugPrint(final String message) {
 		System.out.println("[GatewayClient] " + message);
 	}
 
@@ -35,7 +35,7 @@ public class GatewayClient extends WebSocketClient {
 	private final String token;
 	private long sequenceNumber, heartbeatSentAt, ping;
 
-	public GatewayClient(DiscordClient client, String token, boolean debug) {
+	public GatewayClient(final DiscordClient client, final String token, final boolean debug) {
 		super(DISCORD_GATEWAY_URI);
 		this.client = client;
 		this.token = token;
@@ -46,12 +46,12 @@ public class GatewayClient extends WebSocketClient {
 		return ping;
 	}
 
-	public void connectAndIdentify(GatewayIntent... intents) {
+	public void connectAndIdentify(final GatewayIntent... intents) {
 		tryConnecting();
 		sendIdentify(intents);
 	}
 
-	public void connectAndIdentify(IdentifyParams params) {
+	public void connectAndIdentify(final IdentifyParams params) {
 		tryConnecting();
 		sendIdentify(params);
 	}
@@ -61,31 +61,32 @@ public class GatewayClient extends WebSocketClient {
 			if (!connectBlocking())
 				// also a good idea to print this regardless of this.debug
 				debugPrint("connectBlocking() failed!");
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void sendIdentify(String payload) {
+	private void sendIdentify(final String payload) {
 		if (debug)
 			debugPrint("Sending identify payload: " + payload);
 		send(payload);
 	}
 
-	private void sendIdentify(GatewayIntent... intents) {
+	private void sendIdentify(final GatewayIntent... intents) {
 		final var d = Map.of(
-				"token", token,
-				"properties", IdentifyParams.DEFAULT_CONNECTION_PROPERTIES,
-				"intents", GatewayIntent.sum(intents));
+			"token", token,
+			"properties", IdentifyParams.DEFAULT_CONNECTION_PROPERTIES,
+			"intents", GatewayIntent.sum(intents)
+		);
 		sendIdentify("{\"op\":2,\"d\":" + Sj.write(d) + "}");
 	}
 
-	private void sendIdentify(IdentifyParams params) {
+	private void sendIdentify(final IdentifyParams params) {
 		sendIdentify("{\"op\":2,\"d\":" + params.toJsonString() + "}");
 	}
 
-	public void sendRequestGuildMembers(String guildId, String query, int limit, boolean presences,
-			List<String> userIds, String nonce) {
+	public void requestGuildMembers(final String guildId, final String query, final int limit, final boolean presences,
+			final List<String> userIds, final String nonce) {
 		final var obj = new SjObject();
 		obj.put("guild_id", Objects.requireNonNull(guildId));
 		if (query != null) {
@@ -105,7 +106,7 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onOpen(ServerHandshake handshake) {
+	public void onOpen(final ServerHandshake handshake) {
 		if (debug)
 			debugPrint("""
 					Connection to Discord gateway opened
@@ -119,12 +120,12 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onMessage(String message) {
+	public void onMessage(final String message) {
 		CompletableFuture.runAsync(() -> onMessageAsync(message)).exceptionally(Util::printStackTrace);
 	}
 
 	@Override
-	public void onClose(int code, String reason, boolean remote) {
+	public void onClose(final int code, final String reason, final boolean remote) {
 		if (debug)
 			debugPrint("""
 					Connection closed!
@@ -136,10 +137,7 @@ public class GatewayClient extends WebSocketClient {
 
 	@Override
 	public void onError(Exception e) {
-		// this prints regardless of this.debug since it's
-		// probably a good idea to show users of this class
-		// any exceptions that occur
-		debugPrint("WebSocket error occurred! Details below:");
+		debugPrint("WebSocket error occurred!");
 		e.printStackTrace();
 	}
 
@@ -176,7 +174,7 @@ public class GatewayClient extends WebSocketClient {
 					case GUILD_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
 						final var deletedGuild = client.guilds.cache.get(id);
-						deletedGuild.setDeleted();
+						deletedGuild.markAsDeleted();
 						client.onGuildDelete(deletedGuild);
 					}
 
@@ -186,39 +184,39 @@ public class GatewayClient extends WebSocketClient {
 						final var id = obj.getObject("d").getString("id");
 						System.out.println(id);
 						final var deletedChannel = client.channels.cache.get(id);
-						deletedChannel.setDeleted();
+						deletedChannel.markAsDeleted();
 						client.onChannelDelete(deletedChannel);
 					}
 
 					case MESSAGE_CREATE -> {
 						final var messageObj = obj.getObject("d");
 						client.channels.get(messageObj.getString("channel_id"))
-							.thenAccept(c -> {
-								final var channel = (MessageChannel) c;
-								final var message = channel.getMessageManager().cache(messageObj);
-								client.onMessageCreate(message);
-							});
+								.thenAccept(c -> {
+									final var channel = (MessageChannel) c;
+									final var message = channel.getMessageManager().cache(messageObj);
+									client.onMessageCreate(message);
+								});
 					}
 
 					case MESSAGE_UPDATE -> {
 						final var messageObj = obj.getObject("d");
 						client.channels.get(messageObj.getString("channel_id"))
-							.thenAccept(c -> {
-								final var channel = (MessageChannel) c;
-								final var message = channel.getMessageManager().cache(messageObj);
-								client.onMessageUpdate(message);
-							});
+								.thenAccept(c -> {
+									final var channel = (MessageChannel) c;
+									final var message = channel.getMessageManager().cache(messageObj);
+									client.onMessageUpdate(message);
+								});
 					}
 
 					case MESSAGE_DELETE -> {
 						final var d = obj.getObject("d");
 						client.channels.get(d.getString("channel_id"))
-							.thenAccept(c -> {
-								final var channel = (MessageChannel) c;
-								final var deletedMessage = channel.getMessageManager().cache.get(d.getString("id"));
-								deletedMessage.setDeleted();
-								client.onMessageDelete(deletedMessage);
-							});
+								.thenAccept(c -> {
+									final var channel = (MessageChannel) c;
+									final var deletedMessage = channel.getMessageManager().cache.get(d.getString("id"));
+									deletedMessage.markAsDeleted();
+									client.onMessageDelete(deletedMessage);
+								});
 					}
 
 					default -> {
@@ -232,11 +230,12 @@ public class GatewayClient extends WebSocketClient {
 					debugPrint("Heartbeat ACK received; Ping: " + ping + "ms");
 			}
 
+			// we should only receive this once
 			case HELLO -> {
 				final var d = obj.getObject("d");
 
-				// Interval in milliseconds that Discord wants us to wait before
-				// sending another heartbeat.
+				// interval in milliseconds that discord wants us to wait before sending another
+				// heartbeat
 				final var heartbeatInterval = d.getLong("heartbeat_interval");
 				if (debug)
 					debugPrint("Hello event received; Heartbeat interval: " + heartbeatInterval + "ms");

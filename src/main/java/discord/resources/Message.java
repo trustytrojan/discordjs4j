@@ -1,7 +1,6 @@
 package discord.resources;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -71,7 +70,7 @@ public class Message extends AbstractDiscordResource {
 
 	public CompletableFuture<Message> reply(Message.Payload payload) {
 		payload.replyMessageId = getId();
-		return getChannelAsync().thenCompose(c -> c.send(payload));
+		return getChannel().thenCompose(c -> c.send(payload));
 	}
 
 	@Override
@@ -83,7 +82,7 @@ public class Message extends AbstractDiscordResource {
 		return data.getString("channel_id");
 	}
 
-	public CompletableFuture<MessageChannel> getChannelAsync() {
+	public CompletableFuture<MessageChannel> getChannel() {
 		return client.channels.get(getChannelId()).thenApply(c -> (MessageChannel) c);
 	}
 
@@ -91,12 +90,16 @@ public class Message extends AbstractDiscordResource {
 		return data.getObject("author").getString("id");
 	}
 
-	public CompletableFuture<User> getAuthorAsync() {
+	public CompletableFuture<User> getAuthor() {
 		return client.users.get(getAuthorId());
 	}
 
-	public CompletableFuture<Guild> getGuildAsync() {
-		return getChannelAsync().thenCompose(c -> ((GuildChannel) c).getGuildAsync());
+	public CompletableFuture<Guild> getGuild() {
+		return getChannel().thenCompose(c ->
+			(c instanceof final GuildChannel gc)
+				? gc.getGuild()
+				: CompletableFuture.completedFuture(null)
+		);
 	}
 
 	public String getContent() {
@@ -109,13 +112,8 @@ public class Message extends AbstractDiscordResource {
 
 	public List<MessageComponent> getComponents() {
 		final var rawComponents = data.getObjectArray("components");
-		if (rawComponents != null) {
-			final var _components = new LinkedList<MessageComponent>();
-			for (final var rawComponent : data.getObjectArray("components"))
-				_components.add(MessageComponent.construct(rawComponent));
-			return Collections.unmodifiableList(_components);
-		} else {
-			return Collections.emptyList();
-		}
+		return (rawComponents == null)
+			? Collections.emptyList()
+			: data.getObjectArray("components").stream().map(MessageComponent::construct).toList();
 	}
 }

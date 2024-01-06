@@ -7,7 +7,7 @@ import discord.resources.guilds.Guild;
 public interface GuildResource extends DiscordResource {
 	String getGuildId();
 
-	default CompletableFuture<Guild> getGuildAsync() {
+	default CompletableFuture<Guild> getGuild() {
 		return getClient().guilds.get(getGuildId());
 	}
 }

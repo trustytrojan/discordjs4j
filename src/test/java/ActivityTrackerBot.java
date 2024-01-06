@@ -146,7 +146,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 
 	@Override
 	protected void onMessageCreate(Message message) {
-		final var resources = Util.awaitResources(message.getGuildAsync(), message.getAuthorAsync());
+		final var resources = Util.awaitResources(message.getGuild(), message.getAuthor());
 		final var guild = (Guild) resources[0];
 		final var author = (User) resources[1];
 

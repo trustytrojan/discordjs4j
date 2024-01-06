@@ -95,6 +95,6 @@ public interface GuildChannel extends GuildResource, Channel {
 	 * @return 
 	 */
 	default CompletableFuture<Void> edit(Payload payload) {
-		return getGuildAsync().thenAccept(g -> g.channels.edit(getId(), payload));
+		return getGuild().thenAccept(g -> g.channels.edit(getId(), payload));
 	}
 }

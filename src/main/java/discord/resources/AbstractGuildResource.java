@@ -26,7 +26,7 @@ public abstract class AbstractGuildResource extends AbstractDiscordResource impl
 	}
 
 	@Override
-	public CompletableFuture<Guild> getGuildAsync() {
+	public CompletableFuture<Guild> getGuild() {
 		return CompletableFuture.completedFuture(guild);
 	}
 }

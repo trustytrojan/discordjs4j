@@ -11,6 +11,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import discord.util.Util;
 import sj.Sj;
@@ -64,6 +65,8 @@ public final class APIClient {
 
 	APIClient(String token, boolean bot, boolean debug) {
 		Objects.requireNonNull(token);
+		if (token.isEmpty() || token.isBlank())
+			throw new IllegalArgumentException("Token cannot be empty or blank");
 		this.debug = debug;
 		this.token = bot ? ("Bot " + token) : token;
 	}
@@ -105,12 +108,16 @@ public final class APIClient {
 		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
 		if (debug)
 			debugPrint("Being rate limited for " + retryAfter + "ms");
-		try {
-			Thread.sleep(retryAfter);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		return sendRequest(requestWrapper);
+		
+		// try {
+		// 	Thread.sleep(retryAfter);
+		// } catch (InterruptedException e) {
+		// 	e.printStackTrace();
+		// }
+		// return sendRequest(requestWrapper);
+
+		return CompletableFuture.completedFuture(requestWrapper)
+			.thenComposeAsync(this::sendRequest, CompletableFuture.delayedExecutor(retryAfter, TimeUnit.MILLISECONDS));
 	}
 
 	private CompletableFuture<JsonResponse> buildAndSend(HttpMethod method, String path, String body) {
