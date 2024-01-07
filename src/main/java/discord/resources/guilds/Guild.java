@@ -190,7 +190,7 @@ public class Guild extends PreviewGuild {
 		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES;
 	
 		@Override
-		public long getBitIndex() {
+		public int getBitIndex() {
 			return 1 << ordinal();
 		}
 	}

@@ -60,7 +60,7 @@ public enum Permission implements BitFlag {
 	}
 
 	@Override
-	public long getBitIndex() {
+	public int getBitIndex() {
 		return bitIndex;
 	}
 }

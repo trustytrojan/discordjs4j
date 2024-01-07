@@ -12,7 +12,7 @@ public class BitFlagSet<T extends BitFlag> {
 	 * with only one {@code 1} bit, for use with {@code BitFlagSet}.
 	 */
 	public static interface BitFlag {
-		long getBitIndex();
+		int getBitIndex();
 	}
 
 	protected long bitset;
@@ -30,7 +30,7 @@ public class BitFlagSet<T extends BitFlag> {
 		return is1(flag.getBitIndex());
 	}
 
-	public boolean is1(long bitIndex) {
+	public boolean is1(int bitIndex) {
 		return (bitset & (1 << bitIndex)) != 0;
 	}
 
