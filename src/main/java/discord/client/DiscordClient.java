@@ -3,7 +3,7 @@ package discord.client;
 import discord.managers.ChannelManager;
 import discord.managers.GuildManager;
 import discord.managers.UserManager;
-import discord.resources.CurrentUser;
+import discord.resources.ClientUser;
 import discord.resources.Message;
 import discord.resources.channels.Channel;
 import discord.resources.guilds.Guild;
@@ -17,7 +17,7 @@ public sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
 	public final ChannelManager channels = new ChannelManager(this);
 	public final GuildManager guilds = new GuildManager(this);
 
-	public final CurrentUser currentUser;
+	public final ClientUser currentUser;
 
 	protected DiscordClient(String token, boolean bot, boolean debug) {
 		api = new APIClient(token, bot, debug);

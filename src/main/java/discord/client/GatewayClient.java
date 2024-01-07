@@ -120,8 +120,8 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onMessage(final String message) {
-		CompletableFuture.runAsync(() -> onMessageAsync(message)).exceptionally(Util::printStackTrace);
+	public void onMessage(final String data) {
+		CompletableFuture.runAsync(() -> onMessageAsync(data)).exceptionally(Util::printStackTrace);
 	}
 
 	@Override
@@ -136,13 +136,13 @@ public class GatewayClient extends WebSocketClient {
 	}
 
 	@Override
-	public void onError(Exception e) {
+	public void onError(final Exception e) {
 		debugPrint("WebSocket error occurred!");
 		e.printStackTrace();
 	}
 
-	private void onMessageAsync(String rawJson) {
-		final var obj = Sj.parseObject(rawJson);
+	private void onMessageAsync(final String data) {
+		final var obj = Sj.parseObject(data);
 		final var opcode = GatewayOpcode.resolve(obj.getShort("op"));
 
 		switch (opcode) {
@@ -234,8 +234,7 @@ public class GatewayClient extends WebSocketClient {
 			case HELLO -> {
 				final var d = obj.getObject("d");
 
-				// interval in milliseconds that discord wants us to wait before sending another
-				// heartbeat
+				// interval in milliseconds that discord wants us to wait before sending another heartbeat
 				final var heartbeatInterval = d.getLong("heartbeat_interval");
 				if (debug)
 					debugPrint("Hello event received; Heartbeat interval: " + heartbeatInterval + "ms");

@@ -53,7 +53,7 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	}
 
 	public CompletableFuture<Role> getRoleAsync(final String optionName) {
-		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.roles::get));
+		return interaction.getGuild().thenCompose(g -> getResource(optionName, g.roles::get));
 	}
 
 	public CompletableFuture<User> getUserAsync(final String optionName) {
@@ -61,11 +61,11 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	}
 
 	public CompletableFuture<GuildMember> getMemberAsync(final String optionName) {
-		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.members::get));
+		return interaction.getGuild().thenCompose(g -> getResource(optionName, g.members::get));
 	}
 
 	public CompletableFuture<GuildChannel> getChannelAsync(final String optionName) {
-		return interaction.getGuildAsync().thenCompose(g -> getResource(optionName, g.channels::get));
+		return interaction.getGuild().thenCompose(g -> getResource(optionName, g.channels::get));
 	}
 
 	/**

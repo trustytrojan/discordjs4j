@@ -34,7 +34,7 @@ public class MessageComponentInteraction extends Interaction {
 	}
 
 	public CompletableFuture<Message> getMessageAsync() {
-		return getChannelAsync().thenCompose(c -> c.getMessageManager().get(messageId));
+		return getChannel().thenCompose(c -> c.getMessageManager().get(messageId));
 	}
 
 	public Message getMessage() {

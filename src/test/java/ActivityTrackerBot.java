@@ -21,6 +21,9 @@ import sj.Sj;
 import sj.SjObject;
 import sj.SjSerializable;
 
+/**
+ * A Discord bot that keeps track of the number of 
+ */
 public class ActivityTrackerBot extends BotDiscordClient {
 	private static final String DATA_FILENAME = "at.json";
 	private static final String TEST_GUILD_ID = "1131342149301055488";
@@ -107,7 +110,7 @@ public class ActivityTrackerBot extends BotDiscordClient {
 			return;
 		switch (interaction.commandName) {
 			case "view_activity" -> {
-				final var guild = interaction.getGuildAsync().join();
+				final var guild = interaction.getGuild().join();
 
 				var activityPerMember = activityPerMemberPerGuild.get(guild.getId());
 

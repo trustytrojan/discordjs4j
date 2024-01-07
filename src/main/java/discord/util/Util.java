@@ -6,10 +6,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -25,18 +22,6 @@ public final class Util {
 	public static <T> T printStackTrace(Throwable e) {
 		e.printStackTrace();
 		return null;
-	}
-
-	public static Timer timerFrom(Runnable r, long ms) {
-		final var timer = new Timer();
-		
-		timer.schedule(new TimerTask() {
-			public void run() {
-				r.run();
-			}
-		}, 0, ms);
-
-		return timer;
 	}
 
 	public static boolean fileExists(String path) {
@@ -67,19 +52,20 @@ public final class Util {
 		return Integer.parseInt(hexColor, 16);
 	}
 
+	/**
+	 * Returns the set difference of {@code c1} and {@code c2}, i.e., the elements that are in {@code c1} but not in {@code c2}.
+	 * The function does not modify the input collections.
+	 * The input collections are expected to represent sets; they should not contain duplicate elements.
+	 *
+	 * @param c1 the first collection
+	 * @param c2 the second collection
+	 * @return The set difference of {@code c1} and {@code c2}
+	 */
 	public static <T> Collection<T> setDifference(Collection<T> c1, Collection<T> c2) {
 		final var difference = new HashSet<T>(c1);
 		difference.removeAll(c2);
 		return difference;
 	}
-
-	/*
-	private static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
-
-	private static String urlEncode(String s) {
-		return URLEncoder.encode(s, DEFAULT_CHARSET);
-	}
-	*/
 
 	public static String encodeUrlParams(Map<String, String> params) {
 		final var size = params.size();
@@ -102,9 +88,5 @@ public final class Util {
 	@SafeVarargs
 	public static DiscordResource[] awaitResources(CompletableFuture<? extends DiscordResource>... resourceCfs) {
 		return Stream.of(resourceCfs).map(CompletableFuture::join).toArray(DiscordResource[]::new);
-	}
-
-	public static <T, U> void whenDone(CompletableFuture<T> cf1, CompletableFuture<U> cf2, BiConsumer<T, U> consumer) {
-		consumer.accept(cf1.join(), cf2.join());
 	}
 }

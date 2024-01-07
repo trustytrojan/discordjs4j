@@ -8,7 +8,7 @@ import discord.util.Util;
 import sj.SjObject;
 import sj.SjSerializable;
 
-public final class CurrentUser extends User {
+public final class ClientUser extends User {
 	public static enum PremiumType { NONE, NITRO_CLASSIC, NITRO, NITRO_BASIC }
 
 	public static class Payload implements SjSerializable {
@@ -26,11 +26,11 @@ public final class CurrentUser extends User {
 		}
 	}
 
-	public CurrentUser(final DiscordClient client, final SjObject data) {
+	public ClientUser(final DiscordClient client, final SjObject data) {
 		super(client, data);
 	}
 
-	public CompletableFuture<Void> edit(Payload payload) {
+	public CompletableFuture<Void> edit(final Payload payload) {
 		return client.api.patch("/users/@me", payload.toJsonString()).thenRun(Util.NO_OP);
 	}
 

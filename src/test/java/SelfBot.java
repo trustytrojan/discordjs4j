@@ -4,8 +4,6 @@ import discord.resources.Message;
 import discord.util.Util;
 
 public final class SelfBot extends UserDiscordClient {
-	// private static final String PRIVATE_GUILD_ID = "1131342149301055488";
-	// 1131342149301055488
 	private static final String PREFIX = "!";
 
 	private SelfBot(String token) {
@@ -13,7 +11,8 @@ public final class SelfBot extends UserDiscordClient {
 		Runtime.getRuntime().addShutdownHook(new Thread(gateway::close));
 		gateway.connectAndIdentify(
 			GatewayIntent.GUILDS,
-			GatewayIntent.GUILD_MESSAGES);
+			GatewayIntent.GUILD_MESSAGES
+		);
 	}
 
 	@Override
@@ -42,13 +41,14 @@ public final class SelfBot extends UserDiscordClient {
 						System.out.println(categoryChannels);
 						System.out.println(guild.channels.cache);
 						channel.send(categoryChannels.toString());
+						// TODO: implement this thing, but finish the whole project first 💀
 					}
 
 					case "roles" -> {
 						if (guild == null)
 							return;
 						guild.roles.refreshCache().join();
-						final var sb = new StringBuilder("```Id                 \tName\n");
+						final var sb = new StringBuilder("```Id\t\t\t\t\tName\n");
 						guild.roles.cache.values().forEach(r -> sb.append(r.getId()).append('\t').append(r.getName()).append('\n'));
 						message.reply(sb.append("```").toString());
 					}

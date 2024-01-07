@@ -101,19 +101,19 @@ public abstract class Interaction {
 		return (guildId != null);
 	}
 
-	public CompletableFuture<Guild> getGuildAsync() {
+	public CompletableFuture<Guild> getGuild() {
 		return client.guilds.get(guildId);
 	}
 
-	public CompletableFuture<MessageChannel> getChannelAsync() {
+	public CompletableFuture<MessageChannel> getChannel() {
 		return client.channels.get(channelId).thenApply(c -> (MessageChannel) c);
 	}
 
-	public CompletableFuture<GuildMember> getMemberAsync() {
-		return getGuildAsync().thenCompose(g -> g.members.get(userId));
+	public CompletableFuture<GuildMember> getMember() {
+		return getGuild().thenCompose(g -> g.members.get(userId));
 	}
 
-	public CompletableFuture<User> getUserAsync() {
+	public CompletableFuture<User> getUser() {
 		return client.users.get(userId);
 	}
 	
