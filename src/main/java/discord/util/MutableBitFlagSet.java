@@ -19,7 +19,7 @@ public class MutableBitFlagSet<T extends BitFlag> extends BitFlagSet<T> {
 		set(flag.getBitIndex());
 	}
 
-	public void set(int bitIndex) {
+	public void set(long bitIndex) {
 		bitset |= (1 << bitIndex);
 	}
 
@@ -27,7 +27,7 @@ public class MutableBitFlagSet<T extends BitFlag> extends BitFlagSet<T> {
 		unset(flag.getBitIndex());
 	}
 
-	public void unset(int bitIndex) {
+	public void unset(long bitIndex) {
 		bitset &= ~(1 << bitIndex);
 	}
 
@@ -35,7 +35,7 @@ public class MutableBitFlagSet<T extends BitFlag> extends BitFlagSet<T> {
 		toggle(flag.getBitIndex());
 	}
 
-	public void toggle(int bitIndex) {
+	public void toggle(long bitIndex) {
 		bitset ^= (1 << bitIndex);
 	}
 }

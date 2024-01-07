@@ -38,7 +38,7 @@ public class Guild extends PreviewGuild {
 						"name": \"%s\",
 						"type": \"%d\"
 					}
-						""".formatted(name, type.value);
+				""".formatted(name, type.value);
 			}
 		}
 
@@ -54,7 +54,7 @@ public class Guild extends PreviewGuild {
 		public String systemChannelId;
 		public BitFlagSet<SystemChannelFlag> systemChannelFlags;
 
-		public CreatePayload(String name) {
+		public CreatePayload(final String name) {
 			this.name = name;
 		}
 
@@ -190,8 +190,8 @@ public class Guild extends PreviewGuild {
 		SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES;
 	
 		@Override
-		public int getBitIndex() {
-			return ordinal();
+		public long getBitIndex() {
+			return 1 << ordinal();
 		}
 	}
 
@@ -246,7 +246,7 @@ public class Guild extends PreviewGuild {
 								emojiId,
 								emojiName;
 
-			private WelcomeScreenChannel(SjObject data) {
+			private WelcomeScreenChannel(final SjObject data) {
 				channelId = data.getString("channel_id");
 				description = data.getString("description");
 				emojiId = data.getString("emoji_id");
@@ -257,7 +257,7 @@ public class Guild extends PreviewGuild {
 		public final String description;
 		public final List<WelcomeScreenChannel> channels;
 
-		private WelcomeScreen(SjObject data) {
+		private WelcomeScreen(final SjObject data) {
 			description = data.getString("description");
 			channels = data.getObjectArray("welcome_channels").stream().map(WelcomeScreenChannel::new).toList();
 		}
@@ -268,7 +268,7 @@ public class Guild extends PreviewGuild {
 	public final RoleManager roles;
 	public final ApplicationCommandManager commands;
 
-	public Guild(DiscordClient client, SjObject data) {
+	public Guild(final DiscordClient client, final SjObject data) {
 		super(client, data);
 		channels = new GuildChannelManager(client, this);
 		roles = new RoleManager(client, this);

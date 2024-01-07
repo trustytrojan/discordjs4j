@@ -9,12 +9,12 @@ import sj.SjObject;
 
 public interface Channel extends DiscordResource {
 	public static enum Type {
-		GUILD_TEXT(0),
-		DM(1),
-		GUILD_VOICE(2),
-		GROUP_DM(3),
-		GUILD_CATEGORY(4),
-		GUILD_ANNOUNCEMENT(5),
+		GUILD_TEXT,
+		DM,
+		GUILD_VOICE,
+		GROUP_DM,
+		GUILD_CATEGORY,
+		GUILD_ANNOUNCEMENT,
 		ANNOUNCEMENT_THREAD(10),
 		PUBLIC_THREAD(11),
 		PRIVATE_THREAD(12),
@@ -30,6 +30,10 @@ public interface Channel extends DiscordResource {
 		}
 
 		public final int value;
+
+		private Type() {
+			value = ordinal();
+		}
 
 		private Type(int value) {
 			this.value = value;

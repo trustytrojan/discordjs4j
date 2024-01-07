@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.managers.MessageManager;
-import discord.resources.Embed;
 import discord.resources.Message;
+import discord.structures.Embed;
 
 public interface MessageChannel extends Channel {
 	MessageManager getMessageManager();

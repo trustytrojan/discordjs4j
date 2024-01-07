@@ -9,6 +9,7 @@ import discord.client.DiscordClient;
 import discord.resources.channels.GuildChannel;
 import discord.resources.channels.MessageChannel;
 import discord.resources.guilds.Guild;
+import discord.structures.Embed;
 import discord.structures.components.ActionRow;
 import discord.structures.components.MessageComponent;
 import sj.SjObject;

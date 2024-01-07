@@ -43,7 +43,7 @@ public class User extends AbstractDiscordResource {
 		}
 
 		@Override
-		public int getBitIndex() {
+		public long getBitIndex() {
 			return bitIndex;
 		}
 	}

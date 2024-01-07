@@ -6,12 +6,12 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.APIClient.JsonResponse;
 import discord.client.BotDiscordClient;
-import discord.resources.Embed;
 import discord.resources.GuildMember;
 import discord.resources.Message;
 import discord.resources.User;
 import discord.resources.channels.MessageChannel;
 import discord.resources.guilds.Guild;
+import discord.structures.Embed;
 import discord.structures.components.ActionRow;
 import sj.SjObject;
 

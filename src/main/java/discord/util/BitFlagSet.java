@@ -9,11 +9,10 @@ import discord.util.BitFlagSet.BitFlag;
 public class BitFlagSet<T extends BitFlag> {
 	/**
 	 * An interface requiring enums to return a {@code long}
-	 * that has only one bit as a {@code 1}, for use with
-	 * {@code BitFlagSet}.
+	 * with only one {@code 1} bit, for use with {@code BitFlagSet}.
 	 */
 	public static interface BitFlag {
-		int getBitIndex();
+		long getBitIndex();
 	}
 
 	protected long bitset;
@@ -31,7 +30,7 @@ public class BitFlagSet<T extends BitFlag> {
 		return is1(flag.getBitIndex());
 	}
 
-	public boolean is1(int bitIndex) {
+	public boolean is1(long bitIndex) {
 		return (bitset & (1 << bitIndex)) != 0;
 	}
 
