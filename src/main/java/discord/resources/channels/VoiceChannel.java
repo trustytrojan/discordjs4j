@@ -23,7 +23,7 @@ public class VoiceChannel extends AbstractGuildResource implements GuildChannel,
 			final var obj = toSjObject();
 			obj.put("type", Channel.Type.GUILD_VOICE.value);
 			if (nsfw)
-				obj.put("nsfw", Boolean.TRUE);
+				obj.put("nsfw", true);
 			if (bitrate != null)
 				obj.put("bitrate", bitrate);
 			if (userLimit != null)

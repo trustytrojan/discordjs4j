@@ -45,7 +45,7 @@ public interface GuildChannel extends GuildResource, Channel {
 			if (position != null)
 				obj.put("position", position);
 			if (syncPermissions)
-				obj.put("lock_permissions", Boolean.TRUE);
+				obj.put("lock_permissions", true);
 			if (parentId != null)
 				obj.put("parent_id", parentId);
 			return obj.toJsonString();

@@ -94,7 +94,7 @@ public class GatewayClient extends WebSocketClient {
 			obj.put("limit", limit);
 		}
 		if (presences)
-			obj.put("presences", Boolean.TRUE);
+			obj.put("presences", true);
 		if (userIds != null && userIds.size() > 0)
 			obj.put("user_ids", userIds);
 		if (nonce != null)

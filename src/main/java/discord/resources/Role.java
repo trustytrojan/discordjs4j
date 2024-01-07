@@ -34,7 +34,7 @@ public class Role extends AbstractGuildResource {
 			if (unicodeEmoji != null)
 				obj.put("unicode_emoji", unicodeEmoji);
 			if (mentionable)
-				obj.put("mentionable", Boolean.TRUE);
+				obj.put("mentionable", true);
 			return obj.toJsonString();
 		}
 	}

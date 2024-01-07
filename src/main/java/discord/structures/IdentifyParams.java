@@ -50,7 +50,7 @@ public class IdentifyParams implements SjSerializable {
 		obj.put("token", token);
 		obj.put("properties", Map.of("os", os, "browser", browser, "device", device));
 		if (compress)
-			obj.put("compress", Boolean.TRUE);
+			obj.put("compress", true);
 		if (largeThreshold > 0)
 			obj.put("large_threshold", largeThreshold);
 		if (shardId > 0 && numShards > 0)

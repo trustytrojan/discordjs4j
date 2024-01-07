@@ -69,7 +69,7 @@ public abstract class Button extends MessageComponent {
 		if (label != null)
 			obj.put("label", label);
 		if (disabled)
-			obj.put("disabled", Boolean.TRUE);
+			obj.put("disabled", true);
 		return obj;
 	}
 }

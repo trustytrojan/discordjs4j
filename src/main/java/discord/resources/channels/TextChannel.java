@@ -25,7 +25,7 @@ public class TextChannel extends AbstractGuildResource implements GuildChannel, 
 			if (topic != null)
 				obj.put("topic", topic);
 			if (nsfw)
-				obj.put("nsfw", Boolean.TRUE);
+				obj.put("nsfw", true);
 			if (rateLimitPerUser != null)
 				obj.put("rate_limit_per_user", rateLimitPerUser);
 			if (parentId != null)

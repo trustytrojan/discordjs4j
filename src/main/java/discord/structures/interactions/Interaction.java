@@ -55,7 +55,7 @@ public abstract class Interaction {
 		public String toJsonString() {
 			final var obj = toJsonObject();
 			if (ephemeral)
-				obj.put("ephemeral", Boolean.TRUE);
+				obj.put("ephemeral", true);
 			return obj.toString();
 		}
 	}
