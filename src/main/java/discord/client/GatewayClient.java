@@ -40,6 +40,7 @@ public class GatewayClient extends WebSocketClient {
 		this.client = client;
 		this.token = token;
 		this.debug = debug;
+		Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 	}
 
 	public long getPing() {
@@ -190,37 +191,33 @@ public class GatewayClient extends WebSocketClient {
 
 					case MESSAGE_CREATE -> {
 						final var messageObj = obj.getObject("d");
-						client.channels.get(messageObj.getString("channel_id"))
-								.thenAccept(c -> {
-									final var channel = (MessageChannel) c;
-									final var message = channel.getMessageManager().cache(messageObj);
-									client.onMessageCreate(message);
-								});
+						client.channels.get(messageObj.getString("channel_id")).thenAccept(c -> {
+							final var channel = (MessageChannel) c;
+							final var message = channel.getMessageManager().cache(messageObj);
+							client.onMessageCreate(message);
+						});
 					}
 
 					case MESSAGE_UPDATE -> {
 						final var messageObj = obj.getObject("d");
-						client.channels.get(messageObj.getString("channel_id"))
-								.thenAccept(c -> {
-									final var channel = (MessageChannel) c;
-									final var message = channel.getMessageManager().cache(messageObj);
-									client.onMessageUpdate(message);
-								});
+						client.channels.get(messageObj.getString("channel_id")).thenAccept(c -> {
+							final var channel = (MessageChannel) c;
+							final var message = channel.getMessageManager().cache(messageObj);
+							client.onMessageUpdate(message);
+						});
 					}
 
 					case MESSAGE_DELETE -> {
 						final var d = obj.getObject("d");
-						client.channels.get(d.getString("channel_id"))
-								.thenAccept(c -> {
-									final var channel = (MessageChannel) c;
-									final var deletedMessage = channel.getMessageManager().cache.get(d.getString("id"));
-									deletedMessage.markAsDeleted();
-									client.onMessageDelete(deletedMessage);
-								});
+						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
+							final var channel = (MessageChannel) c;
+							final var deletedMessage = channel.getMessageManager().cache.get(d.getString("id"));
+							deletedMessage.markAsDeleted();
+							client.onMessageDelete(deletedMessage);
+						});
 					}
 
-					default -> {
-					}
+					default -> {}
 				}
 			}
 

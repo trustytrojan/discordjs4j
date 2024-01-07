@@ -1,14 +1,18 @@
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import discord.client.UserDiscordClient;
 import discord.enums.GatewayIntent;
 import discord.resources.Message;
 import discord.util.Util;
 
 public final class SelfBot extends UserDiscordClient {
-	private static final String PREFIX = "!";
+	public static void main(final String[] args) throws Exception {
+		new SelfBot(Util.readFile("tokens/main"));
+	}
 
-	private SelfBot(String token) {
+	private SelfBot(final String token) {
 		super(token, false);
-		Runtime.getRuntime().addShutdownHook(new Thread(gateway::close));
 		gateway.connectAndIdentify(
 			GatewayIntent.GUILDS,
 			GatewayIntent.GUILD_MESSAGES
@@ -20,44 +24,44 @@ public final class SelfBot extends UserDiscordClient {
 		System.out.println("Logged in as " + currentUser.getTag() + '!');
 	}
 
+	private static final String PREFIX = "!";
+
 	@Override
-	protected void onMessageCreate(Message message) {
+	protected void onMessageCreate(final Message message) {
+		// Only allow this user to execute commands
 		if (!message.getAuthorId().equals(currentUser.getId()))
 			return;
-		final var guild = message.getGuild().join();
-		final var channel = message.getChannel().join();
-		final var content = message.getContent();
-		final var args = content.split(" ");
+		final var args = message.getContent().split(" ");
 		if (!args[0].startsWith(PREFIX))
 			return;
-		switch (args[0].substring(1)) {
-			case "list" -> {
-				switch (args[1]) {
-					case "channels" -> {
-						if (guild == null)
-							return;
-						guild.channels.refreshCache().join();
-						final var categoryChannels = guild.channels.getCategoryChannels();
-						System.out.println(categoryChannels);
-						System.out.println(guild.channels.cache);
-						channel.send(categoryChannels.toString());
-						// TODO: implement this thing, but finish the whole project first 💀
-					}
+		final var command = args[0].substring(1);
+		try { COMMAND_HANDLERS.get(command).accept(message, args); }
+		catch (final Exception e) { message.reply("**this is an error**```" + e.getMessage() + "```"); }
+	}
 
-					case "roles" -> {
-						if (guild == null)
-							return;
-						guild.roles.refreshCache().join();
-						final var sb = new StringBuilder("```Id\t\t\t\t\tName\n");
-						guild.roles.cache.values().forEach(r -> sb.append(r.getId()).append('\t').append(r.getName()).append('\n'));
-						message.reply(sb.append("```").toString());
-					}
-				}
-			}
+	private static final Map<String, BiConsumer<Message, String[]>> COMMAND_HANDLERS = Map.of(
+		"roles", (final var message, final var args) -> {
+			final var guild = message.getGuild().join();
+			if (guild == null)
+				return;
+			guild.roles.refreshCache().join();
+			final var formatTemplate = "%-20s %s%n";
+			final var sb = new StringBuilder("```" + formatTemplate.formatted("ID", "Name"));
+			guild.roles.cache.forEach((id, role) -> sb.append(formatTemplate.formatted(id, role.getName())));
+			message.reply(sb.append("```").toString());
+		},
+
+		"channels", (final var message, final var args) -> {
+			final var guild = message.getGuild().join();
+			if (guild == null)
+				return;
+			guild.channels.refreshCache().join();
+			final var formatTemplate = "%-20s %-20s %s%n";
+			final var sb = new StringBuilder("```" + formatTemplate.formatted("ID", "Type", "Name"));
+			guild.channels.cache.forEach(
+				(id, channel) -> sb.append(formatTemplate.formatted(id, channel.getType(), channel.getName()))
+			);
+			message.reply(sb.append("```").toString());
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		new SelfBot(Util.readFile("tokens/main"));
-	}
+	);
 }
