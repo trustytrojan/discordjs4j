@@ -18,7 +18,7 @@ import discord.util.BitFlagSet;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
-import discord.util.CDN.URLFactory;
+import discord.util.CDN.Image;
 import sj.SjObject;
 import sj.SjSerializable;
 
@@ -346,15 +346,15 @@ public class Guild extends PreviewGuild {
 		return data.getString("vanity_url_code");
 	}
 
-	public final URLFactory banner = new URLFactory() {
+	public final Image banner = new Image() {
 		@Override
 		public String getHash() {
 			return data.getString("banner");
 		}
 
 		@Override
-		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeGuildOrUserBannerURL(getId(), getHash(), size, extension);
+		public String getURL(AllowedSize size, AllowedExtension extension) {
+			return CDN.makeBannerURL(getId(), getHash(), size, extension);
 		}
 	};
 

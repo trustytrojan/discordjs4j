@@ -3,12 +3,11 @@ package discord.resources;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.BotDiscordClient;
-import discord.client.DiscordClient;
 import discord.managers.ApplicationCommandManager;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
-import discord.util.CDN.URLFactory;
+import discord.util.CDN.Image;
 import sj.SjObject;
 
 /**
@@ -17,9 +16,12 @@ import sj.SjObject;
 public class Application extends AbstractDiscordResource {
 	public final ApplicationCommandManager commands;
 
-	public Application(DiscordClient client, SjObject data) {
+	/**
+	 * Only bots should be using this class.
+	 */
+	public Application(final BotDiscordClient client, final SjObject data) {
 		super(client, data);
-		commands = new ApplicationCommandManager((BotDiscordClient) client, null);
+		commands = new ApplicationCommandManager(client, null);
 	}
 
 	@Override
@@ -39,15 +41,15 @@ public class Application extends AbstractDiscordResource {
 		return data.getString("description");
 	}
 
-	public final URLFactory icon = new URLFactory() {
+	public final Image icon = new Image() {
 		@Override
 		public String getHash() {
 			return data.getString("icon");
 		}
 
 		@Override
-		public String makeURL(AllowedSize size, AllowedExtension extension) {
-			return CDN.makeApplicationIconURL(getId(), getHash(), size, extension);
+		public String getURL(final AllowedSize size, final AllowedExtension extension) {
+			return CDN.makeApplicationIconOrCoverURL(getId(), getHash(), size, extension);
 		}
 	};
 }

@@ -15,7 +15,7 @@ import discord.resources.User;
 import discord.util.CDN;
 import discord.util.CDN.AllowedExtension;
 import discord.util.CDN.AllowedSize;
-import discord.util.CDN.URLFactory;
+import discord.util.CDN.Image;
 import sj.SjObject;
 import sj.SjSerializable;
 
@@ -82,14 +82,14 @@ public class GroupDMChannel extends AbstractDiscordResource implements NonGuildC
 		return leave(true);
 	}
 
-	public final URLFactory icon = new URLFactory() {
+	public final Image icon = new Image() {
 		@Override
 		public String getHash() {
 			return data.getString("icon");
 		}
 
 		@Override
-		public String makeURL(AllowedSize size, AllowedExtension extension) {
+		public String getURL(AllowedSize size, AllowedExtension extension) {
 			return CDN.makeChannelIconURL(getId(), getHash(), size, extension);
 		}
 	};
