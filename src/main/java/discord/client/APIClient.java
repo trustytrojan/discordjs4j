@@ -23,14 +23,18 @@ import sj.SjObject;
 public final class APIClient {
 	private static class DiscordAPIException extends RuntimeException {
 		DiscordAPIException(HttpRequestWithBody requestWrapper, HttpResponse<String> response) {
+			// @formatter:off
 			super(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + response.statusCode()
-					+ "\nResponse body: " + response.body()
-					+ "\nRequest body: " + requestWrapper.body);
+			    + "\nResponse body: " + response.body()
+				+ "\nRequest body: " + requestWrapper.body);
+			// @formatter:on
 		}
 	}
 
 	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {}
+	// @formatter:off
 	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
+	// @formatter:on
 
 	private static final BodyHandler<String> BODY_HANDLER = BodyHandlers.ofString();
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
@@ -73,11 +77,13 @@ public final class APIClient {
 
 	private HttpRequestWithBody buildRequest(HttpMethod method, String path, String body) {
 		final var requestBuilder = HttpRequest.newBuilder(URI.create(BASE_URL + path));
+
 		BodyPublisher bp = null;
 		if (body != null) {
 			requestBuilder.header("Content-Type", "application/json");
 			bp = BodyPublishers.ofString(body);
 		}
+
 		switch (method) {
 			case GET -> requestBuilder.GET();
 			case POST -> requestBuilder.POST(bp);
@@ -85,11 +91,13 @@ public final class APIClient {
 			case PUT -> requestBuilder.PUT(bp);
 			case DELETE -> requestBuilder.DELETE();
 		}
+
 		requestBuilder.header("Authorization", token);
 		return new HttpRequestWithBody(requestBuilder.build(), path, body);
 	}
 
 	private CompletableFuture<JsonResponse> sendRequest(HttpRequestWithBody requestWrapper) {
+		// @formatter:off
 		return HTTP_CLIENT.sendAsync(requestWrapper.request, BODY_HANDLER)
 			.thenApply(response -> {
 				final var statusCode = response.statusCode();
@@ -102,22 +110,20 @@ public final class APIClient {
 					throw new DiscordAPIException(requestWrapper, response);
 				return new JsonResponse(response.body());
 			}).exceptionally(Util::printStackTrace);
+		// @formatter:on
 	}
 
 	private CompletableFuture<JsonResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
 		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
 		if (debug)
 			debugPrint("Being rate limited for " + retryAfter + "ms");
-		
-		// try {
-		// 	Thread.sleep(retryAfter);
-		// } catch (InterruptedException e) {
-		// 	e.printStackTrace();
-		// }
-		// return sendRequest(requestWrapper);
-
+		// @formatter:off
 		return CompletableFuture.completedFuture(requestWrapper)
-			.thenComposeAsync(this::sendRequest, CompletableFuture.delayedExecutor(retryAfter, TimeUnit.MILLISECONDS));
+			.thenComposeAsync(
+				this::sendRequest,
+		    	CompletableFuture.delayedExecutor(retryAfter, TimeUnit.MILLISECONDS)
+			);
+		// @formatter:on
 	}
 
 	private CompletableFuture<JsonResponse> buildAndSend(HttpMethod method, String path, String body) {
