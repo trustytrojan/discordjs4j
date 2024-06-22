@@ -22,9 +22,7 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 
 	OptionResolver(final ChatInputInteraction interaction, final List<SjObject> rawOptions) {
 		this.interaction = Objects.requireNonNull(interaction);
-
 		options = new HashMap<String, ChatInputInteraction.Option>();
-
 		if (rawOptions != null) {
 			for (final var optionData : rawOptions) {
 				final var option = new ChatInputInteraction.Option(interaction, optionData);
@@ -36,8 +34,8 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 	@Override
 	public Iterator<ChatInputInteraction.Option> iterator() {
 		return (options == null)
-				? Collections.emptyIterator()
-				: options.values().iterator();
+			? Collections.emptyIterator()
+			: options.values().iterator();
 	}
 
 	public ChatInputInteraction.Option get(final String optionName) {
@@ -48,8 +46,8 @@ public class OptionResolver implements Iterable<ChatInputInteraction.Option> {
 			final Function<String, CompletableFuture<T>> resourceGetter) {
 		final var id = getString(optionName);
 		return (id == null)
-				? CompletableFuture.completedFuture(null)
-				: resourceGetter.apply(id);
+			? CompletableFuture.completedFuture(null)
+			: resourceGetter.apply(id);
 	}
 
 	public CompletableFuture<Role> getRoleAsync(final String optionName) {

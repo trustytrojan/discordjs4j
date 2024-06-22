@@ -25,6 +25,7 @@ public class Message extends AbstractDiscordResource {
 
 		public SjObject toJsonObject() {
 			final var obj = new SjObject();
+
 			if (content != null)
 				obj.put("content", content);
 
@@ -101,6 +102,10 @@ public class Message extends AbstractDiscordResource {
 				? gc.getGuild()
 				: CompletableFuture.completedFuture(null)
 		);
+	}
+
+	public CompletableFuture<Boolean> inGuild() {
+		return getGuild().thenApply(g -> g != null);
 	}
 
 	public String getContent() {

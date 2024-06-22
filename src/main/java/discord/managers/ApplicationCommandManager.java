@@ -11,7 +11,7 @@ import sj.SjObject;
 
 public class ApplicationCommandManager extends ResourceManager<ApplicationCommand> {
 	public ApplicationCommandManager(BotDiscordClient client, String guildId) {
-		super(client, "/applications/" + client.currentUser.getId() + ((guildId != null) ? ("/guilds/" + guildId) : "") + "/commands");
+		super(client, "/applications/" + client.clientUser.getId() + ((guildId != null) ? ("/guilds/" + guildId) : "") + "/commands");
 	}
 
 	@Override

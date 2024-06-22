@@ -93,11 +93,16 @@ public class ApplicationCommand extends AbstractDiscordResource {
 	}
 
 	/**
-	 * Chat input application command payload. Has extra attributes specific to
-	 * chat input commands.
+	 * Chat input application command payload.
+	 * Has extra attributes specific to chat input commands.
 	 */
 	public static class ChatInputPayload extends Payload {
 		private final String description;
+
+		/**
+		 * To add options to this command, assign this member a list.
+		 * It is {@code null} by default.
+		 */
 		public List<ApplicationCommandOption.Payload> options;
 
 		public ChatInputPayload(String name, String description) {

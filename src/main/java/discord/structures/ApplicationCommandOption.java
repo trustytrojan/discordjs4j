@@ -36,7 +36,12 @@ public final class ApplicationCommandOption {
 
 		@Override
 		public String toJsonString() {
-			return "{\"name\":\"" + name + "\",\"value\":\"" + value + "\"}";
+			return """
+				{
+					"name": "%s",
+					"value": "%s"
+				}
+				""".formatted(name, value);
 		}
 	}
 
@@ -64,10 +69,15 @@ public final class ApplicationCommandOption {
 		public Boolean required;
 		public List<Choice> choices;
 
-		public NonSubcommandPayload(final Type type, final String name, final String description) {
+		public NonSubcommandPayload(final Type type, final String name, final String description, final boolean required) {
 			super(type, name, description);
 			if (type == Type.SUB_COMMAND)
-				throw new RuntimeException();
+				throw new IllegalArgumentException("SUBCOMMAND type passed to NonSubcommandPayload");
+			this.required = required;
+		}
+
+		public NonSubcommandPayload(final Type type, final String name, final String description) {
+			this(type, name, description, false);
 		}
 
 		@Override
@@ -108,17 +118,16 @@ public final class ApplicationCommandOption {
 		type = Type.resolve(data.getInteger("type"));
 		name = data.getString("name");
 		description = data.getString("description");
-		final var r = data.getBoolean("required");
-		required = (r == null) ? false : r;
+		// final var r = data.getBoolean("required");
+		// required = (r == null) ? false : r;
+		required = data.getBooleanDefaultFalse("required");
 
 		final var rawChoices = data.getObjectArray("choices");
-		choices = (rawChoices == null)
-				? null
-				: rawChoices.stream().map(Choice::new).toList();
+		choices = (rawChoices == null) ? null
+			: rawChoices.stream().map(Choice::new).toList();
 
 		final var rawOptions = data.getObjectArray("options");
-		options = (rawOptions == null)
-				? null
-				: rawOptions.stream().map(ApplicationCommandOption::new).toList();
+		options = (rawOptions == null) ? null
+			: rawOptions.stream().map(ApplicationCommandOption::new).toList();
 	}
 }

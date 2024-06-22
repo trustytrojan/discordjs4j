@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import discord.util.Logger;
 import discord.util.Util;
 import sj.Sj;
 import sj.SjObject;
@@ -23,26 +24,18 @@ import sj.SjObject;
 public final class APIClient {
 	private static class DiscordAPIException extends RuntimeException {
 		DiscordAPIException(HttpRequestWithBody requestWrapper, HttpResponse<String> response) {
-			// @formatter:off
 			super(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + response.statusCode()
 			    + "\nResponse body: " + response.body()
 				+ "\nRequest body: " + requestWrapper.body);
-			// @formatter:on
 		}
 	}
 
 	private static record HttpRequestWithBody(HttpRequest request, String path, String body) {}
-	// @formatter:off
 	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
-	// @formatter:on
 
 	private static final BodyHandler<String> BODY_HANDLER = BodyHandlers.ofString();
 	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 	private static final String BASE_URL = "https://discord.com/api/v10";
-
-	private static void debugPrint(String message) {
-		System.out.println("[APIClient] " + message);
-	}
 
 	public static class JsonResponse {
 		public final String rawText;
@@ -97,33 +90,29 @@ public final class APIClient {
 	}
 
 	private CompletableFuture<JsonResponse> sendRequest(HttpRequestWithBody requestWrapper) {
-		// @formatter:off
 		return HTTP_CLIENT.sendAsync(requestWrapper.request, BODY_HANDLER)
 			.thenApply(response -> {
 				final var statusCode = response.statusCode();
 				final var responseBody = response.body();
 				if (debug)
-					debugPrint(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + statusCode);
+					Logger.log(requestWrapper.request.method() + ' ' + requestWrapper.path + " -> " + statusCode);
 				if (statusCode == 429)
 					return retryAfter(requestWrapper, responseBody).join();
 				else if (statusCode >= 400)
 					throw new DiscordAPIException(requestWrapper, response);
 				return new JsonResponse(response.body());
 			}).exceptionally(Util::printStackTrace);
-		// @formatter:on
 	}
 
 	private CompletableFuture<JsonResponse> retryAfter(HttpRequestWithBody requestWrapper, String responseBody) {
 		final var retryAfter = (int) (1000 * Sj.parseObject(responseBody).getDouble("retry_after"));
 		if (debug)
-			debugPrint("Being rate limited for " + retryAfter + "ms");
-		// @formatter:off
+			Logger.log("Being rate limited for " + retryAfter + "ms");
 		return CompletableFuture.completedFuture(requestWrapper)
 			.thenComposeAsync(
 				this::sendRequest,
 		    	CompletableFuture.delayedExecutor(retryAfter, TimeUnit.MILLISECONDS)
 			);
-		// @formatter:on
 	}
 
 	private CompletableFuture<JsonResponse> buildAndSend(HttpMethod method, String path, String body) {

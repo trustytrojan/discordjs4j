@@ -12,7 +12,7 @@ public final class SelfBot extends UserDiscordClient {
 	}
 
 	private SelfBot(final String token) {
-		super(token, false);
+		super(token, true);
 		gateway.connectAndIdentify(
 			GatewayIntent.GUILDS,
 			GatewayIntent.GUILD_MESSAGES
@@ -21,7 +21,7 @@ public final class SelfBot extends UserDiscordClient {
 
 	@Override
 	protected void onReady() {
-		System.out.println("Logged in as " + currentUser.getTag() + '!');
+		System.out.println("Logged in as " + clientUser.getTag() + '!');
 	}
 
 	private static final String PREFIX = "!";
@@ -29,7 +29,7 @@ public final class SelfBot extends UserDiscordClient {
 	@Override
 	protected void onMessageCreate(final Message message) {
 		// Only allow this user to execute commands
-		if (!message.getAuthorId().equals(currentUser.getId()))
+		if (!message.getAuthorId().equals(clientUser.getId()))
 			return;
 		final var args = message.getContent().split(" ");
 		if (!args[0].startsWith(PREFIX))

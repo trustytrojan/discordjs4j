@@ -17,12 +17,12 @@ public sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
 	public final ChannelManager channels = new ChannelManager(this);
 	public final GuildManager guilds = new GuildManager(this);
 
-	public final ClientUser currentUser;
+	public final ClientUser clientUser;
 
 	protected DiscordClient(String token, boolean bot, boolean debug) {
 		api = new APIClient(token, bot, debug);
 		gateway = new GatewayClient(this, token, debug);
-		currentUser = users.getCurrentUser().join();
+		clientUser = users.getCurrentUser().join();
 	}
 
 	/*

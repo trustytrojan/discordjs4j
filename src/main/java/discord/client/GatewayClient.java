@@ -18,15 +18,12 @@ import discord.resources.channels.MessageChannel;
 import discord.structures.AuditLogEntry;
 import discord.structures.IdentifyParams;
 import discord.structures.interactions.Interaction;
+import discord.util.Logger;
 import discord.util.Util;
 import sj.Sj;
 import sj.SjObject;
 
 public class GatewayClient extends WebSocketClient {
-	private static void debugPrint(final String message) {
-		System.out.println("[GatewayClient] " + message);
-	}
-
 	private static final URI DISCORD_GATEWAY_URI = URI.create("wss://gateway.discord.gg");
 
 	private final Timer heartbeatTimer = new Timer();
@@ -61,7 +58,7 @@ public class GatewayClient extends WebSocketClient {
 		try {
 			if (!connectBlocking())
 				// also a good idea to print this regardless of this.debug
-				debugPrint("connectBlocking() failed!");
+				Logger.log("connectBlocking() failed!");
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -69,17 +66,16 @@ public class GatewayClient extends WebSocketClient {
 
 	private void sendIdentify(final String payload) {
 		if (debug)
-			debugPrint("Sending identify payload: " + payload);
+			Logger.log("Sending identify payload: " + payload);
 		send(payload);
 	}
 
 	private void sendIdentify(final GatewayIntent... intents) {
-		final var d = Map.of(
+		sendIdentify("{\"op\":2,\"d\":" + Sj.write(Map.of(
 			"token", token,
 			"properties", IdentifyParams.DEFAULT_CONNECTION_PROPERTIES,
 			"intents", GatewayIntent.sum(intents)
-		);
-		sendIdentify("{\"op\":2,\"d\":" + Sj.write(d) + "}");
+		)) + "}");
 	}
 
 	private void sendIdentify(final IdentifyParams params) {
@@ -102,22 +98,22 @@ public class GatewayClient extends WebSocketClient {
 			obj.put("nonce", nonce);
 		final var payload = "{\"op\":8,\"d\":" + obj.toJsonString() + "}";
 		if (debug)
-			debugPrint("Sending Request Guild Members payload: " + payload);
+			Logger.log("Sending Request Guild Members payload: " + payload);
 		send(payload);
 	}
 
 	@Override
 	public void onOpen(final ServerHandshake handshake) {
 		if (debug)
-			debugPrint("""
-					Connection to Discord gateway opened
-						Status code: %d
-						Status message: %s
-						Content: %s
-					""".formatted(
-					handshake.getHttpStatus(),
-					handshake.getHttpStatusMessage(),
-					handshake.getContent()));
+			Logger.log("""
+				Connection to Discord gateway opened
+					Status code: %d
+					Status message: %s
+					Content: %s
+				""".formatted(
+				handshake.getHttpStatus(),
+				handshake.getHttpStatusMessage(),
+				handshake.getContent()));
 	}
 
 	@Override
@@ -128,17 +124,17 @@ public class GatewayClient extends WebSocketClient {
 	@Override
 	public void onClose(final int code, final String reason, final boolean remote) {
 		if (debug)
-			debugPrint("""
-					Connection closed!
-						Code: %d
-						Reason: %s
-						Remote: %b
-					""".formatted(code, reason, remote));
+			Logger.log("""
+				Connection closed!
+					Code: %d
+					Reason: %s
+					Remote: %b
+				""".formatted(code, reason, remote));
 	}
 
 	@Override
 	public void onError(final Exception e) {
-		debugPrint("WebSocket error occurred!");
+		Logger.log("WebSocket error occurred!");
 		e.printStackTrace();
 	}
 
@@ -152,9 +148,13 @@ public class GatewayClient extends WebSocketClient {
 
 				final var t = obj.getString("t");
 				if (debug)
-					debugPrint("Event received: " + t);
+					Logger.log("Event received: " + t);
 
-				switch (GatewayEvent.valueOf(t)) {
+				final GatewayEvent ev;
+				try { ev = GatewayEvent.valueOf(t); }
+				catch (final IllegalArgumentException e) { return; }
+
+				switch (ev) {
 					case READY -> {
 						// this is really only useful for users
 						// TODO: get more initial data from the ready event for USER clients
@@ -183,7 +183,6 @@ public class GatewayClient extends WebSocketClient {
 					case CHANNEL_UPDATE -> client.onChannelUpdate(client.channels.cache(obj.getObject("d")));
 					case CHANNEL_DELETE -> {
 						final var id = obj.getObject("d").getString("id");
-						System.out.println(id);
 						final var deletedChannel = client.channels.cache.get(id);
 						deletedChannel.markAsDeleted();
 						client.onChannelDelete(deletedChannel);
@@ -224,7 +223,7 @@ public class GatewayClient extends WebSocketClient {
 			case HEARTBEAT_ACK -> {
 				ping = System.currentTimeMillis() - heartbeatSentAt;
 				if (debug)
-					debugPrint("Heartbeat ACK received; Ping: " + ping + "ms");
+					Logger.log("Heartbeat ACK received; Ping: " + ping + "ms");
 			}
 
 			// we should only receive this once
@@ -234,20 +233,19 @@ public class GatewayClient extends WebSocketClient {
 				// interval in milliseconds that discord wants us to wait before sending another heartbeat
 				final var heartbeatInterval = d.getLong("heartbeat_interval");
 				if (debug)
-					debugPrint("Hello event received; Heartbeat interval: " + heartbeatInterval + "ms");
+					Logger.log("Hello event received; Heartbeat interval: " + heartbeatInterval + "ms");
 
 				heartbeatTimer.schedule(new TimerTask() {
 					public void run() {
 						if (debug)
-							debugPrint("Sending heartbeat; Sequence number: " + sequenceNumber);
+							Logger.log("Sending heartbeat; Sequence number: " + sequenceNumber);
 						send("{\"op\":" + GatewayOpcode.HEARTBEAT.value + ",\"d\":" + sequenceNumber + "}");
 						heartbeatSentAt = System.currentTimeMillis();
 					}
 				}, 0, heartbeatInterval);
 			}
 
-			default -> {
-			}
+			default -> {}
 		}
 	}
 }
