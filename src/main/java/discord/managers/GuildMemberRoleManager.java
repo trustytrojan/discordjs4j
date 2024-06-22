@@ -11,13 +11,13 @@ import sj.SjObject;
 public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	private final GuildMember member;
 
-	public GuildMemberRoleManager(DiscordClient client, GuildMember member) {
+	public GuildMemberRoleManager(final DiscordClient client, final GuildMember member) {
 		super(client, member.getGuild().join(), null);
 		this.member = member;
 	}
 
 	@Override
-	public Role construct(SjObject data) {
+	public Role construct(final SjObject data) {
 		return new Role(client, data, guild);
 	}
 
@@ -27,21 +27,24 @@ public class GuildMemberRoleManager extends GuildResourceManager<Role> {
 	 * acquired from guild member objects from the "Get Guild Member" endpoint.
 	 */
 	@Override
-	public CompletableFuture<Role> get(String id, boolean force) throws UnsupportedOperationException {
-		throw new UnsupportedOperationException("Roles can only be fetched individually");
+	public CompletableFuture<Role> get(final String id, final boolean force) throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
 	}
 
-	public CompletableFuture<Void> add(String id) {
+	public CompletableFuture<Void> add(final String id) {
 		return client.api.put(pathWithId(id), null).thenAccept(r -> cache(r.asObject()));
 	}
 
-	public CompletableFuture<Void> remove(String id) {
+	public CompletableFuture<Void> remove(final String id) {
 		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return guild.roles.refreshCache().thenRun(() -> {
+		return CompletableFuture.allOf(
+			guild.roles.refreshCache(),
+			member.refreshData()
+		).thenRun(() -> {
 			final var freshIds = member.getData().getStringArray("roles");
 			final var deletedIds = Util.setDifference(cache.keySet(), freshIds);
 			deletedIds.forEach(cache::remove);

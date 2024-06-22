@@ -21,10 +21,5 @@ public non-sealed class BotDiscordClient extends DiscordClient {
 		return api.get("/oauth2/applications/@me").thenApply(r -> new Application(this, r.asObject()));
 	}
 
-	/*
-	 * Subclasses should override the below methods as necessary
-	 * if they want to use old-style signal handling.
-	 */
-
 	protected void onInteractionCreate(Interaction interaction) {}
 }

@@ -8,6 +8,7 @@ import discord.resources.Message;
 import discord.resources.channels.Channel;
 import discord.resources.guilds.Guild;
 import discord.structures.AuditLogEntry;
+import discord.util.Logger;
 
 public sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
 	public final APIClient api;
@@ -19,25 +20,24 @@ public sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
 
 	public final ClientUser clientUser;
 
-	protected DiscordClient(String token, boolean bot, boolean debug) {
+	protected DiscordClient(final String token, final boolean bot, final boolean debug) {
 		api = new APIClient(token, bot, debug);
 		gateway = new GatewayClient(this, token, debug);
 		clientUser = users.getCurrentUser().join();
+		if (debug) Logger.log("Logged in as: " + clientUser.getTag());
 	}
 
-	/*
-	 * Subclasses should override the below methods to receive events.
-	 */
+	// Subclasses should override the methods below to receive events.
 
 	protected void onReady() {}
-	protected void onChannelCreate(Channel channel) {}
-	protected void onChannelUpdate(Channel channel) {}
-	protected void onChannelDelete(Channel channel) {}
-	protected void onGuildCreate(Guild guild) {}
-	protected void onGuildUpdate(Guild guild) {}
-	protected void onGuildDelete(Guild guild) {}
-	protected void onGuildAuditLogEntryCreate(AuditLogEntry auditLogEntry) {}
-	protected void onMessageCreate(Message message) {}
-	protected void onMessageUpdate(Message message) {}
-	protected void onMessageDelete(Message message) {}
+	protected void onChannelCreate(final Channel channel) {}
+	protected void onChannelUpdate(final Channel channel) {}
+	protected void onChannelDelete(final Channel channel) {}
+	protected void onGuildCreate(final Guild guild) {}
+	protected void onGuildUpdate(final Guild guild) {}
+	protected void onGuildDelete(final Guild guild) {}
+	protected void onGuildAuditLogEntryCreate(final AuditLogEntry auditLogEntry) {}
+	protected void onMessageCreate(final Message message) {}
+	protected void onMessageUpdate(final Message message) {}
+	protected void onMessageDelete(final Message message) {}
 }

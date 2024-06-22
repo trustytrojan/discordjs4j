@@ -1,5 +1,6 @@
 package discord.managers;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
@@ -13,29 +14,35 @@ public class RoleManager extends GuildResourceManager<Role> {
 	}
 
 	@Override
-	public Role construct(SjObject data) {
+	public Role construct(final SjObject data) {
 		return new Role(client, data, guild);
 	}
 
 	@Override
-	public CompletableFuture<Role> get(String id, boolean force) {
-		throw new UnsupportedOperationException("Roles cannot be fetched individually");
+	public CompletableFuture<Role> get(final String id, final boolean force) {
+		Objects.requireNonNull(id);
+		if (!force) {
+			final var cached = cache.get(id);
+			if (cached != null)
+				return CompletableFuture.completedFuture(cached);
+		}
+		return refreshCache().thenApply(__ -> cache.get(id));
 	}
 
-	public CompletableFuture<Role> create(Role.Payload payload) {
+	public CompletableFuture<Role> create(final Role.Payload payload) {
 		return client.api.post(basePath, payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
-	public CompletableFuture<Role> edit(String id, Role.Payload payload) {
+	public CompletableFuture<Role> edit(final String id, final Role.Payload payload) {
 		return client.api.patch(pathWithId(id), payload.toJsonString()).thenApply(r -> cache(r.asObject()));
 	}
 
-	public CompletableFuture<Void> delete(String id) {
+	public CompletableFuture<Void> delete(final String id) {
 		return client.api.delete(pathWithId(id)).thenRun(() -> cache.remove(id));
 	}
 
 	@Override
 	public CompletableFuture<Void> refreshCache() {
-		return client.api.get(basePath).thenAccept(r -> r.asObjectArray().forEach(this::cache));
+		return client.api.get(basePath).thenAccept(this::cacheNewDeleteOld);
 	}
 }

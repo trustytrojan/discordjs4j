@@ -82,8 +82,14 @@ public class GatewayClient extends WebSocketClient {
 		sendIdentify("{\"op\":2,\"d\":" + params.toJsonString() + "}");
 	}
 
-	public void requestGuildMembers(final String guildId, final String query, final int limit, final boolean presences,
-			final List<String> userIds, final String nonce) {
+	public void requestGuildMembers(
+		final String guildId,
+		final String query,
+		final int limit,
+		final boolean presences,
+		final List<String> userIds,
+		final String nonce
+	) {
 		final var obj = new SjObject();
 		obj.put("guild_id", Objects.requireNonNull(guildId));
 		if (query != null) {
@@ -134,7 +140,8 @@ public class GatewayClient extends WebSocketClient {
 
 	@Override
 	public void onError(final Exception e) {
-		Logger.log("WebSocket error occurred!");
+		if (debug)
+			Logger.log("WebSocket error occurred!");
 		e.printStackTrace();
 	}
 
@@ -189,19 +196,17 @@ public class GatewayClient extends WebSocketClient {
 					}
 
 					case MESSAGE_CREATE -> {
-						final var messageObj = obj.getObject("d");
-						client.channels.get(messageObj.getString("channel_id")).thenAccept(c -> {
-							final var channel = (MessageChannel) c;
-							final var message = channel.getMessageManager().cache(messageObj);
+						final var d = obj.getObject("d");
+						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
+							final var message = ((MessageChannel) c).getMessageManager().cache(d);
 							client.onMessageCreate(message);
 						});
 					}
 
 					case MESSAGE_UPDATE -> {
-						final var messageObj = obj.getObject("d");
-						client.channels.get(messageObj.getString("channel_id")).thenAccept(c -> {
-							final var channel = (MessageChannel) c;
-							final var message = channel.getMessageManager().cache(messageObj);
+						final var d = obj.getObject("d");
+						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
+							final var message = ((MessageChannel) c).getMessageManager().cache(d);
 							client.onMessageUpdate(message);
 						});
 					}
@@ -209,8 +214,7 @@ public class GatewayClient extends WebSocketClient {
 					case MESSAGE_DELETE -> {
 						final var d = obj.getObject("d");
 						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
-							final var channel = (MessageChannel) c;
-							final var deletedMessage = channel.getMessageManager().cache.get(d.getString("id"));
+							final var deletedMessage = ((MessageChannel) c).getMessageManager().cache.get(d.getString("id"));
 							deletedMessage.markAsDeleted();
 							client.onMessageDelete(deletedMessage);
 						});

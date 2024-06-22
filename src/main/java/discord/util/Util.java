@@ -52,7 +52,7 @@ public final class Util {
 	}
 
 	public static <T> Collection<T> setDifference(Collection<T> c1, Collection<T> c2) {
-		final var difference = new HashSet<T>(c1);
+		final var difference = new HashSet<>(c1);
 		difference.removeAll(c2);
 		return difference;
 	}

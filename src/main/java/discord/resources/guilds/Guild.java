@@ -241,10 +241,7 @@ public class Guild extends PreviewGuild {
 		 * https://discord.com/developers/docs/resources/guild#welcome-screen-object-welcome-screen-channel-structure
 		 */
 		public static class WelcomeScreenChannel {
-			public final String channelId,
-								description,
-								emojiId,
-								emojiName;
+			public final String channelId, description, emojiId, emojiName;
 
 			private WelcomeScreenChannel(final SjObject data) {
 				channelId = data.getString("channel_id");
@@ -274,8 +271,8 @@ public class Guild extends PreviewGuild {
 		roles = new RoleManager(client, this);
 		members = new GuildMemberManager(client, this);
 		commands = (client instanceof final BotDiscordClient bot && bot.application != null)
-				 ? new ApplicationCommandManager(bot, getId())
-				 : null;
+			? new ApplicationCommandManager(bot, getId())
+			: null;
 	}
 
 	public String getOwnerId() {

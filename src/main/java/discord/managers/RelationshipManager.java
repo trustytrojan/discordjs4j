@@ -17,9 +17,12 @@ public class RelationshipManager extends ResourceManager<Relationship> {
 		return new Relationship((UserDiscordClient) client, data);
 	}
 
+	/**
+	 * @throws UnsupportedOperationException Relationship objects cannot be fetched individually!
+	 */
 	@Override
 	public CompletableFuture<Relationship> get(String id, boolean force) {
-		throw new UnsupportedOperationException("Discord does not allow GET requests to /users/@me/relationships/{id}");
+		throw new UnsupportedOperationException("Relationships cannot be fetched individually");
 	}
 
 	public CompletableFuture<Void> blockUser(String id) {
