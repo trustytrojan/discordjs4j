@@ -105,9 +105,18 @@ public class ApplicationCommand extends AbstractDiscordResource {
 		 */
 		public List<ApplicationCommandOption.Payload> options;
 
-		public ChatInputPayload(String name, String description) {
+		public ChatInputPayload(
+			final String name,
+			final String description,
+			final List<ApplicationCommandOption.Payload> options
+		) {
 			super(null, name);
 			this.description = Objects.requireNonNull(description);
+			this.options = options;
+		}
+
+		public ChatInputPayload(final String name, final String description) {
+			this(name, description, null);
 		}
 
 		@Override

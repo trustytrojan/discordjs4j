@@ -1,5 +1,6 @@
 package discord.structures;
 
+import java.util.Collections;
 import java.util.List;
 
 import sj.SjObject;
@@ -94,8 +95,13 @@ public final class ApplicationCommandOption {
 	public static class SubcommandPayload extends Payload {
 		public List<Payload> options;
 
-		public SubcommandPayload(final String name, final String description) {
+		public SubcommandPayload(final String name, final String description, final List<Payload> options) {
 			super(Type.SUB_COMMAND, name, description);
+			this.options = options;
+		}
+
+		public SubcommandPayload(final String name, final String description) {
+			this(name, description, null);
 		}
 
 		@Override
@@ -118,16 +124,16 @@ public final class ApplicationCommandOption {
 		type = Type.resolve(data.getInteger("type"));
 		name = data.getString("name");
 		description = data.getString("description");
-		// final var r = data.getBoolean("required");
-		// required = (r == null) ? false : r;
 		required = data.getBooleanDefaultFalse("required");
 
 		final var rawChoices = data.getObjectArray("choices");
-		choices = (rawChoices == null) ? null
+		choices = (rawChoices == null)
+			? Collections.emptyList()
 			: rawChoices.stream().map(Choice::new).toList();
 
 		final var rawOptions = data.getObjectArray("options");
-		options = (rawOptions == null) ? null
+		options = (rawOptions == null)
+			? Collections.emptyList()
 			: rawOptions.stream().map(ApplicationCommandOption::new).toList();
 	}
 }

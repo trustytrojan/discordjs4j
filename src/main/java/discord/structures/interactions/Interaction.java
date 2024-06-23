@@ -45,7 +45,9 @@ public abstract class Interaction {
 	}
 
 	public static class Response extends Message.Payload {
-		private final boolean ephemeral;
+		public boolean ephemeral;
+
+		public Response() {}
 
 		public Response(final boolean ephemeral) {
 			this.ephemeral = ephemeral;
@@ -69,26 +71,18 @@ public abstract class Interaction {
 	}
 
 	protected final BotDiscordClient client;
-	
-	private final String id;
-	private final String token;
-	
-	public final Type type;
-	
-	public final String channelId;
-	public final String guildId;
-	public final String userId;
-	
 	protected final SjObject innerData;
-	
+	private final String id, token;
+	public final Type type;
+	public final String channelId, guildId, userId;
 	private Message originalResponse;
 	private boolean deferred;
 
 	protected Interaction(final BotDiscordClient client, final SjObject data) {
 		this.client = Objects.requireNonNull(client);
+		innerData = data.getObject("data");
 		id = data.getString("id");
 		type = Type.resolve(data.getShort("type"));
-		innerData = data.getObject("data");
 		token = data.getString("token");
 		channelId = data.getObject("channel").getString("id");
 		guildId = data.getString("guild_id");
@@ -98,7 +92,7 @@ public abstract class Interaction {
 	}
 
 	public boolean inGuild() {
-		return (guildId != null);
+		return guildId != null;
 	}
 
 	public CompletableFuture<Guild> getGuild() {
@@ -116,7 +110,7 @@ public abstract class Interaction {
 	public CompletableFuture<User> getUser() {
 		return client.users.get(userId);
 	}
-	
+
 	public Message getOriginalResponse() {
 		return originalResponse;
 	}
