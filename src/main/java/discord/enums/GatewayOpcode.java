@@ -6,7 +6,7 @@ public enum GatewayOpcode {
 	DISPATCH, // 0
 	HEARTBEAT, // 1
 	IDENTIFY, // 2
-	PRESENCE_UPDATE, // 3
+	UPDATE_PRESENCE, // 3
 	VOICE_STATE_UPDATE, // 4
 	RESUME(6),
 	RECONNECT(7),

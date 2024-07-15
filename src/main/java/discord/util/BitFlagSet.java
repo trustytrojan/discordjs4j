@@ -8,8 +8,7 @@ import discord.util.BitFlagSet.BitFlag;
  */
 public class BitFlagSet<T extends BitFlag> {
 	/**
-	 * An interface requiring enums to return a {@code long}
-	 * with only one {@code 1} bit, for use with {@code BitFlagSet}.
+	 * An interface requiring enums to return the index of the set bit for use with {@code BitFlagSet}.
 	 */
 	public static interface BitFlag {
 		int getBitIndex();

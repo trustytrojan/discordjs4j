@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -6,16 +7,69 @@ import discord.enums.GatewayIntent;
 import discord.resources.Message;
 import discord.util.Util;
 
+// Friendly reminder that self/user-botting breaks Discord's TOS.
 public final class SelfBot extends UserDiscordClient {
-	public static void main(final String[] args) throws Exception {
-		new SelfBot(Util.readFile("tokens/main"));
-	}
+	private static final String PREFIX = "!";
 
-	private SelfBot(final String token) {
-		super(token, true);
-		gateway.connectAndIdentify(
+	private static final Map<String, BiConsumer<Message, List<String>>> COMMAND_HANDLERS = Map.of(
+		// Echoes all arguments.
+		"echo", (final var message, final var args) -> {
+			message.reply(String.join(" ", args));
+		},
+
+		// Lists all of the roles in the current guild.
+		"roles", (final var message, final var args) -> {
+			final var guild = message.getGuild().join();
+
+			if (guild == null) {
+				message.reply("this is a server-only command!");
+				return;
+			}
+
+			// Refresh the role cache for the guild
+			guild.roles.refreshCache().join();
+
+			// Construct and send a formatted table of roles in a codeblock
+			final var template = "%-20s %s%n";
+			final var sb = new StringBuilder("```" + template.formatted("ID", "Name"));
+			guild.roles.cache.forEach((id, role) -> sb.append(template.formatted(id, role.getName())));
+			message.reply(sb.append("```").toString());
+		},
+
+		// Lists all of the channels in the current guild.
+		"channels", (final var message, final var args) -> {
+			final var guild = message.getGuild().join();
+
+			if (guild == null) {
+				message.reply("this is a server-only command!");
+				return;
+			}
+
+			// Refresh the channel cache for the guild
+			guild.channels.refreshCache().join();
+
+			// Construct and send a formatted table of channels in a codeblock
+			final var template = "%-20s %-20s %s%n";
+			final var sb = new StringBuilder("```" + template.formatted("ID", "Type", "Name"));
+			guild.channels.cache.forEach(
+				(id, channel) -> sb.append(template.formatted(id, channel.getType(), channel.getName())));
+			message.reply(sb.append("```").toString());
+		}
+	);
+
+	private SelfBot(final String token) throws Exception {
+		super(token, false);
+
+		// Connect to the Discord Gateway.
+		gateway.tryConnect();
+
+		// Identify ourselves to the Discord Gateway.
+		// Most things (like authentication) are handled behind the scenes, but we need to specify our desired intents here.
+		// Because we make use of guilds, their messages, and DMs, pass their respective intents.
+		gateway.identify(
 			GatewayIntent.GUILDS,
-			GatewayIntent.GUILD_MESSAGES
+			GatewayIntent.GUILD_MESSAGES,
+			GatewayIntent.DIRECT_MESSAGES
 		);
 	}
 
@@ -24,44 +78,32 @@ public final class SelfBot extends UserDiscordClient {
 		System.out.println("Logged in as " + clientUser.getTag() + '!');
 	}
 
-	private static final String PREFIX = "!";
-
 	@Override
 	protected void onMessageCreate(final Message message) {
-		// Only allow this user to execute commands
 		if (!message.getAuthorId().equals(clientUser.getId()))
+			// Only allow ourself to execute commands.
 			return;
+
+		if (!message.getContent().startsWith(PREFIX))
+			// Ignore messages without our command prefix.
+			return;
+
+		// Get space-separated arguments for the commands
 		final var args = message.getContent().split(" ");
-		if (!args[0].startsWith(PREFIX))
-			return;
-		final var command = args[0].substring(1);
-		try { COMMAND_HANDLERS.get(command).accept(message, args); }
-		catch (final Exception e) { message.reply("**this is an error**```" + e.getMessage() + "```"); }
+
+		// Get the command name by skipping the prefix
+		final var command = args[0].substring(PREFIX.length());
+
+		try {
+			COMMAND_HANDLERS.get(command)
+				// Ignore args[0] since that's just the command name.
+				.accept(message, List.of(args).subList(1, args.length));
+		} catch (final Exception e) {
+			message.reply("**this is an error**```" + e.getMessage() + "```");
+		}
 	}
 
-	private static final Map<String, BiConsumer<Message, String[]>> COMMAND_HANDLERS = Map.of(
-		"roles", (final var message, final var args) -> {
-			final var guild = message.getGuild().join();
-			if (guild == null)
-				return;
-			guild.roles.refreshCache().join();
-			final var formatTemplate = "%-20s %s%n";
-			final var sb = new StringBuilder("```" + formatTemplate.formatted("ID", "Name"));
-			guild.roles.cache.forEach((id, role) -> sb.append(formatTemplate.formatted(id, role.getName())));
-			message.reply(sb.append("```").toString());
-		},
-
-		"channels", (final var message, final var args) -> {
-			final var guild = message.getGuild().join();
-			if (guild == null)
-				return;
-			guild.channels.refreshCache().join();
-			final var formatTemplate = "%-20s %-20s %s%n";
-			final var sb = new StringBuilder("```" + formatTemplate.formatted("ID", "Type", "Name"));
-			guild.channels.cache.forEach(
-				(id, channel) -> sb.append(formatTemplate.formatted(id, channel.getType(), channel.getName()))
-			);
-			message.reply(sb.append("```").toString());
-		}
-	);
+	public static void main(final String[] args) throws Exception {
+		new SelfBot(Util.readFile("tokens/main"));
+	}
 }

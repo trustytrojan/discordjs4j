@@ -23,7 +23,7 @@ public enum GatewayIntent {
 	AUTO_MODERATION_CONFIGURATION(20),
 	AUTO_MODERATION_EXECUTION(21);
 
-	public static int sum(GatewayIntent... intents) {
+	public static int sum(final GatewayIntent... intents) {
 		return Stream.of(intents).mapToInt(i -> i.value).sum();
 	}
 

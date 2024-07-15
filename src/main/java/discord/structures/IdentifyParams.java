@@ -11,9 +11,7 @@ import sj.SjSerializable;
 /**
  * https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure
  * <p>
- * The {@code token} field should have been given to a {@code DiscordClient}
- * instance.
- * It will handle your token properly, so
+ * You can pass an instance of this class when connecting to the Discord gateway via {@link GatewayClient#connectAndIdentify(IdentifyParams)}.
  */
 public class IdentifyParams implements SjSerializable {
 	public static final Map<String, String> DEFAULT_CONNECTION_PROPERTIES =

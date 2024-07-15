@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
 import discord.client.UserDiscordClient;
+import discord.enums.GatewayEvent;
 import discord.resources.channels.DMChannel;
 import discord.util.BitFlagSet;
 import discord.util.BitFlagSet.BitFlag;
@@ -142,5 +143,21 @@ public class User extends AbstractDiscordResource {
 
 	public BitFlagSet<Flag> getPublicFlags() {
 		return new BitFlagSet<>(data.getInteger("public_flags"));
+	}
+
+	/**
+	 * Overlays this user's data using the partial user object received from a 
+	 * {@link GatewayEvent#PRESENCE_UPDATE} event.
+	 * @param receivedUser A user object received from a {@link GatewayEvent#PRESENCE_UPDATE} event.
+	 */
+	public void overlay(final SjObject receivedUser) {
+		if (receivedUser.containsKey("username"))
+			data.put("username", receivedUser.get("username"));
+		if (receivedUser.containsKey("avatar"))
+			data.put("avatar", receivedUser.get("avatar"));
+		if (receivedUser.containsKey("banner"))
+			data.put("banner", receivedUser.get("banner"));
+		if (receivedUser.containsKey("public_flags"))
+			data.put("public_flags", receivedUser.get("public_flags"));
 	}
 }

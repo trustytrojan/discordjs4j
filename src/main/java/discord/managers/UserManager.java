@@ -17,7 +17,7 @@ public class UserManager extends ResourceManager<User> {
 		return new User(client, data);
 	}
 
-	public CompletableFuture<ClientUser> getCurrentUser() {
+	public CompletableFuture<ClientUser> getClientUser() {
 		return client.api.get("/users/@me").thenApply(r -> (ClientUser) cache(new ClientUser(client, r.asObject())));
 	}
 

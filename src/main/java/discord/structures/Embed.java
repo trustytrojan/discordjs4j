@@ -8,15 +8,15 @@ import sj.SjObject;
 import sj.SjSerializable;
 
 public class Embed implements SjSerializable {
-	private static record Author(String name, String iconURL, String url) implements SjSerializable {
+	private static record Author(String name, String iconUrl, String url) implements SjSerializable {
 		@Override
 		public String toJsonString() {
 			final var obj = new SjObject();
 			obj.put("name", name);
 			if (url != null)
 				obj.put("url", url);
-			if (iconURL != null)
-				obj.put("icon_url", iconURL);
+			if (iconUrl != null)
+				obj.put("icon_url", iconUrl);
 			return obj.toString();
 		}
 	}
@@ -33,13 +33,13 @@ public class Embed implements SjSerializable {
 		}
 	}
 
-	private static record Footer(String text, String iconURL) implements SjSerializable {
+	private static record Footer(String text, String iconUrl) implements SjSerializable {
 		@Override
 		public String toJsonString() {
 			final var obj = new SjObject();
 			obj.put("text", text);
-			if (iconURL != null)
-				obj.put("icon_url", iconURL);
+			if (iconUrl != null)
+				obj.put("icon_url", iconUrl);
 			return obj.toString();
 		}
 	}
@@ -59,20 +59,20 @@ public class Embed implements SjSerializable {
 		color = Util.resolveHexColor(hexColor);
 	}
 
-	public void setAuthor(String name, String iconURL, String url) {
-		author = new Author(name, iconURL, url);
+	public void setAuthor(String name, String iconUrl, String url) {
+		author = new Author(name, iconUrl, url);
 	}
 
-	public void setAuthor(String name, String iconURL) {
-		author = new Author(name, iconURL, null);
+	public void setAuthor(String name, String iconUrl) {
+		author = new Author(name, iconUrl, null);
 	}
 
 	public void setAuthor(String name) {
 		author = new Author(name, null, null);
 	}
 
-	public void setFooter(String text, String iconURL) {
-		footer = new Footer(text, iconURL);
+	public void setFooter(String text, String iconUrl) {
+		footer = new Footer(text, iconUrl);
 	}
 
 	public void setFooter(String text) {

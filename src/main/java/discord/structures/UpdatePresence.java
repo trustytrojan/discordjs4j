@@ -6,7 +6,9 @@ import sj.SjObject;
 import sj.SjSerializable;
 
 /**
- * https://discord.com/developers/docs/topics/gateway-events#update-presence-gateway-presence-update-structure
+ * https://discord.com/developers/docs/topics/gateway-events#update-presence
+ * <p>
+ * Sent by the client to indicate a presence or status update.
  */
 public class UpdatePresence implements SjSerializable {
 	public static enum Status { ONLINE, DND, IDLE, INVISIBLE, OFFLINE }
@@ -16,7 +18,11 @@ public class UpdatePresence implements SjSerializable {
 	public final Status status;
 	public final boolean afk;
 
-	public UpdatePresence(List<Activity> activities, Status status, boolean afk) {
+	public UpdatePresence(
+		final List<Activity> activities,
+		final Status status,
+		final boolean afk
+	) {
 		this.activities = activities;
 		this.status = status;
 		this.afk = afk;
@@ -27,7 +33,7 @@ public class UpdatePresence implements SjSerializable {
 		final var obj = new SjObject();
 		obj.put("since", since);
 		obj.put("activities", activities);
-		obj.put("status", status);
+		obj.put("status", status.toString().toLowerCase());
 		obj.put("afk", afk);
 		return obj.toJsonString();
 	}
