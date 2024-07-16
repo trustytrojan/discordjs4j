@@ -1,12 +1,37 @@
 package discord.resources.channels;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+import discord.client.DiscordClient;
 import discord.resources.GuildResource;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 import sj.SjSerializable;
 
 public interface GuildChannel extends GuildResource, Channel {
+	/**
+	 * Construct a {@link GuildChannel} with a {@link Guild}.
+	 * @param client The calling client
+	 * @param data Channel data from Discord.
+	 * @param guild The channel's guild. Cannot be {@code null}.
+	 * @return An instance of a {@link GuildChannel} subclass decided by the {@code type} property in {@code data},
+	 *         or {@code null} if the channel type hasn't been implemented.
+	 */
+	public static GuildChannel construct(final DiscordClient client, final SjObject data, final Guild guild) {
+		System.out.println(Channel.Type.LOOKUP_TABLE[data.getInteger("type")]);
+		Objects.requireNonNull(guild);
+		return switch (Channel.Type.LOOKUP_TABLE[data.getInteger("type")]) {
+			case GUILD_TEXT -> new TextChannel(client, data, guild);
+			case GUILD_VOICE -> new VoiceChannel(client, data, guild);
+			case GUILD_CATEGORY -> new CategoryChannel(client, data, guild);
+			case GUILD_ANNOUNCEMENT -> new AnnouncementChannel(client, data, guild);
+			case GUILD_FORUM -> new ForumChannel(client, data, guild);
+			// ...
+			default -> null;
+		};
+	}
+
 	// https://discord.com/developers/docs/resources/channel#modify-channel
 	public abstract class Payload implements SjSerializable {
 		// subclasses can hardcode the channel type!

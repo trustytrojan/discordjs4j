@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import discord.resources.Application;
 import discord.structures.interactions.Interaction;
 
-public non-sealed class BotDiscordClient extends DiscordClient {
+public class BotDiscordClient extends DiscordClient {
 	public final Application application;
 
 	public BotDiscordClient(String token) {

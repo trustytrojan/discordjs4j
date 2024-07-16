@@ -15,7 +15,7 @@ import discord.structures.AuditLogEntry;
 import discord.structures.ClientStatus;
 import discord.util.Logger;
 
-public sealed class DiscordClient permits BotDiscordClient, UserDiscordClient {
+public class DiscordClient {
 	public final APIClient api;
 	public final GatewayClient gateway;
 

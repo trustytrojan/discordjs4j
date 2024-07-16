@@ -263,13 +263,27 @@ public class Guild extends PreviewGuild {
 	public final GuildMemberManager members;
 	public final GuildChannelManager channels;
 	public final RoleManager roles;
+
+	/**
+	 * Will be {@code null} for non-bot users.
+	 */
 	public final ApplicationCommandManager commands;
 
 	public Guild(final DiscordClient client, final SjObject data) {
 		super(client, data);
+		
 		channels = new GuildChannelManager(client, this);
+		if (data.containsKey("channels"))
+			data.getObjectArray("channels").forEach(channels::cache);
+		
 		roles = new RoleManager(client, this);
+		if (data.containsKey("roles"))
+			data.getObjectArray("roles").forEach(roles::cache);
+		
 		members = new GuildMemberManager(client, this);
+		if (data.containsKey("members"))
+			data.getObjectArray("members").forEach(members::cache);
+
 		commands = (client instanceof final BotDiscordClient bot && bot.application != null)
 			? new ApplicationCommandManager(bot, getId())
 			: null;

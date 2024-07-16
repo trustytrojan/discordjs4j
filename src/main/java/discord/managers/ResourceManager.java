@@ -1,7 +1,6 @@
 package discord.managers;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
@@ -12,7 +11,7 @@ import discord.resources.DiscordResource;
 import discord.util.Util;
 import sj.SjObject;
 
-public abstract class ResourceManager<T extends DiscordResource> implements Iterable<T> {
+public abstract class ResourceManager<T extends DiscordResource> {
 	public final TreeMap<String, T> cache = new TreeMap<>();
 	protected final DiscordClient client;
 	protected final String basePath;
@@ -24,14 +23,6 @@ public abstract class ResourceManager<T extends DiscordResource> implements Iter
 
 	protected String pathWithId(final String id) {
 		return basePath + '/' + id;
-	}
-
-	/**
-	 * @return An {@link Iterator} that iterates over the resources in {@link #cache}.
-	 */
-	@Override
-	public Iterator<T> iterator() {
-		return cache.values().iterator();
 	}
 
 	/**

@@ -28,8 +28,6 @@ public abstract class AbstractDiscordResource implements DiscordResource {
 
 	@Override
 	public void setData(final SjObject data) {
-		if (!data.containsKey("id"))
-			throw new IllegalArgumentException("data does not match Discord resource structure");
 		this.data = Objects.requireNonNull(data);
 	}
 

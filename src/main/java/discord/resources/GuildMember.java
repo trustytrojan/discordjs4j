@@ -40,7 +40,7 @@ public class GuildMember extends AbstractGuildResource {
 
 	@Override
 	public String getId() {
-		return getData().getObject("user").getString(getId());
+		return getData().getObject("user").getString("id");
 	}
 
 	public CompletableFuture<User> getUserAsync() {

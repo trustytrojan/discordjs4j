@@ -42,7 +42,6 @@ public final class GatewayClient extends WebSocketClient {
 		this.client = client;
 		this.token = token;
 		this.debug = debug;
-		// Runtime.getRuntime().addShutdownHook(new Thread(this::close));
 	}
 
 	public long getPing() {
@@ -265,6 +264,16 @@ public final class GatewayClient extends WebSocketClient {
 					// https://discord.com/developers/docs/topics/gateway-events#ready
 					case READY -> {
 						sessionId = d.getString("session_id");
+						if (d.containsKey("guilds"))
+							d.getObjectArray("guilds").forEach(client.guilds::cache);
+						if (d.containsKey("private_channels"))
+							d.getObjectArray("private_channels").forEach(client.channels::cache);
+						if (d.containsKey("user"))
+							client.clientUser.setData(d.getObject("user"));
+						if (client instanceof final UserDiscordClient userClient) {
+							if (d.containsKey("relationships"))
+								d.getObjectArray("relationships").forEach(userClient.relationships::cache);
+						}
 						client.onReady();
 					}
 

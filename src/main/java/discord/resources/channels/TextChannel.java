@@ -3,6 +3,7 @@ package discord.resources.channels;
 import discord.client.DiscordClient;
 import discord.managers.MessageManager;
 import discord.resources.AbstractGuildResource;
+import discord.resources.guilds.Guild;
 import sj.SjObject;
 
 public class TextChannel extends AbstractGuildResource implements GuildChannel, MessageChannel {
@@ -35,6 +36,11 @@ public class TextChannel extends AbstractGuildResource implements GuildChannel, 
 	}
 
 	private final MessageManager messageManager;
+
+	TextChannel(DiscordClient client, SjObject data, Guild guild) {
+		super(client, data, guild);
+		messageManager = new MessageManager(client, this);
+	}
 
 	TextChannel(DiscordClient client, SjObject data) {
 		super(client, data);

@@ -7,15 +7,12 @@ import discord.client.DiscordClient;
 import discord.resources.channels.CategoryChannel;
 import discord.resources.channels.Channel;
 import discord.resources.channels.GuildChannel;
+import discord.resources.channels.MessageChannel;
 import discord.resources.channels.TextChannel;
 import discord.resources.channels.VoiceChannel;
 import discord.resources.guilds.Guild;
 import sj.SjObject;
 
-/**
- * This class relies mostly on ChannelManager for API calls, except for
- * getAll().
- */
 public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 	public GuildChannelManager(DiscordClient client, Guild guild) {
 		super(client, guild, "/channels");
@@ -23,7 +20,7 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 
 	@Override
 	public GuildChannel construct(SjObject data) {
-		return (GuildChannel) client.channels.construct(data);
+		return GuildChannel.construct(client, data, guild);
 	}
 
 	@Override
@@ -66,6 +63,13 @@ public class GuildChannelManager extends GuildResourceManager<GuildChannel> {
 		return cache.values().stream()
 			.filter(c -> c.getType() == Channel.Type.GUILD_VOICE)
 			.map(c -> (VoiceChannel) c)
+			.toList();
+	}
+
+	public List<MessageChannel> getMessageChannels() {
+		return cache.values().stream()
+			.filter(c -> c instanceof MessageChannel)
+			.map(c -> (MessageChannel) c)
 			.toList();
 	}
 }

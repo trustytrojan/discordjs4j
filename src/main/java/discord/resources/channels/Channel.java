@@ -23,7 +23,7 @@ public interface Channel extends DiscordResource {
 		GUILD_FORUM(15),
 		GUILD_MEDIA(16);
 
-		private static final Type[] LOOKUP_TABLE = new Type[17];
+		public static final Type[] LOOKUP_TABLE = new Type[17];
 
 		static {
 			Stream.of(Type.values()).forEach(t -> LOOKUP_TABLE[t.value] = t);
@@ -40,6 +40,16 @@ public interface Channel extends DiscordResource {
 		}
 	}
 
+	/**
+	 * Construct a {@link Channel} with {@code data}. If {@code data} represents a
+	 * {@link GuildChannel}, it is assumed that {@code data} contains a {@code guild_id}
+	 * property. If not, bad things may happen.
+	 * 
+	 * @param client The calling client
+	 * @param data Channel data from Discord. Must contain a {@code guild_id} property if it is a guild channel.
+	 * @return An instance of a {@link Channel} subclass decided by the {@code type} property in {@code data},
+	 *         or {@code null} if the channel type hasn't been implemented.
+	 */
 	public static Channel construct(final DiscordClient client, final SjObject data) {
 		return switch (Type.LOOKUP_TABLE[data.getInteger("type")]) {
 			case GUILD_TEXT -> new TextChannel(client, data);
@@ -47,6 +57,7 @@ public interface Channel extends DiscordResource {
 			case GUILD_VOICE -> new VoiceChannel(client, data);
 			case GROUP_DM -> new GroupDMChannel(client, data);
 			case GUILD_CATEGORY -> new CategoryChannel(client, data);
+			case GUILD_ANNOUNCEMENT -> new AnnouncementChannel(client, data);
 			// ...
 			default -> null;
 		};

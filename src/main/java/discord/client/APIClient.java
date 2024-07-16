@@ -11,6 +11,7 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import discord.util.Logger;
@@ -34,7 +35,15 @@ public final class APIClient {
 	private static enum HttpMethod { GET, POST, PUT, PATCH, DELETE };
 
 	private static final BodyHandler<String> BODY_HANDLER = BodyHandlers.ofString();
-	private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+
+	private static final HttpClient HTTP_CLIENT;
+	static {
+		final var hcb = HttpClient.newBuilder();
+		if (Integer.parseInt(System.getProperty("java.version").split("\\.")[0]) >= 19)
+			hcb.executor(Executors.newVirtualThreadPerTaskExecutor());
+		HTTP_CLIENT = hcb.build();
+	}
+
 	private static final String BASE_URL = "https://discord.com/api/v10";
 
 	public static class JsonResponse {
