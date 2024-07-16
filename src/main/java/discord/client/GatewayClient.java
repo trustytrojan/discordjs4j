@@ -220,7 +220,6 @@ public final class GatewayClient extends WebSocketClient {
 
 	private void handleData(final SjObject obj) {
 		switch (GatewayOpcode.resolve(obj.getShort("op"))) {
-
 			// https://discord.com/developers/docs/topics/gateway-events#hello
 			case HELLO -> {
 				final var heartbeatIntervalMillis = obj.getObject("d").getLong("heartbeat_interval");
@@ -292,8 +291,9 @@ public final class GatewayClient extends WebSocketClient {
 					case GUILD_CREATE -> client.onGuildCreate(client.guilds.cache(d));
 					case GUILD_UPDATE -> client.onGuildUpdate(client.guilds.cache(d));
 					case GUILD_DELETE -> {
-						final var id = d.getString("id");
-						final var deletedGuild = client.guilds.cache.get(id);
+						final var deletedGuild = client.guilds.cache.get(d.getString("id"));
+						if (deletedGuild == null)
+							return;
 						deletedGuild.markAsDeleted();
 						client.onGuildDelete(deletedGuild);
 					}
@@ -301,33 +301,31 @@ public final class GatewayClient extends WebSocketClient {
 					case CHANNEL_CREATE -> client.onChannelCreate(client.channels.cache(d));
 					case CHANNEL_UPDATE -> client.onChannelUpdate(client.channels.cache(d));
 					case CHANNEL_DELETE -> {
-						final var id = d.getString("id");
-						final var deletedChannel = client.channels.cache.get(id);
+						final var deletedChannel = client.channels.cache.get(d.getString("id"));
+						if (deletedChannel == null)
+							return;
 						deletedChannel.markAsDeleted();
 						client.onChannelDelete(deletedChannel);
 					}
 
-					case MESSAGE_CREATE -> {
-						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
-							final var message = ((MessageChannel) c).getMessageManager().cache(d);
-							client.onMessageCreate(message);
-						});
-					}
+					case MESSAGE_CREATE ->
+						client.channels.get(d.getString("channel_id")).thenAccept(c ->
+							client.onMessageCreate(((MessageChannel) c).getMessageManager().cache(d))
+						);
 
-					case MESSAGE_UPDATE -> {
-						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
-							final var message = ((MessageChannel) c).getMessageManager().cache(d);
-							client.onMessageUpdate(message);
-						});
-					}
+					case MESSAGE_UPDATE ->
+						client.channels.get(d.getString("channel_id")).thenAccept(c ->
+							client.onMessageUpdate(((MessageChannel) c).getMessageManager().cache(d))
+						);
 
-					case MESSAGE_DELETE -> {
+					case MESSAGE_DELETE ->
 						client.channels.get(d.getString("channel_id")).thenAccept(c -> {
 							final var deletedMessage = ((MessageChannel) c).getMessageManager().cache.get(d.getString("id"));
+							if (deletedMessage == null)
+								return;
 							deletedMessage.markAsDeleted();
 							client.onMessageDelete(deletedMessage);
 						});
-					}
 
 					default -> {}
 				}

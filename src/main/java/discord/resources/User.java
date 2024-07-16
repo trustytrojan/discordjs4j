@@ -39,7 +39,7 @@ public class User extends AbstractDiscordResource {
 			bitIndex = ordinal();
 		}
 
-		private Flag(int value) {
+		private Flag(final int value) {
 			this.bitIndex = value;
 		}
 
@@ -49,7 +49,7 @@ public class User extends AbstractDiscordResource {
 		}
 	}
 
-	public User(DiscordClient client, SjObject data) {
+	public User(final DiscordClient client, final SjObject data) {
 		super(client, data);
 	}
 
@@ -59,43 +59,38 @@ public class User extends AbstractDiscordResource {
 	}
 
 	/**
-	 * <b>USER-ONLY METHOD:</b> If {@code this.client} is not an instance of
-	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
-	 * <p>
-	 * <b>WARNING:</b> This API method is heavily monitored by Discord. It is very likely
-	 * that this will throw a {@code DiscordAPIException} with the response body
-	 * containing captcha-related data. It is advised not to use this endpoint as a
-	 * user.
+	 * Sends a friend request to this user.
+	 * @apiNote This API endpoint seems to be heavily monitored by Discord;
+	 * you may get captchas very quickly. Use it sparingly.
+	 * @throws ClassCastException if {@link #client} is not a {@link UserDiscordClient}.
 	 */
 	public CompletableFuture<Void> addFriend() {
 		return ((UserDiscordClient) client).relationships.addFriendWithId(getId());
 	}
 
 	/**
-	 * <b>USER-ONLY METHOD:</b> If {@code this.client} is not an instance of
-	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
+	 * Blocks this user.
+	 * @throws ClassCastException if {@link #client} is not a {@link UserDiscordClient}.
 	 */
 	public CompletableFuture<Void> block() {
 		return ((UserDiscordClient) client).relationships.blockUser(getId());
 	}
 
 	/**
-	 * <b>USER-ONLY METHOD:</b> If {@code this.client} is not an instance of
-	 * {@code UserDiscordClient}, a {@code ClassCastException} will be thrown.
-	 * <p>
-	 * Either removes this user as a friend or unblocks them.
+	 * Depending on the relationship type, either removes this user as a friend or unblocks them.
+	 * @throws ClassCastException if {@link #client} is not a {@link UserDiscordClient}.
 	 */
 	public CompletableFuture<Void> deleteRelationship() {
 		return ((UserDiscordClient) client).relationships.delete(getId());
 	}
 
-	public CompletableFuture<Void> setNote(String note) {
+	public CompletableFuture<Void> setNote(final String note) {
 		return client.api.put("/users/@me/notes/" + getId(), "{\"note\":\"" + note + "\"}").thenRun(Util.NO_OP);
 	}
 
 	public CompletableFuture<DMChannel> createDM() {
 		return client.api.post("/users/@me/channels", "{\"recipient_id\":\"" + getId() + "\"}")
-				.thenApply(r -> new DMChannel(client, r.asObject()));
+			.thenApply(r -> (DMChannel) client.channels.cache(r.asObject()));
 	}
 
 	public boolean isBot() {
@@ -124,8 +119,8 @@ public class User extends AbstractDiscordResource {
 		public String getURL(AllowedSize size, AllowedExtension extension) {
 			final var hash = getHash();
 			return (hash == null)
-					? CDN.makeDefaultUserAvatarURL(getDiscriminator())
-					: CDN.makeUserAvatarURL(getId(), hash, size, extension);
+				? CDN.makeDefaultUserAvatarURL(getDiscriminator())
+				: CDN.makeUserAvatarURL(getId(), hash, size, extension);
 		}
 	};
 

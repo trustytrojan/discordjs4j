@@ -35,12 +35,12 @@ public interface Channel extends DiscordResource {
 			value = ordinal();
 		}
 
-		private Type(int value) {
+		private Type(final int value) {
 			this.value = value;
 		}
 	}
 
-	public static Channel construct(DiscordClient client, SjObject data) {
+	public static Channel construct(final DiscordClient client, final SjObject data) {
 		return switch (Type.LOOKUP_TABLE[data.getInteger("type")]) {
 			case GUILD_TEXT -> new TextChannel(client, data);
 			case DM -> new DMChannel(client, data);
