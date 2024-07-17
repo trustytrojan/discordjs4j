@@ -20,8 +20,8 @@ public class UserChannelClient extends UserDiscordClient {
 		);
 	}
 
-	final String clientUserGrayTag() {
-		return Terminal.FG_GRAY + "[" + clientUser.getTag() + "] " + Terminal.FG_DEFAULT;
+	final String clientUserGrayUsername() {
+		return Terminal.FG_GRAY + "[" + clientUser.getUsername() + "] " + Terminal.FG_DEFAULT;
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class UserChannelClient extends UserDiscordClient {
 		// message send loop
 		String line;
 		while (true) {
-			System.out.print(clientUserGrayTag());
+			System.out.print(clientUserGrayUsername());
 			if ((line = console.readLine()) == null) {
 				gateway.closeBlocking();
 				break;
@@ -80,7 +80,7 @@ public class UserChannelClient extends UserDiscordClient {
 		if (message.getChannelId() != channel.getId())
 			return;
 		System.out.print(
-			"\r\n" + Terminal.cursorUp(1) + "[" + message.getAuthor().join().getTag() + "] " + message.getContent() + "\n" + clientUserGrayTag());
+			"\r\n" + Terminal.cursorUp(1) + "[" + message.getAuthor().join().getTag() + "] " + message.getContent() + "\n" + clientUserGrayUsername());
 	}
 
 	public static void main(String[] args) throws Exception {
