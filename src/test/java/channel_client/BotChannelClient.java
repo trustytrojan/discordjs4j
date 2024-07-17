@@ -1,7 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-
+package channel_client;
 import discord.client.BotDiscordClient;
 import discord.enums.GatewayIntent;
 import discord.resources.Message;
@@ -10,29 +7,6 @@ import discord.resources.guilds.Guild;
 import discord.util.Util;
 
 public class BotChannelClient extends BotDiscordClient {
-	/**
-	 * To make life easier we will use {@code fzf} to allow the user to select a guild and channel to use.
-	 */
-	private static class FzfProcess {
-		final Process process;
-		final BufferedWriter stdin;
-		final CompletableFuture<String> result;
-
-		FzfProcess(String header) throws IOException {
-			process = new ProcessBuilder("fzf", "--header", header).start();
-			stdin = process.outputWriter();
-			result = CompletableFuture.supplyAsync(() -> {
-				try { return process.inputReader().readLine(); }
-				catch (final Exception e) { e.printStackTrace(); return null; }
-			});
-		}
-
-		void addChoice(String choice) throws IOException {
-			stdin.write(choice + '\n');
-			stdin.flush();
-		}
-	}
-
 	Guild guild;
 	MessageChannel channel;
 	FzfProcess fzf;
@@ -72,7 +46,7 @@ public class BotChannelClient extends BotDiscordClient {
 				break;
 			}
 			channel.send(line);
-			System.out.print(cursorUp(1) + clearLine() + '\r');
+			System.out.print(Terminal.cursorUp(1) + Terminal.CLEAR_LINE + '\r');
 		}
 	}
 
@@ -92,29 +66,7 @@ public class BotChannelClient extends BotDiscordClient {
 	}
 
 	final String clientUserGrayTag() {
-		return fgGray() + "[" + clientUser.getTag() + "] " + fgDefault();
-	}
-
-	final char ESCAPE = 27;
-
-	final String cursorUp(final int lines) {
-		return ESCAPE + "[" + lines + 'A';
-	}
-
-	final String clearLine() {
-		return ESCAPE + "[2K";
-	}
-
-	final String fgGray() {
-		return ESCAPE + "[30m";
-	}
-
-	final String fgDefault() {
-		return ESCAPE + "[39m";
-	}
-
-	final String fgReset() {
-		return ESCAPE + "[0m";
+		return Terminal.FG_GRAY + "[" + clientUser.getTag() + "] " + Terminal.FG_DEFAULT;
 	}
 
 	@Override
@@ -124,7 +76,7 @@ public class BotChannelClient extends BotDiscordClient {
 		if (message.getChannelId() != channel.getId())
 			return;
 		System.out.print(
-			"\r\n" + cursorUp(1) + "[" + message.getAuthor().join().getTag() + "] " + message.getContent() + "\n" + clientUserGrayTag());
+			"\r\n" + Terminal.cursorUp(1) + "[" + message.getAuthor().join().getTag() + "] " + message.getContent() + "\n" + clientUserGrayTag());
 	}
 
 	public static void main(final String[] args) throws Exception {
