@@ -104,6 +104,6 @@ public final class SelfBot extends UserDiscordClient {
 	}
 
 	public static void main(final String[] args) throws Exception {
-		new SelfBot(Util.readFile("tokens/main"));
+		new SelfBot(Util.File.read("tokens/main"));
 	}
 }

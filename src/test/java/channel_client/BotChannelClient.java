@@ -80,6 +80,6 @@ public class BotChannelClient extends BotDiscordClient {
 	}
 
 	public static void main(final String[] args) throws Exception {
-		new BotChannelClient(Util.readFile("tokens/bot"));
+		new BotChannelClient(Util.File.read("tokens/bot"));
 	}
 }

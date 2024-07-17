@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 
 import discord.client.APIClient.JsonResponse;
 import discord.client.DiscordClient;
+import discord.util.Util;
 import sj.SjObject;
 
 public interface DiscordResource {
@@ -37,7 +38,7 @@ public interface DiscordResource {
 	 * @return The {@link Instant} that this resource was created.
 	 */
 	default Instant getCreatedInstant() {
-		return Instant.ofEpochMilli((Long.parseLong(getId()) >> 22) + 1420070400000L);
+		return Util.Snowflake.toInstant(getId());
 	}
 
 	/**

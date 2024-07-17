@@ -56,7 +56,7 @@ public final class PresenceUpdateTest {
 	}
 
 	public static void main(String[] args) throws Exception {
-		// new BotTest(Util.readFile("tokens/bot"));
-		new UserTest(Util.readFile("tokens/alt"));
+		// new BotTest(Util.File.read("tokens/bot"));
+		new UserTest(Util.File.read("tokens/alt"));
 	}
 }

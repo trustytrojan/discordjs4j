@@ -84,6 +84,6 @@ public class UserChannelClient extends UserDiscordClient {
 	}
 
 	public static void main(String[] args) throws Exception {
-		new UserChannelClient(Util.readFile("tokens/alt"));
+		new UserChannelClient(Util.File.read("tokens/alt"));
 	}
 }

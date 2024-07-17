@@ -57,6 +57,6 @@ public final class SimpleBot extends BotDiscordClient {
 	}
 
 	public static void main(final String[] args) throws Exception {
-		new SimpleBot(Util.readFile("tokens/bot"));
+		new SimpleBot(Util.File.read("tokens/bot"));
 	}
 }
