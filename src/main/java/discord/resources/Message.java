@@ -6,12 +6,14 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.client.UserDiscordClient;
 import discord.resources.channels.GuildChannel;
 import discord.resources.channels.MessageChannel;
 import discord.resources.guilds.Guild;
 import discord.structures.Embed;
 import discord.structures.components.ActionRow;
 import discord.structures.components.MessageComponent;
+import discord.util.Util;
 import sj.SjObject;
 import sj.SjSerializable;
 
@@ -121,5 +123,11 @@ public class Message extends AbstractDiscordResource {
 		return (rawComponents == null)
 			? Collections.emptyList()
 			: data.getObjectArray("components").stream().map(MessageComponent::construct).toList();
+	}
+
+	public CompletableFuture<Void> acknowledge() {
+		if (!(client instanceof UserDiscordClient))
+			throw new UnsupportedOperationException("Only users can acknowledge messages");
+		return client.api.post(getApiPath() + "/ack", "{\"token\":null}").thenRun(Util.NO_OP);
 	}
 }

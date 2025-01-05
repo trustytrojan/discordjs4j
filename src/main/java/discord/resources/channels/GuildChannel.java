@@ -19,7 +19,6 @@ public interface GuildChannel extends GuildResource, Channel {
 	 *         or {@code null} if the channel type hasn't been implemented.
 	 */
 	public static GuildChannel construct(final DiscordClient client, final SjObject data, final Guild guild) {
-		System.out.println(Channel.Type.LOOKUP_TABLE[data.getInteger("type")]);
 		Objects.requireNonNull(guild);
 		return switch (Channel.Type.LOOKUP_TABLE[data.getInteger("type")]) {
 			case GUILD_TEXT -> new TextChannel(client, data, guild);

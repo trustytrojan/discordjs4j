@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import discord.client.DiscordClient;
+import discord.client.UserDiscordClient;
 import discord.resources.Message;
 import discord.resources.channels.MessageChannel;
 import discord.util.Util;
@@ -29,6 +30,13 @@ public class MessageManager extends ResourceManager<Message> {
 
 	public CompletableFuture<Void> delete(String id) {
 		return client.api.delete(basePath + id).thenRun(Util.NO_OP);
+	}
+
+	@Override
+	public CompletableFuture<Message> get(String id, boolean force) {
+		if (client instanceof UserDiscordClient)
+			return getManyAround(id, 1).thenApply(List::getFirst);
+		return super.get(id, force);
 	}
 
 	/*

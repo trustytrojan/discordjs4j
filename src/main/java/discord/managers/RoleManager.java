@@ -26,7 +26,7 @@ public class RoleManager extends GuildResourceManager<Role> {
 			if (cached != null)
 				return CompletableFuture.completedFuture(cached);
 		}
-		return refreshCache().thenApply(__ -> cache.get(id));
+		return refreshCache().thenApply(_ -> cache.get(id));
 	}
 
 	public CompletableFuture<Role> create(final Role.Payload payload) {

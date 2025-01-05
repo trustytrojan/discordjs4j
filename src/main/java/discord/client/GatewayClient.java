@@ -93,9 +93,9 @@ public final class GatewayClient extends WebSocketClient {
 		if (presence != null)
 			obj.put("presence", presence);
 		obj.put("intents", GatewayIntent.sum(intents));
-		if (debug)
-			Logger.log("Sending identify payload (token removed):\n" + obj.toPrettyJsonString());
 		obj.put("token", token);
+		if (debug)
+			Logger.log("Sending identify payload: " + obj.toPrettyJsonString());
 		send("""
 			{
 				"op": %d,
@@ -248,17 +248,22 @@ public final class GatewayClient extends WebSocketClient {
 				if (debug)
 					Logger.log("Event received: " + t);
 
-				final GatewayEvent ev;
+				GatewayEvent ev;
 				try { ev = GatewayEvent.valueOf(t); }
 				catch (final IllegalArgumentException e) {
 					/**
 					 * as long as discord keeps updating, new events will arise,
 					 * and i can't keep up with that. so we need to ignore unknown events.
 					 */
-					return;
+					ev = null;
 				}
 
 				final var d = obj.getObject("d");
+
+				if (ev == null && debug) {
+					Logger.log("Unhandled event, printing out data: " + d);
+					return;
+				}
 
 				switch (ev) {
 					// https://discord.com/developers/docs/topics/gateway-events#ready
@@ -289,9 +294,10 @@ public final class GatewayClient extends WebSocketClient {
 
 					// https://discord.com/developers/docs/topics/gateway-events#interaction-create
 					case INTERACTION_CREATE -> {
-						System.out.println(d);
-						final var bot = (BotDiscordClient) client;
-						bot.onInteractionCreate(Interaction.construct(bot, d));
+						if (client instanceof final BotDiscordClient bot)
+							bot.onInteractionCreate(Interaction.construct(bot, d));
+						else if (debug)
+							Logger.log("Interaction data received as non-bot, printing data: " + d);
 					}
 
 					case GUILD_AUDIT_LOG_ENTRY_CREATE ->

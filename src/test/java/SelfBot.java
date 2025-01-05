@@ -18,7 +18,7 @@ public final class SelfBot extends UserDiscordClient {
 		},
 
 		// Lists all of the roles in the current guild.
-		"roles", (final var message, final var args) -> {
+		"roles", (final var message, @SuppressWarnings("unused") final var args) -> {
 			final var guild = message.getGuild().join();
 
 			if (guild == null) {
@@ -37,7 +37,7 @@ public final class SelfBot extends UserDiscordClient {
 		},
 
 		// Lists all of the channels in the current guild.
-		"channels", (final var message, final var args) -> {
+		"channels", (final var message, @SuppressWarnings("unused") final var args) -> {
 			final var guild = message.getGuild().join();
 
 			if (guild == null) {
@@ -54,11 +54,22 @@ public final class SelfBot extends UserDiscordClient {
 			guild.channels.cache.forEach(
 				(id, channel) -> sb.append(template.formatted(id, channel.getType(), channel.getName())));
 			message.reply(sb.append("```").toString());
+		},
+
+		// Replies with raw message data.
+		"messagedata", (final var message, final var args) -> {
+			final var targetMsgId = args.get(0);
+			final var msg = message
+				.getChannel().join()
+				.getMessageManager()
+				.get(targetMsgId).join();
+			System.out.println("got here");
+			message.reply("```json\n" + msg.getData() + "\n```");
 		}
 	);
 
 	private SelfBot(final String token) throws Exception {
-		super(token, false);
+		super(token, true);
 
 		// Connect to the Discord Gateway.
 		gateway.tryConnect();
@@ -99,7 +110,7 @@ public final class SelfBot extends UserDiscordClient {
 				// Ignore args[0] since that's just the command name.
 				.accept(message, List.of(args).subList(1, args.length));
 		} catch (final Exception e) {
-			message.reply("**this is an error**```" + e.getMessage() + "```");
+			message.reply("**this is an error**```" + e + "```");
 		}
 	}
 
